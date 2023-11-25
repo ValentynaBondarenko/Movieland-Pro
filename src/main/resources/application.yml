@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:8200/movieland?characterEncoding=UTF-8
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
+
+liquibase:
+  change-log: classpath:changelog.xml
+  outputEncoding: UTF-8
+  enabled: true
+
+logging:
+  level:
+    liquibase: ERROR
