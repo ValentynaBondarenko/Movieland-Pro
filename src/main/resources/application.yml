@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:8200/movieland?characterEncoding=UTF-8
-    username:
-    password:
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
