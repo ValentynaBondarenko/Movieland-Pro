@@ -7,8 +7,6 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +15,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "movie")
 @Accessors(chain = true)
-
 public class Movie {
     @Id
     @Column(name = "movie_id")
@@ -43,5 +40,6 @@ public class Movie {
 
     @Column(name = "poster")
     private String picturePath;
+
 
 }
