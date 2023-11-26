@@ -13,5 +13,6 @@ liquibase:
   enabled: true
 
 logging:
+  config: classpath:log.xml
   level:
     liquibase: ERROR
