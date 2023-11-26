@@ -5,7 +5,10 @@ import com.bondarenko.movieland.dto.RequestMovieDTO;
 import java.util.List;
 
 public interface MovieService {
-     List<RequestMovieDTO> findAllMovies() ;
+    List<RequestMovieDTO> findAllMovies();
 
-     List<RequestMovieDTO> getRandomMovies();
+    List<RequestMovieDTO> getRandomMovies();
+
+    List<RequestMovieDTO> getMoviesByGenre(int genreId);
+
 }

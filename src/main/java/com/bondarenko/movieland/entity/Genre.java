@@ -1,10 +1,9 @@
 package com.bondarenko.movieland.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,5 +19,8 @@ public class Genre {
 
     @Column(name = "genre_name")
     private String name;
+
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    private List<Movie> movies;
 
 }

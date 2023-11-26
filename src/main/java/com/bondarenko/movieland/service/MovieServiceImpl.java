@@ -2,13 +2,15 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.dto.RequestMovieDTO;
 import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -20,7 +22,9 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<RequestMovieDTO> findAllMovies() {
         List<Movie> movies = movieRepository.findAll();
-        return movieMapper.toMovieDTO(movies);
+        return Optional.of(movies)
+                .map(movieMapper::toMovieDTO)
+                .orElseThrow(MovieNotFoundException::new);
     }
 
     @Override
@@ -40,5 +44,13 @@ public class MovieServiceImpl implements MovieService {
             randomMovies.addAll(allMovies);
         }
         return movieMapper.toMovieDTO(randomMovies);
+    }
+
+    @Override
+    public List<RequestMovieDTO> getMoviesByGenre(int genreId) {
+        List<Movie> movies = movieRepository.findByGenres_Id(genreId);
+        return Optional.of(movies)
+                .map(movieMapper::toMovieDTO)
+                .orElseThrow(MovieNotFoundException::new);
     }
 }

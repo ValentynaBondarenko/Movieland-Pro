@@ -45,7 +45,16 @@ class MovieServiceImplTest extends AbstractITest {
         assertNotNull(movies);
         assertEquals(3, movies.size());
     }
+    @Test
+    public void testGetMoviesByGenre() {
+        int genreId = 4;
+        List<RequestMovieDTO> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
+
+        assertNotNull(moviesByGenre);
+        assertEquals(4, moviesByGenre.size());
+
+    }
 
     private RequestMovieDTO testDTO() {
         return RequestMovieDTO.builder()
