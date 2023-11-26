@@ -38,6 +38,14 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
         assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
     }
+    @Test
+    public void testRandomMovies() {
+        List<RequestMovieDTO> movies = movieService.getRandomMovies();
+
+        assertNotNull(movies);
+        assertEquals(3, movies.size());
+    }
+
 
     private RequestMovieDTO testDTO() {
         return RequestMovieDTO.builder()

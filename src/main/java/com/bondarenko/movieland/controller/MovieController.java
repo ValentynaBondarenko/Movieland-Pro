@@ -23,5 +23,10 @@ public class MovieController {
         List<RequestMovieDTO> response = movieService.findAllMovies();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/random")
+    protected ResponseEntity<List<RequestMovieDTO>> getRandomMovie() {
+        List<RequestMovieDTO> response = movieService.getRandomMovies();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

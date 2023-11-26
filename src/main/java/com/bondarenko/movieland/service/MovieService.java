@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface MovieService {
      List<RequestMovieDTO> findAllMovies() ;
+
+     List<RequestMovieDTO> getRandomMovies();
 }
