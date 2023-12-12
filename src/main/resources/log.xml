@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <property name="LOG_DIR" value="logs"/>
     <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>movieland.log</file>
+        <file>${LOG_DIR}/movieland.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>movieland-%d{yyyy-MM-dd}.log.%i</fileNamePattern>
             <maxFileSize>5MB</maxFileSize>
@@ -14,10 +15,10 @@
     </appender>
 
     <logger name="com.bondarenko.movieland" level="DEBUG">
-        <appender-ref ref="fileAppender" />
+        <appender-ref ref="fileAppender"/>
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="fileAppender" />
+        <appender-ref ref="fileAppender"/>
     </root>
 </configuration>

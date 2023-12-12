@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.mapper;
 
-import com.bondarenko.movieland.dto.ResponseGenreDTO;
+import com.bondarenko.movieland.api.model.ResponseGenreDTO;
 import com.bondarenko.movieland.entity.Genre;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

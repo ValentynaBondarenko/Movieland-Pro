@@ -1,6 +1,6 @@
-package com.bondarenko.movieland.service;
+package com.bondarenko.movieland.service.movie;
 
-import com.bondarenko.movieland.dto.RequestMovieDTO;
+import com.bondarenko.movieland.api.model.ResponseMovieDTO;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
@@ -20,7 +20,7 @@ public class MovieServiceImpl implements MovieService {
     private MovieMapper movieMapper;
 
     @Override
-    public List<RequestMovieDTO> findAllMovies() {
+    public List<ResponseMovieDTO> findAllMovies() {
         List<Movie> movies = movieRepository.findAll();
         return Optional.of(movies)
                 .map(movieMapper::toMovieDTO)
@@ -28,7 +28,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<RequestMovieDTO> getRandomMovies() {
+    public List<ResponseMovieDTO> getRandomMovies() {
         List<Movie> allMovies = movieRepository.findAll();
         List<Movie> randomMovies = new ArrayList<>();
 
@@ -47,7 +47,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<RequestMovieDTO> getMoviesByGenre(int genreId) {
+    public List<ResponseMovieDTO> getMoviesByGenre(int genreId) {
         List<Movie> movies = movieRepository.findByGenres_Id(genreId);
         return Optional.of(movies)
                 .map(movieMapper::toMovieDTO)
