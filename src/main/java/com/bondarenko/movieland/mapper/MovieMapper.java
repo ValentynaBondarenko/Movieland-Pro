@@ -20,4 +20,7 @@ public interface MovieMapper {
     @Mapping(target = "price", source = "price")
     @Mapping(target = "picturePath", source = "poster")
     List<ResponseMovieDTO> toMovieDTO(List<Movie> movies);
+
+    Movie toMovie(ResponseMovieDTO movies);
+
 }

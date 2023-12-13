@@ -9,4 +9,16 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findByGenres_Id(int genre);
+
+    List<Movie> findAllByOrderByRatingDescPriceAsc();
+
+    List<Movie> findAllByOrderByRatingDescPriceDesc();
+
+    List<Movie> findAllByOrderByRatingDesc();
+
+    List<Movie> findAllByOrderByRatingAscPriceAsc();
+
+    List<Movie> findAllByOrderByRatingAscPriceDesc();
+
+    List<Movie> findAllByOrderByRatingAsc();
 }

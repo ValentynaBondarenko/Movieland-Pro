@@ -22,12 +22,13 @@ public class MovieController implements MovieApi {
     private MovieService movieService;
 
     @Override
-    public ResponseEntity<List<ResponseMovieDTO>> findAllMovies() {
-        log.info("Received request to find all movies.");
-        List<ResponseMovieDTO> response = movieService.findAllMovies();
+    public ResponseEntity<List<ResponseMovieDTO>> findAllMovies(String rating, String price) {
+        List<ResponseMovieDTO> response = (rating == null || price == null)
+                ? movieService.findAllMovies()
+                : movieService.findAllMoviesWithSorting(rating, price);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     public ResponseEntity<List<ResponseMovieDTO>> getMoviesByGenre(Integer genreId) {
         log.info("Received request to find movies by genre with ID {}.", genreId);

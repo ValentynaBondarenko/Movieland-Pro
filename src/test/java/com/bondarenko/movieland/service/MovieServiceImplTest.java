@@ -2,6 +2,7 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.MovielandApplication;
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
+import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import com.bondarenko.movieland.service.movie.MovieService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,7 +28,6 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     void testFindAllMovies() {
-
         List<ResponseMovieDTO> movies = movieService.findAllMovies();
 
         assertNotNull(movies);
@@ -51,10 +52,41 @@ class MovieServiceImplTest extends AbstractITest {
         int genreId = 4;
         List<ResponseMovieDTO> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
-
         assertNotNull(moviesByGenre);
         assertEquals(4, moviesByGenre.size());
+    }
 
+    @Test
+    void testFindAllMoviesWithSortingDescendingByRatingAndAscendingByPrice() {
+        List<Movie> expectedMovies = movieRepository.findAllByOrderByRatingDescPriceAsc();
+        List<ResponseMovieDTO> actualMovies = movieService.findAllMoviesWithSorting("desc", "asc");
+        assertMoviesListEquals(expectedMovies, actualMovies);
+    }
+
+    @Test
+    void testFindAllMoviesWithSortingAscendingByRatingAndDescendingByPrice() {
+        List<Movie> expectedMovies = movieRepository.findAllByOrderByRatingAscPriceDesc();
+        List<ResponseMovieDTO> actualMovies = movieService.findAllMoviesWithSorting("asc", "desc");
+        assertMoviesListEquals(expectedMovies, actualMovies);
+    }
+
+    private void assertMoviesListEquals(List<Movie> expectedMovies, List<ResponseMovieDTO> actualMovies) {
+        assertNotNull(actualMovies);
+        assertEquals(expectedMovies.size(), actualMovies.size());
+
+        for (int i = 0; i < expectedMovies.size(); i++) {
+            Movie expectedMovie = expectedMovies.get(i);
+            ResponseMovieDTO actualMovieDTO = actualMovies.get(i);
+            Movie actualMovie = movieMapper.toMovie(actualMovieDTO);
+
+            assertEquals(expectedMovie, actualMovie);
+        }
+    }
+
+    private void assertMoviesAreEqual(Movie expectedMovie, ResponseMovieDTO actualMovie) {
+        assertEquals(Optional.of(expectedMovie.getId()), actualMovie.getId());
+        assertEquals(expectedMovie.getNameUkrainian(), actualMovie.getNameUkrainian());
+        assertEquals(expectedMovie.getNameNative(), actualMovie.getNameNative());
     }
 
     private ResponseMovieDTO testDTO() {

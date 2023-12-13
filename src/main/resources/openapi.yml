@@ -254,13 +254,27 @@ paths:
   '/movie':
     get:
       description: |
-        Get all movies .
-
-        The GET method find all movies.
+        Get all movies with optional sorting by rating and price.
+        
+        The GET method finds all movies. You can optionally sort the results by rating (desc) or price (asc/desc).
       summary: Get all movies
       operationId: findAllMovies
       tags:
         - Movie
+      parameters:
+        - name: rating
+          in: query
+          description: Sort movies by rating (desc) or leave blank for default.
+          schema:
+            type: string
+            enum: ["desc"]
+          required: false
+        - name: price
+          in: query
+          description: Sort movies by price (asc/desc) or leave blank for default.
+          schema:
+            type: string
+            enum: ["asc"]
       responses:
         '200':
           description: Successful response

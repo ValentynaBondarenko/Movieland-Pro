@@ -11,4 +11,5 @@ public interface MovieService {
 
     List<ResponseMovieDTO> getMoviesByGenre(int genreId);
 
+    List<ResponseMovieDTO> findAllMoviesWithSorting(String rating, String price);
 }
