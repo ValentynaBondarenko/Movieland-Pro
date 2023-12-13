@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 
-@SpringBootTest(classes ={ MovielandApplication.class, DataSourceProxyConfiguration.class})
+@SpringBootTest(classes = {MovielandApplication.class, DataSourceProxyConfiguration.class})
 @Testcontainers
 class GenreServiceImplTest extends AbstractITest {
     @Autowired

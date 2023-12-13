@@ -18,6 +18,7 @@ import java.util.Objects;
 @Accessors(chain = true)
 public class Movie {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "movie_id")
     private int id;
 
@@ -47,6 +48,7 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

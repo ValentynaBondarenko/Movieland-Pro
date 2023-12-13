@@ -3,7 +3,6 @@ package com.bondarenko.movieland.service.movie;
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.entity.SortDirection;
-import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Slf4j

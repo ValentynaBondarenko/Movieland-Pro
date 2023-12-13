@@ -26,7 +26,6 @@ public class MovieController implements MovieApi {
         List<ResponseMovieDTO> response = (rating == null || price == null)
                 ? movieService.findAllMovies()
                 : movieService.findAllMoviesWithSorting(rating, price);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

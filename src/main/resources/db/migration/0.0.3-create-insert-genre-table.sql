@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS genre(
   genre_name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO genre (genre_name)
-VALUES
+insert into genre (genre_name)
+values
     ('Драма'),
     ('Кримінал'),
     ('Фентезі'),

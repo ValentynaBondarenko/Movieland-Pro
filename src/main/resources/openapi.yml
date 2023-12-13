@@ -267,14 +267,14 @@ paths:
           description: Sort movies by rating (desc) or leave blank for default.
           schema:
             type: string
-            enum: ["desc"]
+            enum: [ "desc" ]
           required: false
         - name: price
           in: query
           description: Sort movies by price (asc/desc) or leave blank for default.
           schema:
             type: string
-            enum: ["asc"]
+            enum: [ "asc" ]
       responses:
         '200':
           description: Successful response

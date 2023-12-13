@@ -3,6 +3,7 @@ package com.bondarenko.movieland.entity;
 public enum SortDirection {
     ASC,
     DESC;
+
     public static SortDirection fromString(String value) {
         if (value == null) {
             return null;
