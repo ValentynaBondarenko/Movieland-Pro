@@ -1,7 +1,9 @@
 package com.bondarenko.movieland.configuration;
 
+import io.hypersistence.utils.logging.InlineQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,10 +23,12 @@ public class DataSourceProxyConfiguration {
 
     @Bean
     @Primary
-    public DataSource proxyDataSource(DataSource dataSource) {
+    public DataSource proxyDataSource() {
         ChainListener listener = new ChainListener();
+        SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
+        loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
+        listener.addListener(loggingListener);
         listener.addListener(new DataSourceQueryCountListener());
-
         return ProxyDataSourceBuilder
                 .create(actualDataSource())
                 .name(DATA_SOURCE_PROXY_NAME)

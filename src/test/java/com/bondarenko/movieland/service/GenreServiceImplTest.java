@@ -2,6 +2,7 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.MovielandApplication;
 import com.bondarenko.movieland.api.model.ResponseGenreDTO;
+import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.mapper.GenreMapper;
 import com.bondarenko.movieland.repository.GenreRepository;
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 
-@SpringBootTest(classes = MovielandApplication.class)
+@SpringBootTest(classes ={ MovielandApplication.class, DataSourceProxyConfiguration.class})
 @Testcontainers
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
