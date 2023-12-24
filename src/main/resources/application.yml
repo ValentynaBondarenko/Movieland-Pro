@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: default
   datasource:
     url: jdbc:postgresql://localhost:8200/movieland?characterEncoding=UTF-8
     username:
@@ -15,6 +17,6 @@ liquibase:
   enabled: true
 
 logging:
-  config: classpath:log.xml
+  config: classpath:logback.xml
   level:
     liquibase: ERROR
