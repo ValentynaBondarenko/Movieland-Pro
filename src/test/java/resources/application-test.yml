@@ -1,0 +1,3 @@
+movie:
+  random:
+    limit: 3

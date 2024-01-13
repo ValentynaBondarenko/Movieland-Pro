@@ -17,6 +17,9 @@ liquibase:
   change-log: classpath:changelog.xml
   outputEncoding: UTF-8
   enabled: true
+movie:
+  random:
+    limit: 3
 
 logging:
   config: classpath:logback.xml

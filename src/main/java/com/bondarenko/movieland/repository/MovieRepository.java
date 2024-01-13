@@ -2,6 +2,7 @@ package com.bondarenko.movieland.repository;
 
 import com.bondarenko.movieland.entity.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findAllByOrderByRatingAscPriceDesc();
 
     List<Movie> findAllByOrderByRatingAsc();
+    @Query(value = "SELECT * FROM movies ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    List<Movie> findRandomMovies(int limit);
 }

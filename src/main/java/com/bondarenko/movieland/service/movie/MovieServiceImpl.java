@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -19,8 +17,6 @@ import java.util.Random;
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
-    //тред сейф
-    private final Random random = new Random();
 
     @Override
     public List<ResponseMovieDTO> findAllMovies() {
@@ -48,17 +44,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<ResponseMovieDTO> getRandomMovies() {
-        List<Movie> allMovies = movieRepository.findAll();
-        List<Movie> randomMovies = new ArrayList<>();
+        log.info("Received request to find {} random movies.", 3);
 
-        if (allMovies.size() >= 3) {
-            while (randomMovies.size() < 3) {
-                int randomIndex = random.nextInt(allMovies.size());
-                randomMovies.add(allMovies.remove(randomIndex));
-            }
-        } else {
-            randomMovies.addAll(allMovies);
-        }
+        List<Movie> randomMovies = movieRepository.findRandomMovies(3);
         return movieMapper.toMovieDTO(randomMovies);
     }
 

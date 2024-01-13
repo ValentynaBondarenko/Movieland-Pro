@@ -44,7 +44,7 @@ public class Movie {
     private String poster;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "movie_genre",
+    @JoinTable(name = "movies_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
