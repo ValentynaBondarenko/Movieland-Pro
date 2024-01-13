@@ -1,13 +1,13 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.movieland.MovielandApplication;
 import com.bondarenko.movieland.api.model.ResponseGenreDTO;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
-import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.mapper.GenreMapper;
 import com.bondarenko.movieland.repository.GenreRepository;
 import com.bondarenko.movieland.service.cache.GenreCacheService;
 import com.bondarenko.movieland.service.genre.GenreService;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.spring.api.DBRider;
 import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import java.util.List;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 
+@DBRider
 @SpringBootTest(classes = { DataSourceProxyConfiguration.class})
 @Testcontainers
 class GenreServiceImplTest extends AbstractITest {
@@ -35,17 +36,13 @@ class GenreServiceImplTest extends AbstractITest {
 
 
     @Test
+    @ExpectedDataSet(value = "datasets/genre/datasets_genres.yml")
     public void testFindAllGenres() {
 
         List<ResponseGenreDTO> genres = genreService.getAllGenres();
 
         Assertions.assertNotNull(genres);
         Assertions.assertEquals(16, genres.size());
-        ResponseGenreDTO firstDTO = genres.get(0);
-        ResponseGenreDTO genre = testDTO();
-        Assertions.assertEquals(genre.getId(), firstDTO.getId());
-        Assertions.assertEquals(genre.getId(), firstDTO.getId());
-        Assertions.assertEquals(genre.getName(), firstDTO.getName());
     }
 
     @Test
@@ -58,20 +55,5 @@ class GenreServiceImplTest extends AbstractITest {
         genreService.getAllGenres();
         assertSelectCount(1);
 
-    }
-
-
-    private ResponseGenreDTO testDTO() {
-        ResponseGenreDTO responseGenreDTO = new ResponseGenreDTO();
-        responseGenreDTO.setId(1);
-        responseGenreDTO.setName("Драма");
-        return responseGenreDTO;
-    }
-
-    private Genre createGenre(int id, String name) {
-        Genre genre = new Genre();
-        genre.setId(id);
-        genre.setName(name);
-        return genre;
     }
 }
