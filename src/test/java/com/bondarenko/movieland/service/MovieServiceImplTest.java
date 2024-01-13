@@ -1,11 +1,12 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.movieland.MovielandApplication;
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import com.bondarenko.movieland.service.movie.MovieService;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,8 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@SpringBootTest(classes = MovielandApplication.class)
+@DBRider
+@SpringBootTest
 class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieRepository movieRepository;
@@ -27,10 +29,12 @@ class MovieServiceImplTest extends AbstractITest {
     private MovieService movieService;
 
     @Test
+    @DataSet(value = "datasets/movie/dataset_add_movie.yml")
     void testFindAllMovies() {
         List<ResponseMovieDTO> movies = movieService.findAllMovies();
 
         assertNotNull(movies);
+
         assertEquals(25, movies.size());
         ResponseMovieDTO firstMovie = movies.get(0);
         ResponseMovieDTO testMovie = testDTO();

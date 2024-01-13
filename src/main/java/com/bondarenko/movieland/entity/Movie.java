@@ -14,21 +14,21 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "movie")
+@Table(name = "movies")
 @Accessors(chain = true)
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "movie_id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name = "name_ua")
+    @Column(name = "name_ukrainian")
     private String nameUkrainian;
 
     @Column(name = "name_native")
     private String nameNative;
 
-    @Column(name = "release_year")
+    @Column(name = "year_of_release")
     private Integer yearOfRelease;
 
     @Column(name = "description")
@@ -41,7 +41,7 @@ public class Movie {
     private BigDecimal price;
 
     @Column(name = "poster")
-    private String picturePath;
+    private String poster;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "movie_genre",
@@ -49,16 +49,5 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Movie movie = (Movie) o;
-        return id == movie.id;
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

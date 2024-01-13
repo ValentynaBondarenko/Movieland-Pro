@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS movies (
     id SERIAL PRIMARY KEY,
-    name_ua VARCHAR(255) NOT NULL,
+    name_ukrainian VARCHAR(255) NOT NULL,
     name_native VARCHAR(255) NOT NULL,
-    release_year INTEGER NOT NULL,
+    year_of_release INTEGER NOT NULL,
     description TEXT NOT NULL,
     rating DECIMAL(3, 1) NOT NULL,
     price DECIMAL(5, 2) NOT NULL,

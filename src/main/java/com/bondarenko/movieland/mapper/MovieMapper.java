@@ -11,10 +11,10 @@ import java.util.List;
 @Mapper
 @Component
 public interface MovieMapper {
-    @Mapping(target = "id", source = "movie_id")
-    @Mapping(target = "name_ua", source = "nameUkrainian")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "name_ukrainian", source = "nameUkrainian")
     @Mapping(target = "name_native", source = "nameNative")
-    @Mapping(target = "release_year", source = "yearOfRelease")
+    @Mapping(target = "year_of_release", source = "yearOfRelease")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "rating", source = "rating")
     @Mapping(target = "price", source = "price")

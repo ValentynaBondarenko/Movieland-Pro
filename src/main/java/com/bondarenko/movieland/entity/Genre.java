@@ -11,17 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "genre")
+@Table(name = "genres")
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "genre_id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name = "genre_name")
+    @Column(name = "name")
     private String name;
-
-    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
-    private List<Movie> movies;
 
 }

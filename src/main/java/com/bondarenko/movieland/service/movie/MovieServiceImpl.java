@@ -19,11 +19,13 @@ import java.util.Random;
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
+    //тред сейф
     private final Random random = new Random();
 
     @Override
     public List<ResponseMovieDTO> findAllMovies() {
         log.info("Received request to find all movies.");
+
         List<Movie> movies = movieRepository.findAll();
         return movieMapper.toMovieDTO(movies);
     }
