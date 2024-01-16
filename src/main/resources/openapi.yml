@@ -10,7 +10,7 @@ servers:
 
 components:
   schemas:
-    ResponseMovieDTO:
+    ResponseMovie:
       type: object
       properties:
         id:
@@ -32,7 +32,7 @@ components:
           format: double
         poster:
           type: string
-    ResponseGenreDTO:
+    ResponseGenre:
       type: object
       properties:
         id:
@@ -70,7 +70,7 @@ components:
           type: string
           description: |
             A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem,
-            except for purposes of localization. If type is given and other than "about:blank", this attribute shall also be provided.
+            except for purposes of localization. If type is given and other then "about:blank", this attribute shall also be provided.
             A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem,
             except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).
         status:
@@ -287,7 +287,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseMovieDTO'
+                  $ref: '#/components/schemas/ResponseMovie'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -327,7 +327,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseMovieDTO'
+                  $ref: '#/components/schemas/ResponseMovie'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -375,7 +375,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseMovieDTO'
+                  $ref: '#/components/schemas/ResponseMovie'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -415,7 +415,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseGenreDTO'
+                  $ref: '#/components/schemas/ResponseGenre'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

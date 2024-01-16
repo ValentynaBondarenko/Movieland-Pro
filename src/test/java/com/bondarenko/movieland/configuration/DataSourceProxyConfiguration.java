@@ -24,7 +24,6 @@ public class DataSourceProxyConfiguration {
     @Bean
     @Primary
     public DataSource proxyDataSource() {
-        System.out.println(" 111111");
         ChainListener listener = new ChainListener();
         SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
         loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
@@ -39,8 +38,6 @@ public class DataSourceProxyConfiguration {
 
     @Bean
     public DataSource actualDataSource() {
-        System.out.println(" 22222");
-
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name"));
         dataSource.setUrl(environment.getProperty("spring.datasource.url"));

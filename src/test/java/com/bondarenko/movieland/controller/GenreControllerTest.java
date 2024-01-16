@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.controller;
 
-import com.bondarenko.movieland.api.model.ResponseGenreDTO;
+import com.bondarenko.movieland.api.model.ResponseGenre;
 import com.bondarenko.movieland.service.genre.GenreService;
 import com.bondarenko.movieland.util.TestGenres;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class GenreControllerTest {
 
     @Test
     public void testFindAllGenres() throws Exception {
-        List<ResponseGenreDTO> genres = TestGenres.getGenres();
+        List<ResponseGenre> genres = TestGenres.getGenres();
         when(genreService.getAllGenres()).thenReturn(genres);
 
         mockMvc = MockMvcBuilders.standaloneSetup(genreController).build();

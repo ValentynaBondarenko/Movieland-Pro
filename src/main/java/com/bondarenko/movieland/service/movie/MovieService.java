@@ -1,15 +1,14 @@
 package com.bondarenko.movieland.service.movie;
 
-import com.bondarenko.movieland.api.model.ResponseMovieDTO;
+import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import java.util.List;
 
 public interface MovieService {
-    List<ResponseMovieDTO> findAllMovies();
+    List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria);
 
-    List<ResponseMovieDTO> getRandomMovies();
+    List<ResponseMovie> getRandomMovies();
 
-    List<ResponseMovieDTO> getMoviesByGenre(int genreId);
+    List<ResponseMovie> getMoviesByGenre(int genreId);
 
-    List<ResponseMovieDTO> findAllMoviesWithSorting(MovieSortCriteria movieSortCriteria);
 }

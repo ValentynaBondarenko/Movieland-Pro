@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.mapper;
 
-import com.bondarenko.movieland.api.model.ResponseMovieDTO;
+import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.entity.Movie;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,8 +19,8 @@ public interface MovieMapper {
     @Mapping(target = "rating", source = "rating")
     @Mapping(target = "price", source = "price")
     @Mapping(target = "picturePath", source = "poster")
-    List<ResponseMovieDTO> toMovieDTO(List<Movie> movies);
+    List<ResponseMovie> toMovieDTO(List<Movie> movies);
 
-    Movie toMovie(ResponseMovieDTO movies);
+    Movie toMovie(ResponseMovie movies);
 
 }

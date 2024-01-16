@@ -3,7 +3,7 @@ package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.MovieApi;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseMovieDTO;
+import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.service.movie.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,25 +21,27 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/movie", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController implements MovieApi {
     private MovieService movieService;
+//dro->responce request Ganre short responce info
+    //deployment
+    //ec2 without docker запустити jar
+    //1ша задача get movie by id
 
     @Override
-    public ResponseEntity<List<ResponseMovieDTO>> findAllMovies(MovieSortCriteria movieSortCriteria) {
-        List<ResponseMovieDTO> response = (movieSortCriteria == null)
-                ? movieService.findAllMovies()
-                : movieService.findAllMoviesWithSorting(movieSortCriteria);
+    public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
+        List<ResponseMovie> response = movieService.findAllMovies(movieSortCriteria);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<ResponseMovieDTO>> getMoviesByGenre(Integer genreId) {
+    public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Integer genreId) {
         log.info("Received request to find movies by genre with ID {}.", genreId);
-        List<ResponseMovieDTO> movies = movieService.getMoviesByGenre(genreId);
+        List<ResponseMovie> movies = movieService.getMoviesByGenre(genreId);
         return ResponseEntity.ok(movies);
     }
 
 
-    public ResponseEntity<List<ResponseMovieDTO>> getRandomMovies() {
+    public ResponseEntity<List<ResponseMovie>> getRandomMovies() {
         log.info("Received request to find random movies.");
-        List<ResponseMovieDTO> response = movieService.getRandomMovies();
+        List<ResponseMovie> response = movieService.getRandomMovies();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

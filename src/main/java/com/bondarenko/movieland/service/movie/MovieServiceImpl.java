@@ -1,12 +1,14 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseMovieDTO;
+import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -15,54 +17,57 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
-    @Override
-    public List<ResponseMovieDTO> findAllMovies() {
-        log.info("Received request to find all movies.");
+    @Value("${movieland.movie.random.limit}")
+    private Integer limit;
 
-        List<Movie> movies = movieRepository.findAll();
+    @Override
+    public List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria) {
+        log.info("Received request to find all movies.");
+        List<Movie> movies;
+        if (movieSortCriteria != null) {
+            Sort sort = buildSort(movieSortCriteria);
+            movies = movieRepository.findAll(sort);
+        } else {
+            movies = movieRepository.findAll();
+        }
         return movieMapper.toMovieDTO(movies);
     }
 
-    @Override
-    public List<ResponseMovieDTO> findAllMoviesWithSorting(MovieSortCriteria movieSortCriteria) {
-
+    private Sort buildSort(MovieSortCriteria movieSortCriteria) {
         Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortCriteria.getRatingDirection()));
         Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortCriteria.getPriceDirection()));
 
-        Sort sort = Sort.unsorted();
         if (ratingDirection.isPresent()) {
-            sort = Sort.by(new Sort.Order(ratingDirection.get(), "rating"));
+            return Sort.by(new Sort.Order(ratingDirection.get(), "rating"));
         } else if (priceDirection.isPresent()) {
-            sort = Sort.by(new Sort.Order(priceDirection.get(), "price"));
+            return Sort.by(new Sort.Order(priceDirection.get(), "price"));
         }
-
-        List<Movie> movies = movieRepository.findAll(sort);
-        return movieMapper.toMovieDTO(movies);
-
+        return Sort.unsorted();
     }
 
     private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {
         return (ratingDirection == null) ? null : Sort.Direction.valueOf(ratingDirection.getValue());
     }
+
     private Sort.Direction convertPriceDirection(MovieSortCriteria.PriceDirectionEnum priceDirection) {
-        return (priceDirection == null) ? null :  Sort.Direction.valueOf(priceDirection.getValue());
+        return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
     }
 
     @Override
-    public List<ResponseMovieDTO> getRandomMovies() {
-        log.info("Received request to find {} random movies.", 3);
+    public List<ResponseMovie> getRandomMovies() {
+        log.info("Received request to find {} random movies.", limit);
 
-        List<Movie> randomMovies = movieRepository.findRandomMovies(3);
+        List<Movie> randomMovies = movieRepository.findRandomMovies(limit);
         return movieMapper.toMovieDTO(randomMovies);
     }
 
     @Override
-    public List<ResponseMovieDTO> getMoviesByGenre(int genreId) {
+    public List<ResponseMovie> getMoviesByGenre(int genreId) {
         List<Movie> movies = movieRepository.findByGenresId(genreId);
         return movieMapper.toMovieDTO(movies);
     }
