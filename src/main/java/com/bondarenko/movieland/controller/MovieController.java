@@ -1,6 +1,5 @@
 package com.bondarenko.movieland.controller;
 
-
 import com.bondarenko.movieland.api.MovieApi;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseMovie;
@@ -21,7 +20,6 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/movie", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController implements MovieApi {
     private MovieService movieService;
-//dro->responce request Ganre short responce info
     //deployment
     //ec2 without docker запустити jar
     //1ша задача get movie by id
@@ -37,7 +35,6 @@ public class MovieController implements MovieApi {
         List<ResponseMovie> movies = movieService.getMoviesByGenre(genreId);
         return ResponseEntity.ok(movies);
     }
-
 
     public ResponseEntity<List<ResponseMovie>> getRandomMovies() {
         log.info("Received request to find random movies.");

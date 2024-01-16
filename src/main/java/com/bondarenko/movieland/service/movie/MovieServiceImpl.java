@@ -5,7 +5,7 @@ import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +21,12 @@ import java.util.Optional;
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
+    private final EntityManager entityManager;
 
     @Value("${movieland.movie.random.limit}")
-    private Integer limit;
+    private int limit;
+    private static final String RATING = "rating";
+    private static final String PRICE = "price";
 
     @Override
     public List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria) {
@@ -43,19 +46,11 @@ public class MovieServiceImpl implements MovieService {
         Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortCriteria.getPriceDirection()));
 
         if (ratingDirection.isPresent()) {
-            return Sort.by(new Sort.Order(ratingDirection.get(), "rating"));
+            return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
         } else if (priceDirection.isPresent()) {
-            return Sort.by(new Sort.Order(priceDirection.get(), "price"));
+            return Sort.by(new Sort.Order(priceDirection.get(), PRICE));
         }
         return Sort.unsorted();
-    }
-
-    private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {
-        return (ratingDirection == null) ? null : Sort.Direction.valueOf(ratingDirection.getValue());
-    }
-
-    private Sort.Direction convertPriceDirection(MovieSortCriteria.PriceDirectionEnum priceDirection) {
-        return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
     }
 
     @Override
@@ -72,5 +67,11 @@ public class MovieServiceImpl implements MovieService {
         return movieMapper.toMovieDTO(movies);
     }
 
+    private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {
+        return (ratingDirection == null) ? null : Sort.Direction.valueOf(ratingDirection.getValue());
+    }
 
+    private Sort.Direction convertPriceDirection(MovieSortCriteria.PriceDirectionEnum priceDirection) {
+        return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
+    }
 }
