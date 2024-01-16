@@ -42,6 +42,17 @@ components:
         name:
           type: string
           description: Genre name
+    MovieSortCriteria:
+      type: object
+      properties:
+        ratingDirection:
+          type: string
+          description: Sort direction for rating (optional).
+          enum: [ "ASC", "DESC" ]
+        priceDirection:
+          type: string
+          description: Sort direction for price (optional).
+          enum: [ "ASC", "DESC" ]
 
     ProblemDetails:
       required:
@@ -262,19 +273,12 @@ paths:
       tags:
         - Movie
       parameters:
-        - name: rating
+        - name: movieSortCriteria
           in: query
-          description: Sort movies by rating (desc) or leave blank for default.
+          description: Sort criteria for movies (optional).
           schema:
-            type: string
-            enum: [ "desc" ]
+            $ref: '#/components/schemas/MovieSortCriteria'
           required: false
-        - name: price
-          in: query
-          description: Sort movies by price (asc/desc) or leave blank for default.
-          schema:
-            type: string
-            enum: [ "asc" ]
       responses:
         '200':
           description: Successful response

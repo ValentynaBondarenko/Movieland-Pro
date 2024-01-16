@@ -2,6 +2,7 @@ package com.bondarenko.movieland.controller;
 
 
 import com.bondarenko.movieland.api.MovieApi;
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
 import com.bondarenko.movieland.service.movie.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,10 @@ public class MovieController implements MovieApi {
     private MovieService movieService;
 
     @Override
-    public ResponseEntity<List<ResponseMovieDTO>> findAllMovies(String rating, String price) {
-        List<ResponseMovieDTO> response = (rating == null || price == null)
+    public ResponseEntity<List<ResponseMovieDTO>> findAllMovies(MovieSortCriteria movieSortCriteria) {
+        List<ResponseMovieDTO> response = (movieSortCriteria == null)
                 ? movieService.findAllMovies()
-                : movieService.findAllMoviesWithSorting(rating, price);
+                : movieService.findAllMoviesWithSorting(movieSortCriteria);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -1,15 +1,17 @@
 package com.bondarenko.movieland.service.movie;
 
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
 import com.bondarenko.movieland.entity.Movie;
-import com.bondarenko.movieland.entity.SortDirection;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,19 +29,28 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<ResponseMovieDTO> findAllMoviesWithSorting(String rating, String price) {
-        log.info("Received request to find all movies with sorting: rating={}, price={}", rating, price);
+    public List<ResponseMovieDTO> findAllMoviesWithSorting(MovieSortCriteria movieSortCriteria) {
 
-        SortDirection ratingDirection = SortDirection.fromString(rating);
-        SortDirection priceDirection = SortDirection.fromString(price);
+        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortCriteria.getRatingDirection()));
+        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortCriteria.getPriceDirection()));
 
-        List<Movie> movies = switch (ratingDirection) {
-            case DESC -> getMoviesByDESC(priceDirection);
-            case ASC -> getMoviesByASC(priceDirection);
-            default -> movieRepository.findAll();
-        };
+        Sort sort = Sort.unsorted();
+        if (ratingDirection.isPresent()) {
+            sort = Sort.by(new Sort.Order(ratingDirection.get(), "rating"));
+        } else if (priceDirection.isPresent()) {
+            sort = Sort.by(new Sort.Order(priceDirection.get(), "price"));
+        }
 
+        List<Movie> movies = movieRepository.findAll(sort);
         return movieMapper.toMovieDTO(movies);
+
+    }
+
+    private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {
+        return (ratingDirection == null) ? null : Sort.Direction.valueOf(ratingDirection.getValue());
+    }
+    private Sort.Direction convertPriceDirection(MovieSortCriteria.PriceDirectionEnum priceDirection) {
+        return (priceDirection == null) ? null :  Sort.Direction.valueOf(priceDirection.getValue());
     }
 
     @Override
@@ -52,23 +63,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<ResponseMovieDTO> getMoviesByGenre(int genreId) {
-        List<Movie> movies = movieRepository.findByGenres_Id(genreId);
+        List<Movie> movies = movieRepository.findByGenresId(genreId);
         return movieMapper.toMovieDTO(movies);
     }
 
-    private List<Movie> getMoviesByDESC(SortDirection priceDirection) {
-        return switch (priceDirection) {
-            case ASC -> movieRepository.findAllByOrderByRatingDescPriceAsc();
-            case DESC -> movieRepository.findAllByOrderByRatingDescPriceDesc();
-            default -> movieRepository.findAllByOrderByRatingDesc();
-        };
-    }
 
-    private List<Movie> getMoviesByASC(SortDirection priceDirection) {
-        return switch (priceDirection) {
-            case ASC -> movieRepository.findAllByOrderByRatingAscPriceAsc();
-            case DESC -> movieRepository.findAllByOrderByRatingAscPriceDesc();
-            default -> movieRepository.findAllByOrderByRatingAsc();
-        };
-    }
 }

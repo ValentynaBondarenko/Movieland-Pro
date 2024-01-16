@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
-
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import java.util.List;
 
 public interface MovieService {
@@ -11,5 +11,5 @@ public interface MovieService {
 
     List<ResponseMovieDTO> getMoviesByGenre(int genreId);
 
-    List<ResponseMovieDTO> findAllMoviesWithSorting(String rating, String price);
+    List<ResponseMovieDTO> findAllMoviesWithSorting(MovieSortCriteria movieSortCriteria);
 }

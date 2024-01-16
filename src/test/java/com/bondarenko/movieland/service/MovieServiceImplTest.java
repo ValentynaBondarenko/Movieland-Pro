@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.service;
 
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseMovieDTO;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
@@ -32,8 +33,8 @@ class MovieServiceImplTest extends AbstractITest {
     private MovieService movieService;
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_add_movie.yml", cleanBefore = true, cleanAfter = true)
-    @ExpectedDataSet(value = "datasets/movie/dataset_add_movie.yml")
+    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMovies() {
         List<ResponseMovieDTO> movies = movieService.findAllMovies();
 
@@ -48,7 +49,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_add_movie.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
     void testRandomMovies() {
         List<ResponseMovieDTO> movies = movieService.getRandomMovies();
 
@@ -90,31 +91,98 @@ class MovieServiceImplTest extends AbstractITest {
         );
     }
 
+    //ASC rating
     @Test
-    void testFindAllMoviesWithSortingDescendingByRatingAndAscendingByPrice() {
-        List<Movie> expectedMovies = movieRepository.findAllByOrderByRatingDescPriceAsc();
-        List<ResponseMovieDTO> actualMovies = movieService.findAllMoviesWithSorting("desc", "asc");
-        assertMoviesListEquals(expectedMovies, actualMovies);
+    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    void testFindAllMoviesWithSortingDescendingByAscendingRating() {
+        //prepare
+        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
+                .priceDirection(null)
+                .ratingDirection(MovieSortCriteria.RatingDirectionEnum.ASC);
+
+        //when
+        List<ResponseMovieDTO> allMoviesWithSorting = movieService.findAllMoviesWithSorting(movieSortCriteria);
+
+        //than
+        assertNotNull(allMoviesWithSorting);
+        assertEquals(allMoviesWithSorting.size(), 25);
+
+        ResponseMovieDTO movieDtoFirst = allMoviesWithSorting.get(0);
+        assertEquals(7.6, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
+
+        ResponseMovieDTO movieDtoLast = allMoviesWithSorting.get(24);
+        assertEquals(8.9, Optional.ofNullable(movieDtoLast.getRating()).orElse(0.0), 0.001);
     }
 
+    //DESC rating
     @Test
-    void testFindAllMoviesWithSortingAscendingByRatingAndDescendingByPrice() {
-        List<Movie> expectedMovies = movieRepository.findAllByOrderByRatingAscPriceDesc();
-        List<ResponseMovieDTO> actualMovies = movieService.findAllMoviesWithSorting("asc", "desc");
-        assertMoviesListEquals(expectedMovies, actualMovies);
+    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    void testFindAllMoviesWithSortingDescendingByDESCRating() {
+        //prepare
+        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
+                .priceDirection(null)
+                .ratingDirection(MovieSortCriteria.RatingDirectionEnum.DESC);
+
+        //when
+        List<ResponseMovieDTO> allMoviesWithSorting = movieService.findAllMoviesWithSorting(movieSortCriteria);
+
+        //than
+        assertNotNull(allMoviesWithSorting);
+        assertEquals(allMoviesWithSorting.size(), 25);
+
+        ResponseMovieDTO movieDtoFirst = allMoviesWithSorting.get(0);
+        assertEquals(8.9, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
+
+        ResponseMovieDTO movieDtoLast = allMoviesWithSorting.get(24);
+        assertEquals(7.6, Optional.ofNullable(movieDtoLast.getRating()).orElse(0.0), 0.001);
     }
 
-    private void assertMoviesListEquals(List<Movie> expectedMovies, List<ResponseMovieDTO> actualMovies) {
-        assertNotNull(actualMovies);
-        assertEquals(expectedMovies.size(), actualMovies.size());
+    //DESC price
+    @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    void testFindAllMoviesWithSortingDescendingByDESCPrice() {
+        //prepare
+        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
+                .priceDirection(MovieSortCriteria.PriceDirectionEnum.DESC)
+                .ratingDirection(null);
 
-        for (int i = 0; i < expectedMovies.size(); i++) {
-            Movie expectedMovie = expectedMovies.get(i);
-            ResponseMovieDTO actualMovieDTO = actualMovies.get(i);
-            Movie actualMovie = movieMapper.toMovie(actualMovieDTO);
+        //when
+        List<ResponseMovieDTO> allMoviesWithSorting = movieService.findAllMoviesWithSorting(movieSortCriteria);
+        allMoviesWithSorting.forEach(movie -> System.out.println(movie.getPrice()));
 
-            assertEquals(expectedMovie, actualMovie);
-        }
+        //than
+        assertNotNull(allMoviesWithSorting);
+        assertEquals(allMoviesWithSorting.size(), 25);
+
+        ResponseMovieDTO movieDtoFirst = allMoviesWithSorting.get(0);
+        assertEquals(200.6, Optional.ofNullable(movieDtoFirst.getPrice()).orElse(0.0), 0.001);
+
+        ResponseMovieDTO movieDtoLast = allMoviesWithSorting.get(24);
+        assertEquals(100.0, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
+    }
+
+    //ASC price
+    @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    void testFindAllMoviesWithSortingDescendingByASCPrice() {
+        //prepare
+        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
+                .priceDirection(MovieSortCriteria.PriceDirectionEnum.ASC)
+                .ratingDirection(null);
+
+        //when
+        List<ResponseMovieDTO> allMoviesWithSorting = movieService.findAllMoviesWithSorting(movieSortCriteria);
+        allMoviesWithSorting.forEach(movie -> System.out.println(movie.getPrice()));
+
+        //than
+        assertNotNull(allMoviesWithSorting);
+        assertEquals(allMoviesWithSorting.size(), 25);
+
+        ResponseMovieDTO movieDtoFirst = allMoviesWithSorting.get(0);
+        assertEquals(100.0, Optional.ofNullable(movieDtoFirst.getPrice()).orElse(0.0), 0.001);
+
+        ResponseMovieDTO movieDtoLast = allMoviesWithSorting.get(24);
+        assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
     }
 
     private void assertMoviesAreEqual(Movie expectedMovie, ResponseMovieDTO actualMovie) {
