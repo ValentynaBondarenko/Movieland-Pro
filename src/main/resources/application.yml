@@ -3,8 +3,8 @@ spring:
     active: default
   datasource:
     url: jdbc:postgresql://localhost:8200/movieland?characterEncoding=UTF-8
-    username: ${DB_USERNAME:}
-    password: ${DB_PASSWORD:}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   main:
     banner-mode: off

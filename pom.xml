@@ -16,7 +16,7 @@
         <java.version>21</java.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <compiler.version>3.12.1</compiler.version>
         <lombok-binding.version>0.2.0</lombok-binding.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <springdoc.version>2.3.0</springdoc.version>
@@ -124,7 +124,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
+                <version>${compiler.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/movie", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController implements MovieApi {
     private MovieService movieService;
-    //deployment
+
     //ec2 without docker запустити jar
     //1ша задача get movie by id
 
