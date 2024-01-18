@@ -1,16 +1,17 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,6 @@ import java.util.Optional;
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
-    private final EntityManager entityManager;
-
     @Value("${movieland.movie.random.limit}")
     private int limit;
     private static final String RATING = "rating";
@@ -65,6 +64,15 @@ public class MovieServiceImpl implements MovieService {
     public List<ResponseMovie> getMoviesByGenre(int genreId) {
         List<Movie> movies = movieRepository.findByGenresId(genreId);
         return movieMapper.toMovieDTO(movies);
+    }
+
+    @Override
+    @Transactional
+    public ResponseFullMovie getMovieById(Integer movieId) {
+        Movie movie = movieRepository.getMovieById(movieId);
+        ResponseFullMovie fullMovie = movieMapper.toFullMovie(movie);
+
+        return null;
     }
 
     private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {

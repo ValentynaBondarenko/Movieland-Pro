@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
@@ -177,7 +178,12 @@ class MovieServiceImplTest extends AbstractITest {
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
     }
+@Test
+@DataSet(value = "/datasets/movie/dataset_full_movies.yml")
+void findFullMovieByMovieId(){
+    ResponseFullMovie movieById = movieService.getMovieById(1);
 
+}
     private ResponseMovie testDTO() {
         ResponseMovie movieDTO = new ResponseMovie();
         movieDTO.setId(1);

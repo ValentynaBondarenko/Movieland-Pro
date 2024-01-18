@@ -1,0 +1,31 @@
+movies:
+  - id: 1
+    name_ukrainian: 'Втеча з Шоушенка'
+    name_native: 'The Shawshank Redemption'
+    year_of_release: 1994
+    description: 'Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...'
+    rating: 8.9
+    price: 123.45
+    poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg'
+  - id: 2
+    name_ukrainian: 'Зелена миля'
+    name_native: 'The Green Mile'
+    year_of_release: 1999
+    description: 'Обвинувачений у жахливому злочині, Джон Коффі опиняється...'
+    rating: 8.9
+    price: 134.67
+    poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1._SY209_CR0,0,140,209_.jpg'
+
+genres:
+  - id: 1
+    name: 'драма'
+
+  - id: 2
+    name: 'кримінал'
+
+movies_genres:
+  - movie_id: 1
+    genre_id: 1
+
+  - movie_id: 2
+    genre_id: 2

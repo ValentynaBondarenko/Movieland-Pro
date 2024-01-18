@@ -2,6 +2,7 @@ package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.MovieApi;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.service.movie.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,16 @@ import java.util.List;
 public class MovieController implements MovieApi {
     private MovieService movieService;
 
-    //ec2 without docker запустити jar
-    //1ша задача get movie by id
-
     @Override
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         List<ResponseMovie> response = movieService.findAllMovies(movieSortCriteria);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId) {
+        ResponseFullMovie fullMovie = movieService.getMovieById(movieId);
+        return ResponseEntity.ok(fullMovie);
     }
 
     public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Integer genreId) {
