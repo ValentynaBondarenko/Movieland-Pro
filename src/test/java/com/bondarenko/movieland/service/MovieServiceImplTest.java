@@ -2,7 +2,6 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseMovie;
-import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import com.bondarenko.movieland.service.movie.MovieService;
@@ -145,7 +144,6 @@ class MovieServiceImplTest extends AbstractITest {
 
         //when
         List<ResponseMovie> allMoviesWithSorting = movieService.findAllMovies(movieSortCriteria);
-        allMoviesWithSorting.forEach(movie -> System.out.println(movie.getPrice()));
 
         //then
         assertNotNull(allMoviesWithSorting);
@@ -168,7 +166,6 @@ class MovieServiceImplTest extends AbstractITest {
 
         //when
         List<ResponseMovie> allMoviesWithSorting = movieService.findAllMovies(movieSortCriteria);
-        allMoviesWithSorting.forEach(movie -> System.out.println(movie.getPrice()));
 
         //then
         assertNotNull(allMoviesWithSorting);
@@ -179,12 +176,6 @@ class MovieServiceImplTest extends AbstractITest {
 
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
-    }
-
-    private void assertMoviesAreEqual(Movie expectedMovie, ResponseMovie actualMovie) {
-        assertEquals(Optional.of(expectedMovie.getId()), actualMovie.getId());
-        assertEquals(expectedMovie.getNameUkrainian(), actualMovie.getNameUkrainian());
-        assertEquals(expectedMovie.getNameNative(), actualMovie.getNameNative());
     }
 
     private ResponseMovie testDTO() {
