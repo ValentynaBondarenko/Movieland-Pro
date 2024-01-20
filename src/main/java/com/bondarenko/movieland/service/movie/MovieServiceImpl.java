@@ -71,7 +71,7 @@ public class MovieServiceImpl implements MovieService {
     public ResponseFullMovie getMovieById(Integer movieId) {
         Movie movie = movieRepository.getMovieById(movieId);
         ResponseFullMovie fullMovie = movieMapper.toFullMovie(movie);
-
+        System.out.println(fullMovie.toString());
         return null;
     }
 

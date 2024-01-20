@@ -1,4 +1,7 @@
-cacheConnection: false
+cacheConnection: true
+alwaysCleanBefore: true
+alwaysCleanAfter: true
 properties:
   schema: PUBLIC
   caseSensitiveTableNames: true
+

@@ -15,17 +15,13 @@ movies:
     rating: 8.9
     price: 134.67
     poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1._SY209_CR0,0,140,209_.jpg'
-
 genres:
   - id: 1
     name: 'драма'
-
   - id: 2
     name: 'кримінал'
-
 movies_genres:
   - movie_id: 1
     genre_id: 1
-
   - movie_id: 2
     genre_id: 2

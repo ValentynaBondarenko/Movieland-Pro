@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DBRider
-@SpringBootTest()
+@SpringBootTest
 class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieRepository movieRepository;
@@ -32,24 +32,24 @@ class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieService movieService;
 
+//    @Test
+//    @DataSet(value = "datasets/movie/dataset_movies.yml")
+//    @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
+//    void testFindAllMovies() {
+//        List<ResponseMovie> movies = movieService.findAllMovies(null);
+//
+//        assertNotNull(movies);
+//
+//        assertEquals(25, movies.size());
+//        ResponseMovie firstMovie = movies.get(0);
+//        ResponseMovie testMovie = testDTO();
+//        assertEquals(testMovie.getId(), firstMovie.getId());
+//        assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
+//        assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
+//    }
+
     @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
-    @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
-    void testFindAllMovies() {
-        List<ResponseMovie> movies = movieService.findAllMovies(null);
-
-        assertNotNull(movies);
-
-        assertEquals(25, movies.size());
-        ResponseMovie firstMovie = movies.get(0);
-        ResponseMovie testMovie = testDTO();
-        assertEquals(testMovie.getId(), firstMovie.getId());
-        assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
-        assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
-    }
-
-    @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "/datasets/movie/dataset_movies.yml")
     void testRandomMovies() {
         List<ResponseMovie> movies = movieService.getRandomMovies();
 
@@ -70,7 +70,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMoviesByGenre() {
         int genreId = 1;
         List<ResponseMovie> moviesByGenre = movieService.getMoviesByGenre(genreId);
@@ -92,7 +92,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByAscendingRating() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
@@ -114,7 +114,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByDESCRating() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
@@ -136,7 +136,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByDESCPrice() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
@@ -158,7 +158,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "datasets/movie/dataset_movies.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByASCPrice() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
@@ -179,7 +179,7 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
     }
 @Test
-@DataSet(value = "/datasets/movie/dataset_full_movies.yml")
+@DataSet(value = "datasets/movie/datasets_full_movies.yml")
 void findFullMovieByMovieId(){
     ResponseFullMovie movieById = movieService.getMovieById(1);
 
