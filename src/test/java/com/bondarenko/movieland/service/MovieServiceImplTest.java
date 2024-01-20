@@ -179,7 +179,7 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
     }
 @Test
-@DataSet(value = "datasets/movie/datasets_full_movies.yml")
+@DataSet(value = "/datasets/movie/datasets_full_movies.yml")
 void findFullMovieByMovieId(){
     ResponseFullMovie movieById = movieService.getMovieById(1);
 

@@ -70,8 +70,7 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     public ResponseFullMovie getMovieById(Integer movieId) {
         Movie movie = movieRepository.getMovieById(movieId);
-        ResponseFullMovie fullMovie = movieMapper.toFullMovie(movie);
-        System.out.println(fullMovie.toString());
+//        ResponseFullMovie fullMovie = movieMapper.toFullMovie(movie);
         return null;
     }
 

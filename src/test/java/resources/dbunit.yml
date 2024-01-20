@@ -1,6 +1,6 @@
 cacheConnection: true
-alwaysCleanBefore: true
-alwaysCleanAfter: true
+#alwaysCleanBefore: true
+#alwaysCleanAfter: true
 properties:
   schema: PUBLIC
   caseSensitiveTableNames: true
