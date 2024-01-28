@@ -1,15 +1,12 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,9 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @DBRider
 @SpringBootTest
@@ -32,38 +28,38 @@ class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieService movieService;
 
-//    @Test
-//    @DataSet(value = "datasets/movie/dataset_movies.yml")
-//    @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
-//    void testFindAllMovies() {
-//        List<ResponseMovie> movies = movieService.findAllMovies(null);
-//
-//        assertNotNull(movies);
-//
-//        assertEquals(25, movies.size());
-//        ResponseMovie firstMovie = movies.get(0);
-//        ResponseMovie testMovie = testDTO();
-//        assertEquals(testMovie.getId(), firstMovie.getId());
-//        assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
-//        assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
-//    }
+    @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
+    void testFindAllMovies() {
+        List<ResponseMovie> movies = movieService.findAllMovies(null);
+
+        assertNotNull(movies);
+
+        assertEquals(25, movies.size());
+        ResponseMovie firstMovie = movies.get(0);
+        ResponseMovie testMovie = testDTO();
+        assertEquals(testMovie.getId(), firstMovie.getId());
+        assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
+        assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
+    }
 
     @Test
     @DataSet(value = "/datasets/movie/dataset_movies.yml")
     void testRandomMovies() {
         List<ResponseMovie> movies = movieService.getRandomMovies();
 
-        Assertions.assertNotNull(movies);
-        Assertions.assertEquals(3, movies.size());
+        assertNotNull(movies);
+        assertEquals(3, movies.size());
         movies.forEach(movie ->
                 assertAll(
-                        () -> Assertions.assertNotNull(movie.getId()),
-                        () -> Assertions.assertNotNull(movie.getNameUkrainian()),
-                        () -> Assertions.assertNotNull(movie.getNameNative()),
-                        () -> Assertions.assertNotNull(movie.getPrice()),
-                        () -> Assertions.assertNotNull(movie.getDescription()),
-                        () -> Assertions.assertNotNull(movie.getPoster()),
-                        () -> Assertions.assertNotNull(movie.getYearOfRelease())
+                        () -> assertNotNull(movie.getId()),
+                        () -> assertNotNull(movie.getNameUkrainian()),
+                        () -> assertNotNull(movie.getNameNative()),
+                        () -> assertNotNull(movie.getPrice()),
+                        () -> assertNotNull(movie.getDescription()),
+                        () -> assertNotNull(movie.getPoster()),
+                        () -> assertNotNull(movie.getYearOfRelease())
                 )
 
         );
@@ -75,18 +71,18 @@ class MovieServiceImplTest extends AbstractITest {
         int genreId = 1;
         List<ResponseMovie> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
-        Assertions.assertNotNull(moviesByGenre);
-        Assertions.assertEquals(1, moviesByGenre.size());
+        assertNotNull(moviesByGenre);
+        assertEquals(1, moviesByGenre.size());
         moviesByGenre.forEach(movie ->
                 assertAll(
-                        () -> Assertions.assertEquals(1, movie.getId()),
-                        () -> Assertions.assertEquals("Втеча з Шоушенка", movie.getNameUkrainian()),
-                        () -> Assertions.assertEquals("The Shawshank Redemption", movie.getNameNative()),
-                        () -> Assertions.assertEquals(123.45, movie.getPrice()),
-                        () -> Assertions.assertEquals(8.9, movie.getRating()),
-                        () -> Assertions.assertEquals("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...", movie.getDescription()),
-                        () -> Assertions.assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg", movie.getPoster()),
-                        () -> Assertions.assertEquals(1994, movie.getYearOfRelease())
+                        () -> assertEquals(1, movie.getId()),
+                        () -> assertEquals("Втеча з Шоушенка", movie.getNameUkrainian()),
+                        () -> assertEquals("The Shawshank Redemption", movie.getNameNative()),
+                        () -> assertEquals(123.45, movie.getPrice()),
+                        () -> assertEquals(8.9, movie.getRating()),
+                        () -> assertEquals("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...", movie.getDescription()),
+                        () -> assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg", movie.getPoster()),
+                        () -> assertEquals(1994, movie.getYearOfRelease())
                 )
         );
     }
@@ -178,12 +174,58 @@ class MovieServiceImplTest extends AbstractITest {
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
     }
-@Test
-@DataSet(value = "/datasets/movie/datasets_full_movies.yml")
-void findFullMovieByMovieId(){
-    ResponseFullMovie movieById = movieService.getMovieById(1);
 
-}
+    @Test
+    @DataSet(value = "/datasets/movie/dataset_full_movie.yml")
+    void findFullMovieByMovieId() {
+        ResponseFullMovie fullMovie = movieService.getMovieById(1);
+
+        assertNotNull(fullMovie);
+
+        assertEquals(1, fullMovie.getId());
+        assertEquals("Втеча з Шоушенка", fullMovie.getNameUkrainian());
+        assertEquals("The Shawshank Redemption", fullMovie.getNameNative());
+        assertEquals(1994, fullMovie.getYearOfRelease());
+        assertEquals("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...", fullMovie.getDescription());
+        assertEquals(8.9, fullMovie.getRating(), 0.001);
+        assertEquals(123.45, fullMovie.getPrice(), 0.001);
+        assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg", fullMovie.getPicturePath());
+
+        List<ResponseGenre> genres = fullMovie.getGenres();
+        assertNotNull(genres);
+        assertEquals(1, genres.size());
+        ResponseGenre genre = genres.get(0);
+        assertEquals(1, genre.getId());
+        assertEquals("драма", genre.getName());
+
+        List<ResponseCountry> countries = fullMovie.getCountries();
+        assertNotNull(countries);
+        assertEquals(1, countries.size());
+        ResponseCountry country = countries.get(0);
+        assertEquals(1, country.getId());
+        assertEquals("США", country.getName());
+
+        List<ResponseReview> reviews = fullMovie.getReviews();
+        assertNotNull(reviews);
+        assertEquals(2, reviews.size());
+
+        ResponseReview review1 = reviews.get(0);
+        assertEquals(1, review1.getId());
+        ResponseUser user1 = review1.getUser();
+        assertNotNull(user1);
+        assertEquals(1, user1.getId());
+        assertEquals("Дарлін Едвардс", user1.getNickname());
+        assertEquals("Геніальний фільм! Дивишся і думаєш «Так не буває!», але пізніше розумієш, що саме так і має бути. Починаєш знову осмислювати значення фрази, яку постійно використовуєш у своєму житті, «Надія помирає останньою». Адже якщо ти не надієшся, то все в твоєму житті гасне, не залишається сенсу. Фільм наповнений безліччю правильних афоризмів. Я впевнена, що буду переглядати його сотні разів.", review1.getText());
+
+        ResponseReview review2 = reviews.get(1);
+        assertEquals(2, review2.getId());
+        ResponseUser user2 = review2.getUser();
+        assertNotNull(user2);
+        assertEquals(2, user2.getId());
+        assertEquals("Габріель Джексон", user2.getNickname());
+        assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
+    }
+
     private ResponseMovie testDTO() {
         ResponseMovie movieDTO = new ResponseMovie();
         movieDTO.setId(1);

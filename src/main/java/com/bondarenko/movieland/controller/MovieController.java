@@ -24,12 +24,14 @@ public class MovieController implements MovieApi {
 
     @Override
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
+        log.info("Received request to find all movies ");
         List<ResponseMovie> response = movieService.findAllMovies(movieSortCriteria);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId) {
+        log.info("Received request to get movie by  ID {}.", movieId);
         ResponseFullMovie fullMovie = movieService.getMovieById(movieId);
         return ResponseEntity.ok(fullMovie);
     }

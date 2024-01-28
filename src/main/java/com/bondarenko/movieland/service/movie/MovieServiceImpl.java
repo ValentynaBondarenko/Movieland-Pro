@@ -4,6 +4,7 @@ import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +70,10 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional
     public ResponseFullMovie getMovieById(Integer movieId) {
-        Movie movie = movieRepository.getMovieById(movieId);
-//        ResponseFullMovie fullMovie = movieMapper.toFullMovie(movie);
-        return null;
+        Movie movie = movieRepository.getMovieById(movieId)
+                .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
+
+        return movieMapper.toFullMovie(movie);
     }
 
     private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {

@@ -68,8 +68,8 @@ users:
     role: 'GUEST'
   - id: 2
     name: 'Габріель Джексон'
-    email: 'darlene.edwards15@example.com'
-    password: 'bricks'
+    email: 'gabriel.jackson91@example.com'
+    password: 'hjkl'
     role: 'GUEST'
   - id: 3
     name: 'Рональд Рейнольдс'

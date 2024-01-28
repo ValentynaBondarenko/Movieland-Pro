@@ -7,4 +7,8 @@ public class MovieNotFoundException extends RuntimeException {
     public MovieNotFoundException() {
         super(String.format(NO_MOVIE_MESSAGE));
     }
+
+    public MovieNotFoundException(String message) {
+        super();
+    }
 }

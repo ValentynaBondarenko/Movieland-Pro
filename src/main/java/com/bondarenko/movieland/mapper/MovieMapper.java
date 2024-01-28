@@ -36,7 +36,6 @@ public interface MovieMapper {
     @Mapping(target = "genres", qualifiedByName = "mapGenres")
     @Mapping(target = "countries", qualifiedByName = "mapCountries")
     @Mapping(target = "reviews", qualifiedByName = "mapReviews")
-    //@Mapping(target = "users", qualifiedByName = "mapUsers")
     ResponseFullMovie toFullMovie(Movie movie);
 
     @Named("mapGenres")
@@ -54,6 +53,8 @@ public interface MovieMapper {
     ResponseCountry mapCountry(Country country);
 
     @Named("mapUsers")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "nickname", source = "nickname")
     @IterableMapping(qualifiedByName = "mapUser")
     List<ResponseUser> mapUsers(List<User> users);
 
