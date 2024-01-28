@@ -32,11 +32,15 @@ public class GenreCacheService {
             log.info("Get all genres from database");
             List<Genre> genres = genreRepository.findAll();
             genreCache.addAllAbsent(genres);
+
             lastCacheUpdateTime.set(currentTime);
         }
         log.info("Get all genres from cache");
-
         return genreCache.stream().toList();
     }
+
+     public void clearCache(){
+        genreCache.clear();
+     }
 
 }

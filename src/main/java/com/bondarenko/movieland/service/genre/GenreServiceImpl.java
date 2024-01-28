@@ -19,6 +19,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public List<ResponseGenre> getAllGenres() {
+
         List<Genre> genres = genreCache.getGenres();
         return Optional.ofNullable(genres)
                 .map(genreMapper::toGenreDTO)
