@@ -12,6 +12,7 @@ spring:
     change-log: classpath:db/changelog/changelog.xml
   jpa:
     show-sql: true
+    open-in-view: false
 
 liquibase:
   change-log: classpath:changelog.xml

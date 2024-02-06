@@ -20,18 +20,20 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/movie", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController implements MovieApi {
-    private MovieService movieService;
+    private final MovieService movieService;
 
     @Override
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         log.info("Received request to find all movies ");
         List<ResponseMovie> response = movieService.findAllMovies(movieSortCriteria);
+
+        System.out.println(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId) {
-        log.info("Received request to get movie by  ID {}.", movieId);
+        log.info("Received request to get movie by ID: {}.", movieId);
         ResponseFullMovie fullMovie = movieService.getMovieById(movieId);
         return ResponseEntity.ok(fullMovie);
     }

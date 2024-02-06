@@ -2,36 +2,22 @@ package com.bondarenko.movieland.mapper;
 
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.entity.*;
-import org.mapstruct.IterableMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Mapper
-@Component
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MovieMapper {
-    @Mapping(target = "id", source = "id")
+
     @Mapping(target = "name_ukrainian", source = "nameUkrainian")
     @Mapping(target = "name_native", source = "nameNative")
     @Mapping(target = "year_of_release", source = "yearOfRelease")
-    @Mapping(target = "description", source = "description")
-    @Mapping(target = "rating", source = "rating")
-    @Mapping(target = "price", source = "price")
     @Mapping(target = "picturePath", source = "poster")
-    List<ResponseMovie> toMovieDTO(List<Movie> movies);
+    List<ResponseMovie> toMovieResponse(List<Movie> movies);
 
     Movie toMovie(ResponseMovie movies);
 
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "nameUkrainian", source = "nameUkrainian")
-    @Mapping(target = "nameNative", source = "nameNative")
-    @Mapping(target = "yearOfRelease", source = "yearOfRelease")
-    @Mapping(target = "description", source = "description")
-    @Mapping(target = "rating", source = "rating")
-    @Mapping(target = "price", source = "price")
     @Mapping(target = "picturePath", source = "poster")
     @Mapping(target = "genres", qualifiedByName = "mapGenres")
     @Mapping(target = "countries", qualifiedByName = "mapCountries")
@@ -53,8 +39,6 @@ public interface MovieMapper {
     ResponseCountry mapCountry(Country country);
 
     @Named("mapUsers")
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "nickname", source = "nickname")
     @IterableMapping(qualifiedByName = "mapUser")
     List<ResponseUser> mapUsers(List<User> users);
 

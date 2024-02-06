@@ -22,13 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
-@Testcontainers
 @TestPropertySource(properties = "GENRE_CACHE_UPDATE=60")
 class GenreServiceImplTest extends AbstractITest {
-    @Autowired
-    private GenreRepository genreRepository;
-    @Autowired
-    private GenreMapper genreMapper;
 
     @Autowired
     private GenreService genreService;
@@ -36,15 +31,9 @@ class GenreServiceImplTest extends AbstractITest {
     @Autowired
     private GenreCacheService genreCacheService;
 
-    @BeforeEach
-    public void setUp() {
-        genreCacheService.clearCache();
-    }
-
     @Test
 
     public void testFindAllGenres() {
-
         List<ResponseGenre> genres = genreService.getAllGenres();
 
         assertNotNull(genres);
@@ -54,11 +43,12 @@ class GenreServiceImplTest extends AbstractITest {
     @Test
     public void testFindAllGenresFromCache() {
         SQLStatementCountValidator.reset();
-        genreService.getAllGenres();
-        genreService.getAllGenres();
-        genreService.getAllGenres();
+        List<ResponseGenre> genres = genreService.getAllGenres();
         genreService.getAllGenres();
         assertSelectCount(1);
+
+        assertNotNull(genres);
+        assertEquals(16, genres.size());
     }
 
     @Test
@@ -66,9 +56,12 @@ class GenreServiceImplTest extends AbstractITest {
         SQLStatementCountValidator.reset();
         genreService.getAllGenres();
         Thread.sleep(100);
+
         genreService.getAllGenres();
-        genreService.getAllGenres();
-        genreService.getAllGenres();
+        List<ResponseGenre> genres = genreService.getAllGenres();
+
+        assertNotNull(genres);
+        assertEquals(16, genres.size());
         assertSelectCount(2);
 
     }

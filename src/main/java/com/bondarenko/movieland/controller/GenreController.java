@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/genre", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GenreController implements GenreApi {
-    private GenreService genreService;
+    private  final GenreService genreService;
 
     @GetMapping
     public ResponseEntity<List<ResponseGenre>> findAllGenres() {

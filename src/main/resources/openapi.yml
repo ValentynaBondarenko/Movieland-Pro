@@ -32,6 +32,11 @@ components:
           format: double
         poster:
           type: string
+        genres:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseGenre'
+
     ResponseGenre:
       type: object
       properties:

@@ -13,9 +13,15 @@ import java.util.Optional;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findByGenresId(int genre);
 
-    List<Movie> findAll(Sort sort);
-
-    @Query(value = "SELECT * FROM movies ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    @Query(value = """
+            SELECT m.id, m.name_ukrainian, m.name_native, m.year_of_release, m.description,
+                   m.rating, m.price, m.poster, g.name AS genre
+            FROM movies m
+            JOIN movies_genres mg ON m.id = mg.movie_id
+            JOIN genres g ON mg.genre_id = g.id
+            ORDER BY RANDOM()
+            LIMIT :limit
+            """, nativeQuery = true)
     List<Movie> findRandomMovies(int limit);
 
     Optional<Movie> getMovieById(int movieId);

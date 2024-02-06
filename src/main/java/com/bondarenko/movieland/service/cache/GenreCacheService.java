@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,12 +32,13 @@ public class GenreCacheService {
         if (genreCache.isEmpty() || (currentInterval >= cacheUpdateInterval)) {
             log.info("Get all genres from database");
             List<Genre> genres = genreRepository.findAll();
+
             genreCache.addAllAbsent(genres);
 
             lastCacheUpdateTime.set(currentTime);
         }
         log.info("Get all genres from cache");
-        return genreCache.stream().toList();
+        return new ArrayList(genreCache);
     }
 
      public void clearCache(){

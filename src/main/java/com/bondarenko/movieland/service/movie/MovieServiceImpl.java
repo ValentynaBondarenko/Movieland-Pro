@@ -30,7 +30,6 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria) {
-        log.info("Received request to find all movies.");
         List<Movie> movies;
         if (movieSortCriteria != null) {
             Sort sort = buildSort(movieSortCriteria);
@@ -38,7 +37,7 @@ public class MovieServiceImpl implements MovieService {
         } else {
             movies = movieRepository.findAll();
         }
-        return movieMapper.toMovieDTO(movies);
+        return movieMapper.toMovieResponse(movies);
     }
 
     private Sort buildSort(MovieSortCriteria movieSortCriteria) {
@@ -55,16 +54,14 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<ResponseMovie> getRandomMovies() {
-        log.info("Received request to find {} random movies.", limit);
-
         List<Movie> randomMovies = movieRepository.findRandomMovies(limit);
-        return movieMapper.toMovieDTO(randomMovies);
+        return movieMapper.toMovieResponse(randomMovies);
     }
 
     @Override
     public List<ResponseMovie> getMoviesByGenre(int genreId) {
         List<Movie> movies = movieRepository.findByGenresId(genreId);
-        return movieMapper.toMovieDTO(movies);
+        return movieMapper.toMovieResponse(movies);
     }
 
     @Override
