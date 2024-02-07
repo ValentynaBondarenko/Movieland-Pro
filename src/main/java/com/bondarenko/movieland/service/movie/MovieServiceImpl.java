@@ -28,6 +28,7 @@ public class MovieServiceImpl implements MovieService {
     private static final String RATING = "rating";
     private static final String PRICE = "price";
 
+    @Transactional
     @Override
     public List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria) {
         List<Movie> movies;
@@ -40,21 +41,11 @@ public class MovieServiceImpl implements MovieService {
         return movieMapper.toMovieResponse(movies);
     }
 
-    private Sort buildSort(MovieSortCriteria movieSortCriteria) {
-        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortCriteria.getRatingDirection()));
-        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortCriteria.getPriceDirection()));
-
-        if (ratingDirection.isPresent()) {
-            return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
-        } else if (priceDirection.isPresent()) {
-            return Sort.by(new Sort.Order(priceDirection.get(), PRICE));
-        }
-        return Sort.unsorted();
-    }
-
+    @Transactional
     @Override
     public List<ResponseMovie> getRandomMovies() {
         List<Movie> randomMovies = movieRepository.findRandomMovies(limit);
+        System.out.println(randomMovies);
         return movieMapper.toMovieResponse(randomMovies);
     }
 
@@ -71,6 +62,18 @@ public class MovieServiceImpl implements MovieService {
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
 
         return movieMapper.toFullMovie(movie);
+    }
+
+    private Sort buildSort(MovieSortCriteria movieSortCriteria) {
+        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortCriteria.getRatingDirection()));
+        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortCriteria.getPriceDirection()));
+
+        if (ratingDirection.isPresent()) {
+            return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
+        } else if (priceDirection.isPresent()) {
+            return Sort.by(new Sort.Order(priceDirection.get(), PRICE));
+        }
+        return Sort.unsorted();
     }
 
     private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {

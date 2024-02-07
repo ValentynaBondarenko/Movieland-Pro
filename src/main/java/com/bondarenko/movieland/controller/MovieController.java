@@ -8,7 +8,6 @@ import com.bondarenko.movieland.service.movie.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,28 +17,27 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/movie", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1")
 public class MovieController implements MovieApi {
     private final MovieService movieService;
 
     @Override
+    @RequestMapping(produces = {"application/json"})
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         log.info("Received request to find all movies ");
         List<ResponseMovie> response = movieService.findAllMovies(movieSortCriteria);
-
-        System.out.println(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId) {
-        log.info("Received request to get movie by ID: {}.", movieId);
+        log.info("Received request to get movie by id: {}.", movieId);
         ResponseFullMovie fullMovie = movieService.getMovieById(movieId);
         return ResponseEntity.ok(fullMovie);
     }
 
     public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Integer genreId) {
-        log.info("Received request to find movies by genre with ID {}.", genreId);
+        log.info("Received request to find movies by genre with id: {}.", genreId);
         List<ResponseMovie> movies = movieService.getMoviesByGenre(genreId);
         return ResponseEntity.ok(movies);
     }

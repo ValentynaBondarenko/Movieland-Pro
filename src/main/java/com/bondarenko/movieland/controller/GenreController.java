@@ -17,14 +17,14 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/genre", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1")
 public class GenreController implements GenreApi {
-    private  final GenreService genreService;
+    private final GenreService genreService;
 
     @GetMapping
     public ResponseEntity<List<ResponseGenre>> findAllGenres() {
         log.info("Received request to find all genres.");
-        List<ResponseGenre> response = genreService.getAllGenres();
+        List<ResponseGenre> response = genreService.getAll();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

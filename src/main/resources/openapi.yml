@@ -32,10 +32,6 @@ components:
           format: double
         poster:
           type: string
-        genres:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResponseGenre'
 
     ResponseGenre:
       type: object
@@ -361,6 +357,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ResponseMovie'
+
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

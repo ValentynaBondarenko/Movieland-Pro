@@ -24,15 +24,15 @@ class GenreControllerTest {
     private MockMvc mockMvc;
 
     @InjectMocks
-    private GenreController genreController;
+    private  GenreController genreController;
 
     @Mock
     private GenreService genreService;
 
     @Test
-    public void testFindAllGenres() throws Exception {
+    void testFindAllGenres() throws Exception {
         List<ResponseGenre> genres = TestGenres.getGenres();
-        when(genreService.getAllGenres()).thenReturn(genres);
+        when(genreService.getAll()).thenReturn(genres);
 
         mockMvc = MockMvcBuilders.standaloneSetup(genreController).build();
 

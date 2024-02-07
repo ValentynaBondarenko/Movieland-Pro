@@ -6,5 +6,5 @@ import com.bondarenko.movieland.api.model.ResponseGenre;
 import java.util.List;
 
 public interface GenreService {
-    List<ResponseGenre> getAllGenres();
+    List<ResponseGenre> getAll();
 }

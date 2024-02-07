@@ -1,12 +1,12 @@
 package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.mapper.MovieMapper;
-import com.bondarenko.movieland.repository.MovieRepository;
+import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
+import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,17 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Optional;
 
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @DBRider
-@SpringBootTest
+@SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class MovieServiceImplTest extends AbstractITest {
-    @Autowired
-    private MovieRepository movieRepository;
-    @Autowired
-    private MovieMapper movieMapper;
-
     @Autowired
     private MovieService movieService;
 
@@ -32,6 +28,8 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMovies() {
+        SQLStatementCountValidator.reset();
+
         List<ResponseMovie> movies = movieService.findAllMovies(null);
 
         assertNotNull(movies);
@@ -42,11 +40,15 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(testMovie.getId(), firstMovie.getId());
         assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
         assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
+        assertSelectCount(1);
+
     }
 
     @Test
     @DataSet(value = "/datasets/movie/dataset_movies.yml")
     void testRandomMovies() {
+        SQLStatementCountValidator.reset();
+
         List<ResponseMovie> movies = movieService.getRandomMovies();
 
         assertNotNull(movies);
@@ -63,11 +65,14 @@ class MovieServiceImplTest extends AbstractITest {
                 )
 
         );
+        assertSelectCount(1);
     }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMoviesByGenre() {
+        SQLStatementCountValidator.reset();
+
         int genreId = 1;
         List<ResponseMovie> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
@@ -85,11 +90,14 @@ class MovieServiceImplTest extends AbstractITest {
                         () -> assertEquals(1994, movie.getYearOfRelease())
                 )
         );
+        assertSelectCount(1);
     }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByAscendingRating() {
+        SQLStatementCountValidator.reset();
+
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(null)
@@ -107,11 +115,15 @@ class MovieServiceImplTest extends AbstractITest {
 
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(8.9, Optional.ofNullable(movieDtoLast.getRating()).orElse(0.0), 0.001);
+
+        assertSelectCount(1);
     }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByDESCRating() {
+        SQLStatementCountValidator.reset();
+
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(null)
@@ -129,11 +141,15 @@ class MovieServiceImplTest extends AbstractITest {
 
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(7.6, Optional.ofNullable(movieDtoLast.getRating()).orElse(0.0), 0.001);
+
+        assertSelectCount(1);
     }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByDESCPrice() {
+        SQLStatementCountValidator.reset();
+
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(MovieSortCriteria.PriceDirectionEnum.DESC)
@@ -151,11 +167,15 @@ class MovieServiceImplTest extends AbstractITest {
 
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(100.0, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
+
+        assertSelectCount(1);
     }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByASCPrice() {
+        SQLStatementCountValidator.reset();
+
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(MovieSortCriteria.PriceDirectionEnum.ASC)
@@ -173,11 +193,15 @@ class MovieServiceImplTest extends AbstractITest {
 
         ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
+
+        assertSelectCount(1);
     }
 
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movie.yml")
     void findFullMovieByMovieId() {
+        SQLStatementCountValidator.reset();
+
         ResponseFullMovie fullMovie = movieService.getMovieById(1);
 
         assertNotNull(fullMovie);
@@ -225,8 +249,7 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals("Габріель Джексон", user2.getNickname());
         assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
 
-
-
+        assertSelectCount(4);
     }
 
     private ResponseMovie testDTO() {

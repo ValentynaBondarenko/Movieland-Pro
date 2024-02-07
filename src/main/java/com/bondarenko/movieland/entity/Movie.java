@@ -17,7 +17,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class Movie {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "id")
     private int id;
 
