@@ -25,7 +25,7 @@ public class MovieController implements MovieApi {
     @RequestMapping(produces = {"application/json"})
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         log.info("Received request to find all movies ");
-        List<ResponseMovie> response = movieService.findAllMovies(movieSortCriteria);
+        List<ResponseMovie> response = movieService.findAll(movieSortCriteria);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

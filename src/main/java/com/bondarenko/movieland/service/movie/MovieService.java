@@ -7,7 +7,7 @@ import com.bondarenko.movieland.api.model.ResponseMovie;
 import java.util.List;
 
 public interface MovieService {
-    List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria);
+    List<ResponseMovie> findAll(MovieSortCriteria movieSortCriteria);
 
     List<ResponseMovie> getRandomMovies();
 

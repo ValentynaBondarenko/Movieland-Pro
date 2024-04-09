@@ -30,7 +30,7 @@ class MovieServiceImplTest extends AbstractITest {
     void testFindAllMovies() {
         SQLStatementCountValidator.reset();
 
-        List<ResponseMovie> movies = movieService.findAllMovies(null);
+        List<ResponseMovie> movies = movieService.findAll(null);
 
         assertNotNull(movies);
 
@@ -95,7 +95,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
-    void testFindAllMoviesWithSortingDescendingByAscendingRating() {
+    void testfindAllWithSortingDescendingByAscendingRating() {
         SQLStatementCountValidator.reset();
 
         //prepare
@@ -104,7 +104,7 @@ class MovieServiceImplTest extends AbstractITest {
                 .ratingDirection(MovieSortCriteria.RatingDirectionEnum.ASC);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAllMovies(movieSortCriteria);
+        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
 
         //then
         assertNotNull(allMoviesWithSorting);
@@ -121,7 +121,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
-    void testFindAllMoviesWithSortingDescendingByDESCRating() {
+    void testfindAllWithSortingDescendingByDESCRating() {
         SQLStatementCountValidator.reset();
 
         //prepare
@@ -130,7 +130,7 @@ class MovieServiceImplTest extends AbstractITest {
                 .ratingDirection(MovieSortCriteria.RatingDirectionEnum.DESC);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAllMovies(movieSortCriteria);
+        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
 
         //then
         assertNotNull(allMoviesWithSorting);
@@ -156,7 +156,7 @@ class MovieServiceImplTest extends AbstractITest {
                 .ratingDirection(null);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAllMovies(movieSortCriteria);
+        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
 
         //then
         assertNotNull(allMoviesWithSorting);
@@ -182,7 +182,7 @@ class MovieServiceImplTest extends AbstractITest {
                 .ratingDirection(null);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAllMovies(movieSortCriteria);
+        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
 
         //then
         assertNotNull(allMoviesWithSorting);
@@ -198,7 +198,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet(value = "/datasets/movie/dataset_full_movie.yml")
+    @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
         SQLStatementCountValidator.reset();
 

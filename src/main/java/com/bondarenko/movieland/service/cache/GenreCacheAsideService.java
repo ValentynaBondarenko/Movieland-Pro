@@ -6,11 +6,9 @@ import com.bondarenko.movieland.exception.GenreNotFoundException;
 import com.bondarenko.movieland.mapper.GenreMapper;
 import com.bondarenko.movieland.repository.GenreRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,10 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
-@Primary
 @Service
 @RequiredArgsConstructor
 public class GenreCacheAsideService {
@@ -35,7 +31,6 @@ public class GenreCacheAsideService {
 
     @PostConstruct
     public void initialize() {
-        System.out.println("Init mehod start ////////////");
         startCacheUpdateScheduler();
     }
 
@@ -67,6 +62,5 @@ public class GenreCacheAsideService {
     private void startCacheUpdateScheduler() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleWithFixedDelay(this::updateCache, 0, cacheUpdateInterval, TimeUnit.MILLISECONDS);
-
     }
 }

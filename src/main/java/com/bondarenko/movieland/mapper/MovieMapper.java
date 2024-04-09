@@ -3,7 +3,6 @@ package com.bondarenko.movieland.mapper;
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.entity.*;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 

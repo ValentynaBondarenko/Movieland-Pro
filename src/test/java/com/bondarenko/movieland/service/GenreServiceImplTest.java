@@ -2,7 +2,6 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.movieland.api.model.ResponseGenre;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
-import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
 import com.bondarenko.movieland.service.genre.GenreService;
 import com.vladmihalcea.sql.SQLStatementCountValidator;

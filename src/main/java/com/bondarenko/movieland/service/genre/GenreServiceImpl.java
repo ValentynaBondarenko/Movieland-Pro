@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class GenreServiceImpl implements GenreService {
-    private GenreCacheAsideService genreCache;
+    private final GenreCacheAsideService genreCache;
 
     @Override
     public List<ResponseGenre> getAll() {

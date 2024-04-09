@@ -30,7 +30,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public List<ResponseMovie> findAllMovies(MovieSortCriteria movieSortCriteria) {
+    public List<ResponseMovie> findAll(MovieSortCriteria movieSortCriteria) {
         List<Movie> movies;
         if (movieSortCriteria != null) {
             Sort sort = buildSort(movieSortCriteria);
