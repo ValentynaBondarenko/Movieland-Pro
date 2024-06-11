@@ -1,20 +1,18 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.movieland.api.model.ResponseGenre;
-import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
-import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
-import com.bondarenko.movieland.service.genre.GenreService;
-import com.vladmihalcea.sql.SQLStatementCountValidator;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import com.bondarenko.listener.*;
+import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.configuration.*;
+import com.bondarenko.movieland.service.cache.*;
+import com.bondarenko.movieland.service.genre.*;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
+import org.springframework.test.context.*;
 
-import java.util.List;
+import java.util.*;
 
-import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestPropertySource(properties = "GENRE_CACHE_UPDATE=1000")
@@ -28,18 +26,18 @@ class GenreServiceImplTest extends AbstractITest {
 
     @Test
     void testFindAllGenresFromCache() {
-        SQLStatementCountValidator.reset();
+        DataSourceListener.reset();
 
         List<ResponseGenre> genres = genreService.getAll();
 
         assertNotNull(genres);
         assertEquals(16, genres.size());
-        SQLStatementCountValidator.assertSelectCount(0);
+        DataSourceListener.assertSelectCount(0);
     }
 
     @Test
     void testFindAllGenresFromCacheAfterRefreshTime() throws InterruptedException {
-        SQLStatementCountValidator.reset();
+        DataSourceListener.reset();
 
 
         List<ResponseGenre> allGenres = genreService.getAll();
@@ -53,7 +51,7 @@ class GenreServiceImplTest extends AbstractITest {
         assertNotNull(genres);
         assertEquals(16, genres.size());
 
-        assertSelectCount(1);
+        DataSourceListener.assertSelectCount(1);
 
     }
 }

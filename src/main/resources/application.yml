@@ -22,7 +22,7 @@ liquibase:
 logging:
   config: classpath:logback.xml
   level:
-    liquibase: ERROR
+    liquibase: INFO
 
 movieland:
   movie:
