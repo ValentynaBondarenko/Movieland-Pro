@@ -5,4 +5,7 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "main"
+    automerge:
+      conditions:
+        - "success"
 

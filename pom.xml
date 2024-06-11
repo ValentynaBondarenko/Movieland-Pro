@@ -134,7 +134,7 @@
     <repositories>
         <repository>
             <id>datasource-listener</id>
-            <url>https://github.com/ValentynaBondarenko/datasource-listener/main</url>
+            <url>https://github.com/ValentynaBondarenko/datasource-listener</url>
         </repository>
     </repositories>
     <build>
