@@ -28,7 +28,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     @BeforeEach
     void setUp() {
-        this.dataSourceListener = new DataSourceListener(dataSourceProxy.proxyDataSource());
+        this.dataSourceListener = new DataSourceListener(dataSourceProxy.actualDataSource());
     }
 
     @Test

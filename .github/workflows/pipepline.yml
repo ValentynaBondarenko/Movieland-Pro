@@ -2,9 +2,7 @@ name: Movieland CI
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -22,38 +20,40 @@ jobs:
       - name: Build with Maven
         run: mvn -B package -DskipTests --file pom.xml
 
-#  test:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#      - name: Set up JDK 21
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '21'
-#          distribution: 'temurin'
-#          cache: maven
-#      - name: Run Tests
-#        run: mvn test
-#
-#  sonarcloud:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#      - name: Set up JDK 21
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '21'
-#          distribution: 'temurin'
-#          cache: maven
-#      - name: SonarCloud Scan
-#        run: |
-#          mvn sonar:sonar \
-#          -Dsonar.projectKey=ValentynaBondarenko_Movieland-Pro \
-#          -Dsonar.organization=valentynabondarenko \
-#          -Dsonar.host.url=https://sonarcloud.io \
-#          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-#          -Dsonar.exclusions=**/*.java
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Run Tests
+        run: mvn test
+      - name: Update dependencies with Dependabot
+        run: npx dependabot-updater --allow ${{ github.event_name }}
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: SonarCloud Scan
+        run: |
+          mvn sonar:sonar \
+          -Dsonar.projectKey=ValentynaBondarenko_Movieland-Pro \
+          -Dsonar.organization=valentynabondarenko \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.exclusions=**/*.java
