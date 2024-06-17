@@ -22,20 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieService movieService;
-    private DataSourceListener dataSourceListener;
-    @Autowired
-    private DataSourceProxyConfiguration dataSourceProxy;
 
     @BeforeEach
     void setUp() {
-        this.dataSourceListener = new DataSourceListener(dataSourceProxy.actualDataSource());
+        DataSourceListener.reset();
     }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMovies() {
-        DataSourceListener.reset();
 
         List<ResponseMovie> movies = movieService.findAll(null);
 
@@ -54,8 +50,6 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "/datasets/movie/dataset_movies.yml")
     void testRandomMovies() {
-        DataSourceListener.reset();
-
         List<ResponseMovie> movies = movieService.getRandomMovies();
 
         assertNotNull(movies);
@@ -70,7 +64,6 @@ class MovieServiceImplTest extends AbstractITest {
                         () -> assertNotNull(movie.getPoster()),
                         () -> assertNotNull(movie.getYearOfRelease())
                 )
-
         );
         DataSourceListener.assertSelectCount(1);
     }
@@ -78,8 +71,6 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMoviesByGenre() {
-        DataSourceListener.reset();
-
         int genreId = 1;
         List<ResponseMovie> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
@@ -102,9 +93,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
-    void testfindAllWithSortingDescendingByAscendingRating() {
-        DataSourceListener.reset();
-
+    void testFindAllWithSortingDescendingByAscendingRating() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(null)
@@ -128,9 +117,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
-    void testfindAllWithSortingDescendingByDESCRating() {
-        DataSourceListener.reset();
-
+    void testFindAllWithSortingDescendingByDESCRating() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(null)
@@ -155,8 +142,6 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByDESCPrice() {
-        DataSourceListener.reset();
-
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(MovieSortCriteria.PriceDirectionEnum.DESC)
@@ -181,8 +166,6 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByASCPrice() {
-        DataSourceListener.reset();
-
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
                 .priceDirection(MovieSortCriteria.PriceDirectionEnum.ASC)
@@ -207,8 +190,6 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
-        DataSourceListener.reset();
-
         ResponseFullMovie fullMovie = movieService.getMovieById(1);
 
         assertNotNull(fullMovie);

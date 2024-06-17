@@ -24,10 +24,13 @@ class GenreServiceImplTest extends AbstractITest {
     @Autowired
     private GenreCacheAsideService genreCacheService;
 
-    @Test
-    void testFindAllGenresFromCache() {
+    @BeforeEach
+    void setUp() {
         DataSourceListener.reset();
+    }
 
+    @Test
+    void testFindAllGenresFromCacheOnTheStartApp() {
         List<ResponseGenre> genres = genreService.getAll();
 
         assertNotNull(genres);
@@ -37,15 +40,12 @@ class GenreServiceImplTest extends AbstractITest {
 
     @Test
     void testFindAllGenresFromCacheAfterRefreshTime() throws InterruptedException {
-        DataSourceListener.reset();
-
-
         List<ResponseGenre> allGenres = genreService.getAll();
 
         assertNotNull(allGenres);
         assertEquals(16, allGenres.size());
 
-       // Thread.sleep(genreCacheService.getCacheUpdateInterval()+200);
+        Thread.sleep(genreCacheService.getCacheUpdateInterval()+200);
         List<ResponseGenre> genres = genreService.getAll();
 
         assertNotNull(genres);

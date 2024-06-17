@@ -1,39 +1,26 @@
 package com.bondarenko.movieland.configuration;
 
-import io.hypersistence.utils.logging.InlineQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.ChainListener;
-import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
-import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
-import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import com.bondarenko.proxydatasource.*;
+import lombok.extern.slf4j.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.*;
+import org.springframework.jdbc.datasource.*;
 
-import javax.sql.DataSource;
+import javax.sql.*;
 
-
+@Slf4j
 @TestConfiguration
 public class DataSourceProxyConfiguration {
     @Autowired
     private Environment environment;
-    private static final String DATA_SOURCE_PROXY_NAME = "dataSourceProxy";
 
     @Bean
     @Primary
-    public DataSource proxyDataSource() {
-        ChainListener listener = new ChainListener();
-        SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
-        loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
-        listener.addListener(loggingListener);
-        listener.addListener(new DataSourceQueryCountListener());
-        return ProxyDataSourceBuilder
-                .create(actualDataSource())
-                .name(DATA_SOURCE_PROXY_NAME)
-                .listener(listener)
-                .build();
+    public ProxyDataSource createDataSourceListener() {
+        log.info("Proxy datasource start works ");
+        return new ProxyDataSource(actualDataSource());
     }
 
     @Bean

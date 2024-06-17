@@ -30,6 +30,7 @@ public class GenreCacheAsideService {
     private Integer cacheUpdateInterval;
 
     @PostConstruct
+    //Fetch all genres on a start
     public void initialize() {
         startCacheUpdateScheduler();
     }

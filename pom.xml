@@ -20,7 +20,8 @@
         <lombok-binding.version>0.2.0</lombok-binding.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <springdoc.version>2.3.0</springdoc.version>
-
+        <datasource-listener.version>1.2-SNAPSHOT</datasource-listener.version>
+        <rider.version>1.41.0</rider.version>
     </properties>
 
     <dependencies>
@@ -84,15 +85,11 @@
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-62</artifactId>
-            <version>3.6.1</version>
-        </dependency>
+
         <dependency>
             <groupId>com.bondarenko</groupId>
             <artifactId>datasource-listener</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${datasource-listener.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -104,17 +101,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <dependency>
-            <groupId>com.vladmihalcea</groupId>
-            <artifactId>db-util</artifactId>
-            <version>1.0.7</version>
-        </dependency>
-
         <dependency>
             <groupId>com.github.database-rider</groupId>
             <artifactId>rider-spring</artifactId>
-            <version>1.41.0</version>
+            <version>${rider.version}</version>
             <scope>test</scope>
         </dependency>
         <!--OpenApi-->
@@ -123,12 +113,6 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-
     </dependencies>
 
     <repositories>
