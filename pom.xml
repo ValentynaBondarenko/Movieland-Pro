@@ -117,8 +117,8 @@
 
     <repositories>
         <repository>
-            <id>datasource-listener</id>
-            <url>https://github.com/ValentynaBondarenko/datasource-listener</url>
+            <id>github-bondarenko-packages</id>
+            <url>https://maven.pkg.github.com/ValentynaBondarenko/datasource-listener</url>
         </repository>
     </repositories>
     <build>

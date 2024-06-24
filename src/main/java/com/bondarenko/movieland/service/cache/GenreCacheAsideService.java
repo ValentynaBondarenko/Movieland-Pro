@@ -47,7 +47,7 @@ public class GenreCacheAsideService {
     private void updateCache() {
         try {
             List<Genre> genres = genreRepository.findAll();
-
+            Thread.sleep(50000);
             List<ResponseGenre> responseGenres = Optional.of(genres)
                     .map(genreMapper::toGenreResponse)
                     .orElseThrow(GenreNotFoundException::new);
