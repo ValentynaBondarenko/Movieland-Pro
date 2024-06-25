@@ -1,22 +1,18 @@
-name: Movieland CI
+name: Generate Javadoc
 
 on:
-  workflow_call:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
-permissions: read-all
-
 jobs:
-  build:
+  generate-and-commit-javadoc:
     runs-on: ubuntu-latest
     env:
       ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
       ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -38,14 +34,27 @@ jobs:
                 "password": "${{ env.ARTIFACTORY_PASSWORD }}"
             }]
 
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
+      - name: Generate Javadoc
+        run: mvn javadoc:javadoc
 
-      - name: SonarCloud Scan
+      - name: Check Javadoc
         run: |
-          mvn sonar:sonar \
-          -Dsonar.projectKey=ValentynaBondarenko_Movieland-Pro \
-          -Dsonar.organization=valentynabondarenko \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ env.SONAR_TOKEN }} \
-          -Dsonar.exclusions=**/*.java
+          mkdir -p docs
+          cd docs
+          ls
+
+      - name: Copy Javadoc to docs directory
+        run: |
+          cp -r ./target/site/apidocs/* docs/
+          cd docs
+          ls
+
+      - name: Commit Javadoc to Repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add docs
+          git commit -m 'Update Javadoc documentation'
+          git push origin HEAD:main
