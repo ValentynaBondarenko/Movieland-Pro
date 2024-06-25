@@ -1,0 +1,11 @@
+com.bondarenko.movieland
+com.bondarenko.movieland.api
+com.bondarenko.movieland.api.model
+com.bondarenko.movieland.controller
+com.bondarenko.movieland.entity
+com.bondarenko.movieland.exception
+com.bondarenko.movieland.mapper
+com.bondarenko.movieland.repository
+com.bondarenko.movieland.service.cache
+com.bondarenko.movieland.service.genre
+com.bondarenko.movieland.service.movie
