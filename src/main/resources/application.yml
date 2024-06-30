@@ -32,3 +32,10 @@ movieland:
     cache:
       update:
         interval: ${GENRE_CACHE_UPDATE:14400000}
+exchange:
+  api:
+    url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
+  scheduled: 0 30 15 * * ? #update every day at 15:30
+  zone: Europe/Kiev
+  cache:
+    timeout: 30 #30min

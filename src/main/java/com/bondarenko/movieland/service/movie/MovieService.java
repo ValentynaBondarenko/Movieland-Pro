@@ -13,5 +13,5 @@ public interface MovieService {
 
     List<ResponseMovie> getMoviesByGenre(int genreId);
 
-    ResponseFullMovie getMovieById(Integer movieId);
+    ResponseFullMovie getMovieById(Integer movieId, String currency);
 }
