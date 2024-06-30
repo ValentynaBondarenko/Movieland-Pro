@@ -7,6 +7,7 @@ import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
+import com.bondarenko.movieland.service.converter.CurrencyConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
+    private final CurrencyConverter converter;
     @Value("${movieland.movie.random.limit}")
     private int limit;
     private static final String RATING = "rating";
@@ -57,10 +60,11 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Transactional
-    public ResponseFullMovie getMovieById(Integer movieId) {
+    public ResponseFullMovie getMovieById(Integer movieId, String currency) {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
-
+        BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
+        movie.setPrice(correctMoviePrice);
         return movieMapper.toFullMovie(movie);
     }
 
@@ -83,4 +87,5 @@ public class MovieServiceImpl implements MovieService {
     private Sort.Direction convertPriceDirection(MovieSortCriteria.PriceDirectionEnum priceDirection) {
         return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
     }
+
 }
