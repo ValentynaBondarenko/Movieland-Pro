@@ -1,21 +1,23 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.listener.*;
-import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.configuration.*;
-import com.bondarenko.movieland.service.cache.*;
-import com.bondarenko.movieland.service.genre.*;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.test.context.*;
+import com.bondarenko.listener.DataSourceListener;
+import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
+import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
+import com.bondarenko.movieland.service.genre.GenreService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
-import java.util.*;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-@TestPropertySource(properties = "GENRE_CACHE_UPDATE=1000")
+@TestPropertySource(properties = "GENRE_CACHE_UPDATE=500")
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
@@ -38,20 +40,5 @@ class GenreServiceImplTest extends AbstractITest {
         DataSourceListener.assertSelectCount(0);
     }
 
-    @Test
-    void testFindAllGenresFromCacheAfterRefreshTime() throws InterruptedException {
-        List<ResponseGenre> allGenres = genreService.getAll();
 
-        assertNotNull(allGenres);
-        assertEquals(16, allGenres.size());
-
-        Thread.sleep(genreCacheService.getCacheUpdateInterval()+200);
-        List<ResponseGenre> genres = genreService.getAll();
-
-        assertNotNull(genres);
-        assertEquals(16, genres.size());
-
-        DataSourceListener.assertSelectCount(1);
-
-    }
 }

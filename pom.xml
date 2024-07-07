@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.3.1</version>
     </parent>
 
     <groupId>com.bondarenko</groupId>
@@ -20,7 +20,7 @@
         <lombok-binding.version>0.2.0</lombok-binding.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <springdoc.version>2.3.0</springdoc.version>
-        <datasource-listener.version>1.2-SNAPSHOT</datasource-listener.version>
+        <datasource-listener.version>1.3-SNAPSHOT</datasource-listener.version>
         <rider.version>1.41.0</rider.version>
     </properties>
 
@@ -117,7 +117,7 @@
 
     <repositories>
         <repository>
-            <id>github-bondarenko-packages</id>
+            <id>github</id>
             <url>https://maven.pkg.github.com/ValentynaBondarenko/datasource-listener</url>
         </repository>
     </repositories>

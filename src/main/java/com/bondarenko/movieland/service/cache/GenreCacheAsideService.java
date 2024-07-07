@@ -9,15 +9,13 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -30,38 +28,51 @@ public class GenreCacheAsideService {
     private Integer cacheUpdateInterval;
 
     @PostConstruct
-    //Fetch all genres on a start
+    //Cache Preloading. Fetch all genres on a start
     public void initialize() {
-        startCacheUpdateScheduler();
+        updateCacheBlocking();
     }
 
+    // not return ref for modify return new ArrayList<>(genreCache);
     public List<ResponseGenre> getGenres() {
+        if (genreCache.isEmpty()) {
+            throw new GenreNotFoundException();
+        }
         log.info("Get all genres from cache");
         return new ArrayList<>(genreCache);
     }
 
-    public Integer getCacheUpdateInterval() {
-        return cacheUpdateInterval;
-    }
-
+    @Scheduled(fixedDelayString = "${movieland.genre.cache.update.interval}")
     private void updateCache() {
         try {
-            List<Genre> genres = genreRepository.findAll();
-            Thread.sleep(50000);
-            List<ResponseGenre> responseGenres = Optional.of(genres)
-                    .map(genreMapper::toGenreResponse)
-                    .orElseThrow(GenreNotFoundException::new);
-
-            genreCache.clear();
-            genreCache.addAll(responseGenres);
-            log.info("Genre cache updated successfully");
+            updateCacheInternal();
         } catch (Exception e) {
             log.error("Failed to update genre cache", e);
         }
     }
 
-    private void startCacheUpdateScheduler() {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleWithFixedDelay(this::updateCache, 0, cacheUpdateInterval, TimeUnit.MILLISECONDS);
+    private void updateCacheBlocking() {
+        try {
+            updateCacheInternal();
+        } catch (Exception e) {
+            log.error("Failed to update genre cache during initialization", e);
+            throw new RuntimeException("Failed to initialize genre cache", e);
+        }
+    }
+
+    public void updateCacheInternal() {
+        List<ResponseGenre> responseGenres = fetchGenresFromDatabase();
+        genreCache.clear();
+        genreCache.addAll(responseGenres);
+        log.info("Genre cache updated successfully");
+    }
+
+    private List<ResponseGenre> fetchGenresFromDatabase() {
+        List<Genre> genres = genreRepository.findAll();
+        List<ResponseGenre> responseGenres = Optional.of(genres)
+                .map(genreMapper::toGenreResponse)
+                .orElseThrow(GenreNotFoundException::new);
+        log.info("Fetched genres from database");
+        return new ArrayList<>(responseGenres);
     }
 }
