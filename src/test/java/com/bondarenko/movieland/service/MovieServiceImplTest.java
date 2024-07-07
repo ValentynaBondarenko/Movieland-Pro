@@ -7,10 +7,12 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.bondarenko.listener.*;
+import jakarta.validation.Valid;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,6 +119,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
+    @ExpectedDataSet(value = "datasets/movie/expected_movies.yml", ignoreCols = "id")
     void testFindAllWithSortingDescendingByDESCRating() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
@@ -238,6 +241,45 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
 
         DataSourceListener.assertSelectCount(4);
+    }
+    @Test
+    @DataSet(value = "datasets/movie/dataset_add_movie.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml", ignoreCols = "id")
+    void addNewMovie() {
+        MovieRequest movieRequest = getMovieRequest();
+        ResponseFullMovie savedMovie = movieService.saveMovie(movieRequest);
+        assertNotNull(savedMovie);
+        assertNotNull(savedMovie.getId());
+        assertEquals(movieRequest.getNameUkrainian(), savedMovie.getNameUkrainian());
+        assertEquals(movieRequest.getNameNative(), savedMovie.getNameNative());
+        assertEquals(movieRequest.getYearOfRelease(), savedMovie.getYearOfRelease());
+        assertEquals(movieRequest.getDescription(), savedMovie.getDescription());
+        assertEquals(movieRequest.getPrice(), savedMovie.getPrice());
+        assertEquals(movieRequest.getPicturePath(), savedMovie.getPicturePath());
+
+        List<ResponseGenre> savedGenres = savedMovie.getGenres();
+        assertNotNull(savedGenres);
+        assertEquals(2, savedGenres.size());
+
+        List<ResponseCountry> savedCountries = savedMovie.getCountries();
+        assertNotNull(savedCountries);
+        assertEquals(2, savedCountries.size());
+
+        DataSourceListener.assertInsertCount(1);
+    }
+
+    private MovieRequest getMovieRequest(){
+        MovieRequest movieRequest = new MovieRequest();
+        movieRequest.setNameUkrainian("Втеча з Шоушенка");
+        movieRequest.setNameNative("The Shawshank Redemption");
+        movieRequest.setYearOfRelease(1994);
+        movieRequest.setRating(9.0);
+        movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
+        movieRequest.setPrice(123.45);
+        movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
+        movieRequest.setCountries(Arrays.asList(1, 2));
+        movieRequest.setGenres(Arrays.asList(1, 2, 3));
+        return movieRequest;
     }
 
     private ResponseMovie testDTO() {

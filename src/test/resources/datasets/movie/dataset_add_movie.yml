@@ -1,0 +1,34 @@
+genres:
+  - id: 1
+    name: 'драма'
+  - id: 2
+    name: 'кримінал'
+  - id: 3
+    name: 'трилер'
+
+countries:
+  - id: 1
+    name: 'США'
+  - id: 2
+    name: 'Франція'
+
+movies:
+  - name_ukrainian: 'Зелена миля'
+    name_native: 'The Green Mile'
+    year_of_release: 1999
+    description: 'Обвинувачений у жахливому злочині, Джон Коффі опиняється...'
+    rating: 8.9
+    price: 134.67
+    poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1._SY209_CR0,0,140,209_.jpg'
+
+movies_genres:
+  - movie_id: 1
+    genre_id: 1
+  - movie_id: 1
+    genre_id: 2
+
+movies_countries:
+  - movie_id: 1
+    country_id: 1
+  - movie_id: 1
+    country_id: 2
