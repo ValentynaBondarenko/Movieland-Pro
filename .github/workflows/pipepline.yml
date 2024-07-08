@@ -49,42 +49,42 @@ jobs:
                       -Dsonar.host.url=https://sonarcloud.io \
                       -Dsonar.login=${{ env.SONAR_TOKEN }} \
                       -Dsonar.exclusions=**/*.java
-  generateJavadoc:
-    needs: [ build ]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Configure Maven
-        uses: s4u/maven-settings-action@v2.2.0
-        with:
-          servers: |
-            [{
-                "id": "github-bondarenko-packages",
-                "username": "${{ env.ARTIFACTORY_USERNAME }}",
-                "password": "${{ env.ARTIFACTORY_PASSWORD }}"
-            }]
-      - name: Generate Javadoc
-        run: |
-          mvn javadoc:javadoc -Dsourcepath=src/main/java 
-
-      - name: Upload Javadoc artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: javadoc
-          path: target/site/apidocs
-
-      - name: Deploy Javadoc to GitHub Pages
-        if: success()
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GH_ACCESS_TOKEN }}
-          publish_dir: target/site/apidocs
-          publish_branch: docs
+#  generateJavadoc:
+#    needs: [ build ]
+#    if: github.ref == 'refs/heads/main'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#      - name: Set up JDK
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '21'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Configure Maven
+#        uses: s4u/maven-settings-action@v2.2.0
+#        with:
+#          servers: |
+#            [{
+#                "id": "github",
+#                "username": "${{ env.ARTIFACTORY_USERNAME }}",
+#                "password": "${{ env.ARTIFACTORY_PASSWORD }}"
+#            }]
+#      - name: Generate Javadoc
+#        run: |
+#          mvn javadoc:javadoc -Dsourcepath=src/main/java
+#
+#      - name: Upload Javadoc artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: javadoc
+#          path: target/site/apidocs
+#
+#      - name: Deploy Javadoc to GitHub Pages
+#        if: success()
+#        uses: peaceiris/actions-gh-pages@v4
+#        with:
+#          github_token: ${{ secrets.GH_ACCESS_TOKEN }}
+#          publish_dir: target/site/apidocs
+#          publish_branch: docs
