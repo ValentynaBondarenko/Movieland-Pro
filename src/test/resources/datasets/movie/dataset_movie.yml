@@ -13,7 +13,8 @@ countries:
     name: 'Франція'
 
 movies:
-  - name_ukrainian: 'Зелена миля'
+  - id: 1
+    name_ukrainian: 'Зелена миля'
     name_native: 'The Green Mile'
     year_of_release: 1999
     description: 'Обвинувачений у жахливому злочині, Джон Коффі опиняється...'

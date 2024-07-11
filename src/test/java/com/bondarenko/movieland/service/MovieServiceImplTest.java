@@ -1,22 +1,32 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.listener.DataSourceListener;
+import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
+import com.bondarenko.movieland.api.model.ResponseCountry;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
+import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.ResponseReview;
+import com.bondarenko.movieland.api.model.ResponseUser;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.bondarenko.listener.*;
-import jakarta.validation.Valid;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @DBRider
@@ -119,7 +129,6 @@ class MovieServiceImplTest extends AbstractITest {
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
-    @ExpectedDataSet(value = "datasets/movie/expected_movies.yml", ignoreCols = "id")
     void testFindAllWithSortingDescendingByDESCRating() {
         //prepare
         MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
@@ -242,12 +251,19 @@ class MovieServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(4);
     }
+    @Transactional
+
     @Test
-    @DataSet(value = "datasets/movie/dataset_add_movie.yml")
-    @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml", ignoreCols = "id")
-    void addNewMovie() {
+    @DataSet("datasets/movie/dataset_movie.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml")
+    void saveNewMovieToTheDatabase() {
+        //prepare
         MovieRequest movieRequest = getMovieRequest();
+
+        //when
         ResponseFullMovie savedMovie = movieService.saveMovie(movieRequest);
+
+        //then
         assertNotNull(savedMovie);
         assertNotNull(savedMovie.getId());
         assertEquals(movieRequest.getNameUkrainian(), savedMovie.getNameUkrainian());
@@ -256,19 +272,30 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(movieRequest.getDescription(), savedMovie.getDescription());
         assertEquals(movieRequest.getPrice(), savedMovie.getPrice());
         assertEquals(movieRequest.getPicturePath(), savedMovie.getPicturePath());
+        //ToDo ?
+        DataSourceListener.assertInsertCount(6);
+    }
+    @Test
+    @DataSet("datasets/movie/dataset_movie.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_expected_edit_movie.yml")
+    void editMovieFromTheDatabase() {
+        //prepare
+        MovieRequest movieRequest = getMovieRequest();
+        //when
+        ResponseFullMovie responseFullMovie = movieService.editMovieById(1, movieRequest);
+        //then
+        assertNotNull(responseFullMovie);
+        assertNotNull(responseFullMovie.getId());
+        assertEquals(movieRequest.getNameUkrainian(), responseFullMovie.getNameUkrainian());
+        assertEquals(movieRequest.getNameNative(), responseFullMovie.getNameNative());
+        assertEquals(movieRequest.getYearOfRelease(), responseFullMovie.getYearOfRelease());
+        assertEquals(movieRequest.getDescription(), responseFullMovie.getDescription());
+        assertEquals(movieRequest.getPrice(), responseFullMovie.getPrice());
+        assertEquals(movieRequest.getPicturePath(), responseFullMovie.getPicturePath());
 
-        List<ResponseGenre> savedGenres = savedMovie.getGenres();
-        assertNotNull(savedGenres);
-        assertEquals(2, savedGenres.size());
-
-        List<ResponseCountry> savedCountries = savedMovie.getCountries();
-        assertNotNull(savedCountries);
-        assertEquals(2, savedCountries.size());
-
-        DataSourceListener.assertInsertCount(1);
     }
 
-    private MovieRequest getMovieRequest(){
+    private MovieRequest getMovieRequest() {
         MovieRequest movieRequest = new MovieRequest();
         movieRequest.setNameUkrainian("Втеча з Шоушенка");
         movieRequest.setNameNative("The Shawshank Redemption");

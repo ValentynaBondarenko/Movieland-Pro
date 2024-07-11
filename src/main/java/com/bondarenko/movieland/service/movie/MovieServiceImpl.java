@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,28 +76,20 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     @Override
     public ResponseFullMovie saveMovie(MovieRequest movieRequest) {
-        List<Country> countries = mapCountryIdToCountries(movieRequest);
-        List<Genre> genres = mapGenresIdToGenres(movieRequest);
-
         Movie movie = movieMapper.toMovie(movieRequest);
-        movie.setCountries(countries);
-        movie.setGenres(genres);
+        enrichMovieWithGenresAndCountries(movieRequest, movie);
 
         movie = movieRepository.save(movie);
         log.info("Successfully saved movie {} to the database", movie);
-
         return movieMapper.toFullMovie(movie);
     }
+
 
     @Transactional
     @Override
     public ResponseFullMovie editMovieById(Integer movieId, MovieRequest movieRequest) {
         Movie existingMovie = getMovie(movieId);
-        List<Country> countries = mapCountryIdToCountries(movieRequest);
-        List<Genre> genres = mapGenresIdToGenres(movieRequest);
-
-        existingMovie.setCountries(countries);
-        existingMovie.setGenres(genres);
+        enrichMovieWithGenresAndCountries(movieRequest, existingMovie);
 
         Movie updateMovie = movieMapper.updateMovieFromMovieRequest(existingMovie, movieRequest);
         updateMovie = movieRepository.save(updateMovie);
@@ -125,26 +118,30 @@ public class MovieServiceImpl implements MovieService {
         return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
     }
 
+    private void enrichMovieWithGenresAndCountries(MovieRequest movieRequest, Movie movie) {
+        List<Country> countries = mapCountryIdToCountries(movieRequest);
+        List<Genre> genres = mapGenresIdToGenres(movieRequest);
+        movie.setGenres(new ArrayList<>(genres));
+        movie.setCountries(new ArrayList<>(countries));
+    }
+
     private List<Country> mapCountryIdToCountries(MovieRequest movieRequest) {
-        List<Country> countries = movieRequest.getCountries().stream()
+        return movieRequest.getCountries().stream()
                 .map(countryId -> countryRepository.findById(Long.valueOf(countryId))
                         .orElseThrow(() -> new CountryNotFoundException("Can't found country by id: " + countryId)))
                 .toList();
-        return countries;
     }
 
     private List<Genre> mapGenresIdToGenres(MovieRequest movieRequest) {
-        List<Genre> genres = movieRequest.getGenres().stream()
+        return movieRequest.getGenres().stream()
                 .map(genreId -> genreRepository.findById(Long.valueOf(genreId))
                         .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId)))
                 .toList();
-        return genres;
     }
 
     private Movie getMovie(Integer movieId) {
-        Movie movie = movieRepository.getMovieById(movieId)
+        return movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
-        return movie;
     }
 
 }
