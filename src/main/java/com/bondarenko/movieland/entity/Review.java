@@ -9,11 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "reviews")
 public class Review {
     @Id
-    @GeneratedValue
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
+    @SequenceGenerator(name = "reviews_id_seq", sequenceName = "reviews_id_seq")
     private Integer id;
 
     @Column(name = "review")

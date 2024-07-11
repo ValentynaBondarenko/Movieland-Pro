@@ -1,6 +1,8 @@
 package com.bondarenko.movieland.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -20,13 +22,22 @@ public class AbstractITest {
             new PostgreSQLContainer<>("postgres:alpine")
                     .withDatabaseName("test")
                     .withUsername("test")
-                    .withPassword("test")
-                    .withReuse(true);
+                    .withPassword("test");
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", container::getJdbcUrl);
         registry.add("spring.datasource.username", container::getUsername);
         registry.add("spring.datasource.password", container::getPassword);
+    }
+
+    @BeforeAll
+    public static void startContainer() {
+        container.start();
+    }
+
+    @AfterAll
+    public static void stopContainer() {
+        container.stop();
     }
 }

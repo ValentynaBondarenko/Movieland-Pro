@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
@@ -30,11 +31,11 @@ import java.util.List;
 @Entity
 @Table(name = "movies")
 @Accessors(chain = true)
+@ToString
 public class Movie {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movies_seq")
-    @SequenceGenerator(name = "movies_seq", sequenceName = "movies_seq", allocationSize = 1)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movies_id_seq")
+    @SequenceGenerator(name = "movies_id_seq", sequenceName = "movies_id_seq")
     private int id;
 
     @Column(name = "name_ukrainian")
