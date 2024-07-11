@@ -122,6 +122,42 @@ components:
         nickname:
           type: string
           description: User's nickname
+    MovieRequest:
+      type: object
+      properties:
+        nameUkrainian:
+          type: string
+          description: The Ukranian name of the movie
+        nameNative:
+          type: string
+          description: The original name of the movie
+        yearOfRelease:
+          type: integer
+          description: The year the movie was released
+        rating:
+          type: number
+          format: double
+          description: The movie rating
+        description:
+          type: string
+          description: Description of the movie
+        price:
+          type: number
+          format: double
+          description: Price of the movie
+        picturePath:
+          type: string
+          description: URL to the movie's picture
+        countries:
+          type: array
+          items:
+            type: integer
+          description: List of country IDs
+        genres:
+          type: array
+          items:
+            type: integer
+          description: List of genre IDs
 
     ProblemDetails:
       required:
@@ -378,6 +414,51 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
+    post:
+      description: |
+        Add new movie
+        
+        The POST method add movie
+        tags:
+        - Movie
+      summary: Add new movie
+      operationId: addMovie
+      tags:
+        - Movie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '201':
+          description: Movie successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseFullMovie'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '416':
+          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 
   '/movie/random':
     get:
@@ -511,6 +592,57 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
+    put:
+      description: |
+        Edit movie by id.
+
+        The PUT method finds one movie by id and edits this movie.
+      summary: Edit movie
+      operationId: editMovie
+      tags:
+        - Movie
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          description: ID of the movie
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseFullMovie'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '416':
+          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   '/genre':
     get:
       description: |

@@ -12,7 +12,8 @@ import lombok.*;
 @Table(name = "genres")
 public class Genre {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "genres_id_seq")
+    @SequenceGenerator(name = "genres_id_seq", sequenceName = "genres_id_seq")
     @Column(name = "id")
     private int id;
 

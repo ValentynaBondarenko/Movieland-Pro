@@ -1,20 +1,32 @@
 package com.bondarenko.movieland.service;
 
-import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.listener.DataSourceListener;
+import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
+import com.bondarenko.movieland.api.model.ResponseCountry;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
+import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.ResponseReview;
+import com.bondarenko.movieland.api.model.ResponseUser;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.bondarenko.listener.*;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @DBRider
@@ -238,6 +250,63 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
 
         DataSourceListener.assertSelectCount(4);
+    }
+    @Transactional
+
+    @Test
+    @DataSet("datasets/movie/dataset_movie.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml")
+    void saveNewMovieToTheDatabase() {
+        //prepare
+        MovieRequest movieRequest = getMovieRequest();
+
+        //when
+        ResponseFullMovie savedMovie = movieService.saveMovie(movieRequest);
+
+        //then
+        assertNotNull(savedMovie);
+        assertNotNull(savedMovie.getId());
+        assertEquals(movieRequest.getNameUkrainian(), savedMovie.getNameUkrainian());
+        assertEquals(movieRequest.getNameNative(), savedMovie.getNameNative());
+        assertEquals(movieRequest.getYearOfRelease(), savedMovie.getYearOfRelease());
+        assertEquals(movieRequest.getDescription(), savedMovie.getDescription());
+        assertEquals(movieRequest.getPrice(), savedMovie.getPrice());
+        assertEquals(movieRequest.getPicturePath(), savedMovie.getPicturePath());
+        //ToDo ?
+        DataSourceListener.assertInsertCount(6);
+    }
+    @Test
+    @DataSet("datasets/movie/dataset_movie.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_expected_edit_movie.yml")
+    void editMovieFromTheDatabase() {
+        //prepare
+        MovieRequest movieRequest = getMovieRequest();
+        //when
+        ResponseFullMovie responseFullMovie = movieService.editMovieById(1, movieRequest);
+        //then
+        assertNotNull(responseFullMovie);
+        assertNotNull(responseFullMovie.getId());
+        assertEquals(movieRequest.getNameUkrainian(), responseFullMovie.getNameUkrainian());
+        assertEquals(movieRequest.getNameNative(), responseFullMovie.getNameNative());
+        assertEquals(movieRequest.getYearOfRelease(), responseFullMovie.getYearOfRelease());
+        assertEquals(movieRequest.getDescription(), responseFullMovie.getDescription());
+        assertEquals(movieRequest.getPrice(), responseFullMovie.getPrice());
+        assertEquals(movieRequest.getPicturePath(), responseFullMovie.getPicturePath());
+
+    }
+
+    private MovieRequest getMovieRequest() {
+        MovieRequest movieRequest = new MovieRequest();
+        movieRequest.setNameUkrainian("Втеча з Шоушенка");
+        movieRequest.setNameNative("The Shawshank Redemption");
+        movieRequest.setYearOfRelease(1994);
+        movieRequest.setRating(9.0);
+        movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
+        movieRequest.setPrice(123.45);
+        movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
+        movieRequest.setCountries(Arrays.asList(1, 2));
+        movieRequest.setGenres(Arrays.asList(1, 2, 3));
+        return movieRequest;
     }
 
     private ResponseMovie testDTO() {

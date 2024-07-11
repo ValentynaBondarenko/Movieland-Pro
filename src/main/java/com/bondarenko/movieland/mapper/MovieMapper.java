@@ -1,8 +1,23 @@
 package com.bondarenko.movieland.mapper;
 
-import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.entity.*;
-import org.mapstruct.*;
+import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.ResponseCountry;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
+import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.ResponseReview;
+import com.bondarenko.movieland.api.model.ResponseUser;
+import com.bondarenko.movieland.entity.Country;
+import com.bondarenko.movieland.entity.Genre;
+import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.entity.Review;
+import com.bondarenko.movieland.entity.User;
+import org.mapstruct.IterableMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 import java.util.List;
 
@@ -50,4 +65,15 @@ public interface MovieMapper {
 
     @Named("mapReview")
     ResponseReview mapReview(Review review);
+
+    @Mapping(target = "poster", source = "picturePath")
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "countries", ignore = true)
+    Movie toMovie(MovieRequest movieRequest);
+
+    @Mapping(target = "poster", source = "picturePath")
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "countries", ignore = true)
+    Movie updateMovieFromMovieRequest(@MappingTarget Movie movie, MovieRequest movieRequest);
+
 }
