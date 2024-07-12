@@ -1,18 +1,14 @@
 package com.bondarenko.movieland.controller;
 
-import com.bondarenko.movieland.api.MovieApi;
-import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
-import com.bondarenko.movieland.service.movie.MovieService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.bondarenko.movieland.api.*;
+import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.service.movie.*;
+import lombok.*;
+import lombok.extern.slf4j.*;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -30,9 +26,10 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId) {
-        log.info("Received request to get movie by id: {}.", movieId);
-        ResponseFullMovie fullMovie = movieService.getMovieById(movieId);
+    public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId, String currency) {
+
+        log.info("Received request to get movie by id: {}. And currency: {} ", movieId, currency);
+        ResponseFullMovie fullMovie = movieService.getMovieById(movieId, currency);
         return ResponseEntity.ok(fullMovie);
     }
 
