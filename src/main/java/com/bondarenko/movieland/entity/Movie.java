@@ -36,6 +36,7 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movies_id_seq")
     @SequenceGenerator(name = "movies_id_seq", sequenceName = "movies_id_seq")
+    @Column(name = "id")
     private int id;
 
     @Column(name = "name_ukrainian")

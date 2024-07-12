@@ -83,8 +83,6 @@ public class MovieServiceImpl implements MovieService {
 
         movie = movieRepository.save(movie);
         log.info("Successfully saved movie {} to the database", movie);
-        List<Movie> all = movieRepository.findAll();
-        System.out.printf(all.toString());
         return movieMapper.toFullMovie(movie);
     }
 

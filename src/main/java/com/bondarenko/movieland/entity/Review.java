@@ -9,12 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@ToString
 @Table(name = "reviews")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
     @SequenceGenerator(name = "reviews_id_seq", sequenceName = "reviews_id_seq")
+    @Column(name = "id")
     private Integer id;
 
     @Column(name = "review")

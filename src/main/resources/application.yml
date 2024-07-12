@@ -9,20 +9,17 @@ spring:
   main:
     banner-mode: off
   liquibase:
+    enabled: true
     change-log: classpath:db/changelog/changelog.xml
+    clear-checksums: false
   jpa:
     show-sql: true
     open-in-view: false
 
-liquibase:
-  change-log: classpath:changelog.xml
-  outputEncoding: UTF-8
-  enabled: true
-
 logging:
   config: classpath:logback.xml
   level:
-    liquibase: INFO
+    liquibase: debug
 
 movieland:
   movie:
