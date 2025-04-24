@@ -15,7 +15,13 @@ public interface MovieMapper {
     @Mapping(target = "picturePath", source = "poster")
     List<ResponseMovie> toMovieResponse(List<Movie> movies);
 
-    Movie toMovie(ResponseMovie movies);
+    @Mapping(target = "id", ignore = true)
+    // @Mapping(target = "reviews", source = "reviews")
+    //@Mapping(target = "price", source = "price")
+    @Mapping(target = "poster", source = "picturePath")
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "countries", ignore = true)
+    Movie toMovie(MovieRequest movieRequest);
 
     @Mapping(target = "picturePath", source = "poster")
     @Mapping(target = "genres", qualifiedByName = "mapGenres")
