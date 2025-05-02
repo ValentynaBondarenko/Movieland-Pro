@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.MovieApi;
+import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
@@ -20,6 +21,13 @@ import java.util.List;
 @RequestMapping(path = "/api/v1")
 public class MovieController implements MovieApi {
     private final MovieService movieService;
+
+    @Override
+    public ResponseEntity<Void> addMovie(MovieRequest movieRequest) {
+        log.info("Received request to add new movie {}", movieRequest);
+        movieService.saveMovie(movieRequest);
+        return new ResponseEntity<>( HttpStatus.CREATED);
+    }
 
     @Override
     @RequestMapping(produces = {"application/json"})

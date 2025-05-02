@@ -1,11 +1,18 @@
 package com.bondarenko.movieland.service.movie;
 
+import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.entity.Country;
+import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.exception.CountryNotFoundException;
+import com.bondarenko.movieland.exception.GenreNotFoundException;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
+import com.bondarenko.movieland.repository.CountryRepository;
+import com.bondarenko.movieland.repository.GenreRepository;
 import com.bondarenko.movieland.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +31,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
+    private final CountryRepository countryRepository;
     private final MovieMapper movieMapper;
     @Value("${movieland.movie.random.limit}")
     private int limit;
@@ -62,6 +73,44 @@ public class MovieServiceImpl implements MovieService {
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
 
         return movieMapper.toFullMovie(movie);
+    }
+
+    @Override
+    @Transactional
+    public void saveMovie(MovieRequest movieRequest) {
+        Movie movie = movieMapper.toMovie(movieRequest);
+
+        if (movie.getRating() == null) {
+            movie.setRating(BigDecimal.ZERO);
+        }
+        enrichMovieWithGenresAndCountries(movieRequest, movie);
+
+        movieRepository.save(movie);
+
+        log.info("Successfully saved movie {} to the database", movie);
+    }
+
+    private void enrichMovieWithGenresAndCountries(MovieRequest movieRequest, Movie movie) {
+        List<Country> countries = mapCountryIdToCountries(movieRequest);
+        List<Genre> genres = mapGenresIdToGenres(movieRequest);
+        movie.setGenres(new ArrayList<>(genres));
+        movie.setCountries(new ArrayList<>(countries));
+    }
+
+    private List<Country> mapCountryIdToCountries(MovieRequest movieRequest) {
+
+
+        return movieRequest.getCountries().stream()
+                .map(countryId -> countryRepository.findById(Long.valueOf(countryId))
+                        .orElseThrow(() -> new CountryNotFoundException("Can't found country by id: " + countryId)))
+                .toList();
+    }
+
+    private List<Genre> mapGenresIdToGenres(MovieRequest movieRequest) {
+        return movieRequest.getGenres().stream()
+                .map(genreId -> genreRepository.findById(Long.valueOf(genreId))
+                        .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId)))
+                .toList();
     }
 
     private Sort buildSort(MovieSortCriteria movieSortCriteria) {
