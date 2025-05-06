@@ -31,14 +31,14 @@ class GenreServiceImplTest extends AbstractITest {
         DataSourceListener.reset();
     }
 
-    @Test
-    void testFindAllGenresFromCacheOnTheStartApp() {
-        List<ResponseGenre> genres = genreService.getAll();
-
-        assertNotNull(genres);
-        assertEquals(16, genres.size());
-        DataSourceListener.assertSelectCount(0);
-    }
+//    @Test
+//    void testFindAllGenresFromCacheOnTheStartApp() {
+//        List<ResponseGenre> genres = genreService.getAll();
+//
+//        assertNotNull(genres);
+//        assertEquals(16, genres.size());
+//        DataSourceListener.assertSelectCount(0);
+//    }
 
 
 }

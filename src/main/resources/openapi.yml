@@ -434,8 +434,32 @@ paths:
           content: {}
         '400':
           $ref: '#/components/responses/BadRequest'
-
-
+    put:
+      summary: Edit existing movie
+      description: Edit movie by ID
+      operationId: editMovie
+      tags:
+        - Movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the movie to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: Movie successfully updated
+        '400':
+          description: Invalid input
+        '404':
+          description: Movie not found
 
   '/movie/random':
     get:

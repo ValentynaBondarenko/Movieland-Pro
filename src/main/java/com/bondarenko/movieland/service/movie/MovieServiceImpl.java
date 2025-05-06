@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -90,6 +91,27 @@ public class MovieServiceImpl implements MovieService {
         log.info("Successfully saved movie {} to the database", movie);
     }
 
+    @Transactional
+    @Override
+    public ResponseFullMovie updateMovie(Integer id, MovieRequest movieRequest) {
+        Movie movie = movieRepository.findById(id.longValue())
+                .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", id)));
+
+        movie.setNameUkrainian(movieRequest.getNameUkrainian());
+        movie.setNameNative(movieRequest.getNameNative());
+        movie.setPoster(movieRequest.getPicturePath());
+        List<Genre> genres = mapGenresIdToGenres(movieRequest);
+        movie.setGenres(genres);
+        List<Country> countries = mapCountryIdToCountries(movieRequest);
+        movie.setCountries(countries);
+
+        movieRepository.save(movie);
+
+        ResponseFullMovie response = movieMapper.toMovieResponse(movie);
+        log.info("Successfully updated movie id {} to the database", movie.getId());
+        return response;
+    }
+
     private void enrichMovieWithGenresAndCountries(MovieRequest movieRequest, Movie movie) {
         List<Country> countries = mapCountryIdToCountries(movieRequest);
         List<Genre> genres = mapGenresIdToGenres(movieRequest);
@@ -103,14 +125,14 @@ public class MovieServiceImpl implements MovieService {
         return movieRequest.getCountries().stream()
                 .map(countryId -> countryRepository.findById(Long.valueOf(countryId))
                         .orElseThrow(() -> new CountryNotFoundException("Can't found country by id: " + countryId)))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private List<Genre> mapGenresIdToGenres(MovieRequest movieRequest) {
         return movieRequest.getGenres().stream()
                 .map(genreId -> genreRepository.findById(Long.valueOf(genreId))
                         .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId)))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private Sort buildSort(MovieSortCriteria movieSortCriteria) {

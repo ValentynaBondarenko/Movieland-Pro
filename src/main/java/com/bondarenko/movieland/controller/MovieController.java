@@ -30,6 +30,13 @@ public class MovieController implements MovieApi {
     }
 
     @Override
+    public ResponseEntity<Void> editMovie(Integer id, MovieRequest movieRequest) {
+        log.info("Received request to edit by id={} movie {}", id, movieRequest);
+        movieService.updateMovie(id, movieRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
     @RequestMapping(produces = {"application/json"})
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         log.info("Received request to find all movies ");
