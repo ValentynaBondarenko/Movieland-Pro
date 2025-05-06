@@ -13,7 +13,12 @@ public interface MovieMapper {
     @Mapping(target = "name_native", source = "nameNative")
     @Mapping(target = "year_of_release", source = "yearOfRelease")
     @Mapping(target = "picturePath", source = "poster")
+    @Mapping(target = "rating", ignore = true)
+    @Mapping(target = "reviews", ignore = true)
     List<ResponseMovie> toMovieResponse(List<Movie> movies);
+
+    @Mapping(target = "reviews", ignore = true)
+    ResponseFullMovie toMovieResponse(Movie movies);
 
     @Mapping(target = "id", ignore = true)
     // @Mapping(target = "reviews", source = "reviews")
@@ -21,6 +26,8 @@ public interface MovieMapper {
     @Mapping(target = "poster", source = "picturePath")
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "countries", ignore = true)
+    @Mapping(target = "rating", ignore = true)
+    @Mapping(target = "reviews", ignore = true)
     Movie toMovie(MovieRequest movieRequest);
 
     @Mapping(target = "picturePath", source = "poster")

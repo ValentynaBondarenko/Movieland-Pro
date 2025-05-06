@@ -3,7 +3,6 @@ package com.bondarenko.movieland.service;
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.movie.MovieService;
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
@@ -251,6 +250,18 @@ class MovieServiceImplTest extends AbstractITest {
 
         //when
         movieService.saveMovie(movieRequest);
+
+    }
+
+    @Test
+    @DataSet("datasets/movie/dataset_before_update_movie.yml")
+    @ExpectedDataSet(value = "datasets/movie/dataset_expected_update_movie.yml")
+    void updateMovieInTheDatabase() {
+        //prepare
+        MovieRequest movieRequest = getMovieRequest();
+
+        //when
+         movieService.updateMovie(1, movieRequest);
 
     }
 

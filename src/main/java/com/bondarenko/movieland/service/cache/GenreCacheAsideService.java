@@ -23,51 +23,51 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GenreCacheAsideService {
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
-    private final List<ResponseGenre> genreCache = new CopyOnWriteArrayList<>();
-    @Value("${movieland.genre.cache.update.interval}")
-    private Integer cacheUpdateInterval;
-
-    @PostConstruct
-    //Cache Preloading. Fetch all genres on a start
-    public void initialize() {
-        updateCacheBlocking();
-    }
+//    private final List<ResponseGenre> genreCache = new CopyOnWriteArrayList<>();
+//    @Value("${movieland.genre.cache.update.interval}")
+//    private Integer cacheUpdateInterval;
+//
+//    @PostConstruct
+//    //Cache Preloading. Fetch all genres on a start
+//    public void initialize() {
+//        updateCacheBlocking();
+//    }
 
     // not return ref for modify return new ArrayList<>(genreCache);
-    public List<ResponseGenre> getGenres() {
-        if (genreCache.isEmpty()) {
-            throw new GenreNotFoundException();
-        }
-        log.info("Get all genres from cache");
-        return new ArrayList<>(genreCache);
-    }
+//    public List<ResponseGenre> getGenres() {
+//        if (genreCache.isEmpty()) {
+//            throw new GenreNotFoundException();
+//        }
+//        log.info("Get all genres from cache");
+//        return new ArrayList<>(genreCache);
+//    }
 
-    @Scheduled(fixedDelayString = "${movieland.genre.cache.update.interval}")
-    private void updateCache() {
-        try {
-            updateCacheInternal();
-        } catch (Exception e) {
-            log.error("Failed to update genre cache", e);
-        }
-    }
+//    @Scheduled(fixedDelayString = "${movieland.genre.cache.update.interval}")
+//    private void updateCache() {
+//        try {
+//            updateCacheInternal();
+//        } catch (Exception e) {
+//            log.error("Failed to update genre cache", e);
+//        }
+//    }
+//
+//    private void updateCacheBlocking() {
+//        try {
+//            updateCacheInternal();
+//        } catch (Exception e) {
+//            log.error("Failed to update genre cache during initialization", e);
+//            throw new RuntimeException("Failed to initialize genre cache", e);
+//        }
+//    }
 
-    private void updateCacheBlocking() {
-        try {
-            updateCacheInternal();
-        } catch (Exception e) {
-            log.error("Failed to update genre cache during initialization", e);
-            throw new RuntimeException("Failed to initialize genre cache", e);
-        }
-    }
+//    public void updateCacheInternal() {
+//        List<ResponseGenre> responseGenres = fetchGenresFromDatabase();
+//        genreCache.clear();
+//        genreCache.addAll(responseGenres);
+//        log.info("Genre cache updated successfully");
+//    }
 
-    public void updateCacheInternal() {
-        List<ResponseGenre> responseGenres = fetchGenresFromDatabase();
-        genreCache.clear();
-        genreCache.addAll(responseGenres);
-        log.info("Genre cache updated successfully");
-    }
-
-    private List<ResponseGenre> fetchGenresFromDatabase() {
+    public List<ResponseGenre> fetchGenresFromDatabase() {
         List<Genre> genres = genreRepository.findAll();
         List<ResponseGenre> responseGenres = Optional.of(genres)
                 .map(genreMapper::toGenreResponse)

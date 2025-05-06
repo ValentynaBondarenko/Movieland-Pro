@@ -17,4 +17,6 @@ public interface MovieService {
     ResponseFullMovie getMovieById(Integer movieId);
 
     void saveMovie(MovieRequest movieRequest);
+
+    ResponseFullMovie updateMovie(Integer id, MovieRequest movieRequest);
 }
