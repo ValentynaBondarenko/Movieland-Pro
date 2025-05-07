@@ -566,6 +566,12 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: currency
+          in: query
+          required: false
+          description: Currency for calculating the price of the movie. Specify the currency code (e.g., USD, EUR) to retrieve the movie price in the selected currency. If not specified, the price will be returned in the default currency (UAH).
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response

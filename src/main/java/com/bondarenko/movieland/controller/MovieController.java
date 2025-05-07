@@ -45,9 +45,10 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId) {
-        log.info("Received request to get movie by id: {}.", movieId);
-        ResponseFullMovie fullMovie = movieService.getMovieById(movieId);
+    public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId, String currency) {
+
+        log.info("Received request to get movie by id: {}. And currency: {} ", movieId, currency);
+        ResponseFullMovie fullMovie = movieService.getMovieById(movieId, currency);
         return ResponseEntity.ok(fullMovie);
     }
 

@@ -14,9 +14,9 @@ public interface MovieService {
 
     List<ResponseMovie> getMoviesByGenre(int genreId);
 
-    ResponseFullMovie getMovieById(Integer movieId);
-
     void saveMovie(MovieRequest movieRequest);
 
     ResponseFullMovie updateMovie(Integer id, MovieRequest movieRequest);
+
+    ResponseFullMovie getMovieById(Integer movieId, String currency);
 }
