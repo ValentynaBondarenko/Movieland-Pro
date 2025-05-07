@@ -431,7 +431,7 @@ paths:
       responses:
         '201':
           description: Movie successfully created
-          content: {}
+          content: { }
         '400':
           $ref: '#/components/responses/BadRequest'
     put:

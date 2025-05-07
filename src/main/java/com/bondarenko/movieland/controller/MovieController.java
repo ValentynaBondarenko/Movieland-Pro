@@ -26,7 +26,7 @@ public class MovieController implements MovieApi {
     public ResponseEntity<Void> addMovie(MovieRequest movieRequest) {
         log.info("Received request to add new movie {}", movieRequest);
         movieService.saveMovie(movieRequest);
-        return new ResponseEntity<>( HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
@@ -37,7 +37,6 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    @RequestMapping(produces = {"application/json"})
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         log.info("Received request to find all movies ");
         List<ResponseMovie> response = movieService.findAll(movieSortCriteria);

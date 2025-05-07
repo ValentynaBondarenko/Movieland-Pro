@@ -13,7 +13,7 @@ countries:
     name: 'Франція'
 
 movies:
-  - id : 1
+  - id: 1
     name_ukrainian: 'Зелена миля'
     name_native: 'The Green Mile'
     year_of_release: 1999

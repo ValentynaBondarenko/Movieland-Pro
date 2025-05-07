@@ -261,7 +261,7 @@ class MovieServiceImplTest extends AbstractITest {
         MovieRequest movieRequest = getMovieRequest();
 
         //when
-         movieService.updateMovie(1, movieRequest);
+        movieService.updateMovie(1, movieRequest);
 
     }
 
