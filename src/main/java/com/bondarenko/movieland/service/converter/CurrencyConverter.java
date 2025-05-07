@@ -12,28 +12,24 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Slf4j
 @Component
 public class CurrencyConverter {
+
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
-    @Value("${exchange.cache.timeout}")
-    private String timeout;
 
-    private final CopyOnWriteArrayList<CurrencyExchange> currencyCache = new CopyOnWriteArrayList<>();
-    ExecutorService executor = Executors.newSingleThreadExecutor();
+    @Value("${exchange.scheduled.cron}")
+    private String scheduledCron;
+
+    private Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
     @PostConstruct
-    private void initialize() {
+    public void initialize() {
         updateCurrencyCache();
     }
 
@@ -42,48 +38,33 @@ public class CurrencyConverter {
             log.info("Default currency is UAH");
             return price;
         }
-        Optional<BigDecimal> exchangeRate = getExchangeRate(currency);
 
-        exchangeRate.ifPresent(rate ->
-                log.info(String.format("Converted %s %s with exchange rate %s", currency, price, rate))
-        );
-        return exchangeRate.map(price::multiply)
-                .orElseThrow(() -> new CurrencyExchangeException("Currency not found: " + currency));
-
-    }
-
-    private Optional<BigDecimal> getExchangeRate(String currency) {
-        return currencyCache.stream()
-                .filter(currencyExchange -> currency.equalsIgnoreCase(currencyExchange.getCode()))
-                .map(CurrencyExchange::getRate)
-                .findFirst();
-    }
-
-    //if cache will be update long time
-    @Scheduled(cron = "${exchange.scheduled}", zone = "${exchange.scheduled.zone}")
-    public void scheduledUpdateCurrencyCache() {
-        Future<?> updateTime = executor.submit(this::updateCurrencyCache);
-        try {
-            updateTime.get(30, TimeUnit.MINUTES);
-        } catch (TimeoutException e) {
-            updateTime.cancel(true);
-            log.error("Currency cache update timed out", e);
-            throw new RuntimeException("Currency cache update timed out", e);
-        } catch (ExecutionException | InterruptedException e) {
-            log.error("Failed to update currency cache", e);
-            throw new RuntimeException("Failed to update currency cache", e);
+        BigDecimal exchangeRate = currencyCache.get(currency);
+        if (exchangeRate == null) {
+            log.error("Currency not found: {}", currency);
+            throw new CurrencyExchangeException("Currency not found: " + currency);
         }
+
+        log.info("Converted {} {} to {} UAH with exchange rate {}", price, currency, price.multiply(exchangeRate), exchangeRate);
+        return price.multiply(exchangeRate);
     }
 
-    private void updateCurrencyCache() {
-        ObjectMapper objectMapper = new ObjectMapper();
+    @Scheduled(cron = "${exchange.scheduled.cron}")
+    public void scheduledUpdateCurrencyCache() {
+        updateCurrencyCache();
+    }
+
+     void updateCurrencyCache() {
         try {
-            CurrencyExchange[] currencyExchanges = objectMapper.readValue(new URL(exchangeApiUrl), CurrencyExchange[].class);
+            CurrencyExchange[] currencyExchanges = new ObjectMapper().readValue(new URL(exchangeApiUrl), CurrencyExchange[].class);
             currencyCache.clear();
-            currencyCache.addAll(Arrays.asList(currencyExchanges));
+            for (CurrencyExchange exchange : currencyExchanges) {
+                currencyCache.put(exchange.getCode(), exchange.getRate());
+            }
             log.info("Currency cache updated");
         } catch (IOException e) {
-            throw new RuntimeException("Can`t read url " + exchangeApiUrl + " and get currency rate", e);
+            log.error("Failed to update currency cache", e);
+            throw new RuntimeException("Can't update currency cache. The cache will remain unchanged", e);
         }
     }
 }

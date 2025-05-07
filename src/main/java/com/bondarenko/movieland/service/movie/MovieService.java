@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.service.movie;
 
+import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieSortCriteria;
 import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
@@ -12,6 +13,10 @@ public interface MovieService {
     List<ResponseMovie> getRandomMovies();
 
     List<ResponseMovie> getMoviesByGenre(int genreId);
+
+    void saveMovie(MovieRequest movieRequest);
+
+    ResponseFullMovie updateMovie(Integer id, MovieRequest movieRequest);
 
     ResponseFullMovie getMovieById(Integer movieId, String currency);
 }

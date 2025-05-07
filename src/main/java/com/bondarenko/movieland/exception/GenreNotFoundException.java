@@ -7,4 +7,7 @@ public class GenreNotFoundException extends RuntimeException {
     public GenreNotFoundException() {
         super(String.format(NO_GENRE_BY_ID_MESSAGE));
     }
+
+    public GenreNotFoundException(String message) {
+    }
 }

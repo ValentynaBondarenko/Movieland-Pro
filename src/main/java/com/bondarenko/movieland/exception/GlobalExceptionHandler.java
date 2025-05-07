@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetails> handleGenreNotFoundException(GenreNotFoundException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setStatus(HttpStatus.NOT_FOUND.value());
-        problemDetails.setTitle("Not found");
+        problemDetails.setTitle("There is no genre");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetails);
     }
 }

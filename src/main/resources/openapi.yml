@@ -54,6 +54,39 @@ components:
           type: string
           description: Sort direction for price (optional).
           enum: [ "ASC", "DESC" ]
+    MovieRequest:
+      type: object
+      properties:
+        nameUkrainian:
+          type: string
+          description: The Ukranian name of the movie
+        nameNative:
+          type: string
+          description: The original name of the movie
+        yearOfRelease:
+          type: integer
+          description: The year the movie was released
+        description:
+          type: string
+          description: Description of the movie
+        price:
+          type: number
+          format: double
+          description: Price of the movie
+        picturePath:
+          type: string
+          description: URL to the movie's picture
+        countries:
+          type: array
+          items:
+            type: integer
+          description: List of country IDs
+        genres:
+          type: array
+          items:
+            type: integer
+          description: List of genre IDs
+
     ResponseFullMovie:
       type: object
       properties:
@@ -378,6 +411,55 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
+    post:
+      description: |
+        Add new movie
+        
+        The POST method add movie
+        tags:
+        - Movie
+      summary: Add new movie
+      operationId: addMovie
+      tags:
+        - Movie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '201':
+          description: Movie successfully created
+          content: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    put:
+      summary: Edit existing movie
+      description: Edit movie by ID
+      operationId: editMovie
+      tags:
+        - Movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the movie to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: Movie successfully updated
+        '400':
+          description: Invalid input
+        '404':
+          description: Movie not found
 
   '/movie/random':
     get:
