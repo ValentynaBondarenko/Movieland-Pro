@@ -434,33 +434,6 @@ paths:
           content: {}
         '400':
           $ref: '#/components/responses/BadRequest'
-    put:
-      summary: Edit existing movie
-      description: Edit movie by ID
-      operationId: editMovie
-      tags:
-        - Movie
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID of the movie to edit
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MovieRequest'
-      responses:
-        '200':
-          description: Movie successfully updated
-        '400':
-          description: Invalid input
-        '404':
-          description: Movie not found
-
   '/movie/random':
     get:
       description: |
@@ -548,7 +521,7 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  '/movie/{movieId}':
+  '/movie/{id}':
     get:
       description: |
         Get movie by id.
@@ -559,7 +532,7 @@ paths:
       tags:
         - Movie
       parameters:
-        - name: movieId
+        - name: id
           in: path
           required: true
           description: ID of the movie
@@ -583,22 +556,34 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '416':
-          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Edit existing movie
+      description: Edit movie by ID
+      operationId: editMovie
+      tags:
+        - Movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the movie to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: Movie successfully updated
+        '400':
+          description: Invalid input
+        '404':
+          description: Movie not found
   '/genre':
     get:
       description: |
