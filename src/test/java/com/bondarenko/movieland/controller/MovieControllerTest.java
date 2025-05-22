@@ -1,6 +1,9 @@
 package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieSortCriteria;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
+import com.bondarenko.movieland.api.model.ResponseMovie;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,14 +19,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @WebMvcTest(MovieController.class)
 @Import(SecurityConfig.class)
@@ -44,7 +52,7 @@ class MovieControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void shouldAllAdminAddNewMovies() throws Exception {
+    void shouldAllAdminCanAddNewMovie() throws Exception {
         // when + then
         mockMvc.perform(post("/api/v1/movie")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +111,62 @@ class MovieControllerTest {
 
         verify(movieService, never()).updateMovie(any(Integer.class), any(MovieRequest.class));
     }
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldReturnAllMovies() throws Exception {
+        List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
+        when(movieService.findAll(any())).thenReturn(mockResponse);
 
+        mockMvc.perform(get("/api/v1/movie"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(movieService).findAll(any(MovieSortCriteria.class));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldReturnMovieByIdWithCurrency() throws Exception {
+        int movieId = 1;
+        String currency = "USD";
+
+        ResponseFullMovie responseMovie = new ResponseFullMovie();
+        when(movieService.getMovieById(eq(movieId), eq(currency))).thenReturn(responseMovie);
+
+        mockMvc.perform(get("/api/v1/movie/{id}", movieId)
+                        .param("currency", currency))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(movieService).getMovieById(eq(movieId), eq(currency));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldReturnMoviesByGenre() throws Exception {
+        int genreId = 5;
+        List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
+        when(movieService.getMoviesByGenre(eq(genreId))).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/v1/movie/genre/{id}", genreId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(movieService).getMoviesByGenre(eq(genreId));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldReturnRandomMovies() throws Exception {
+        List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
+        when(movieService.getRandomMovies()).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/v1/movie/random"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(movieService).getRandomMovies();
+    }
 
     private MovieRequest getMovieRequest() {
         MovieRequest movieRequest = new MovieRequest();

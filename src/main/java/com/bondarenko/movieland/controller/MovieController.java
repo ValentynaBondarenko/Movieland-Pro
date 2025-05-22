@@ -24,20 +24,19 @@ public class MovieController implements MovieApi {
 
     @Override
     public ResponseEntity<Void> addMovie(MovieRequest movieRequest) {
-        log.info("Received request to add new movie {}", movieRequest);
+        log.info("Received request to add new movie {}.", movieRequest);
         movieService.saveMovie(movieRequest);
-        return new ResponseEntity<>( HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Void> editMovie(Integer id, MovieRequest movieRequest) {
-        log.info("Received request to edit by id={} movie {}", id, movieRequest);
+        log.info("Received request to edit by id={} movie {} .", id, movieRequest);
         movieService.updateMovie(id, movieRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
-    @RequestMapping(produces = {"application/json"})
     public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
         log.info("Received request to find all movies ");
         List<ResponseMovie> response = movieService.findAll(movieSortCriteria);
@@ -47,17 +46,19 @@ public class MovieController implements MovieApi {
     @Override
     public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId, String currency) {
 
-        log.info("Received request to get movie by id: {}. And currency: {} ", movieId, currency);
+        log.info("Received request to get movie by id: {}. And currency: {} .", movieId, currency);
         ResponseFullMovie fullMovie = movieService.getMovieById(movieId, currency);
         return ResponseEntity.ok(fullMovie);
     }
 
+    @Override
     public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Integer genreId) {
         log.info("Received request to find movies by genre with id: {}.", genreId);
         List<ResponseMovie> movies = movieService.getMoviesByGenre(genreId);
         return ResponseEntity.ok(movies);
     }
 
+    @Override
     public ResponseEntity<List<ResponseMovie>> getRandomMovies() {
         log.info("Received request to find random movies.");
         List<ResponseMovie> response = movieService.getRandomMovies();

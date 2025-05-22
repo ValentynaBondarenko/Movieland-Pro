@@ -12,7 +12,7 @@ public interface MovieMapper {
     @Mapping(target = "name_ukrainian", source = "nameUkrainian")
     @Mapping(target = "name_native", source = "nameNative")
     @Mapping(target = "year_of_release", source = "yearOfRelease")
-    @Mapping(target = "picturePath", source = "poster")
+    @Mapping(target = "picturePath", ignore = true)
     @Mapping(target = "rating", ignore = true)
     @Mapping(target = "reviews", ignore = true)
     List<ResponseMovie> toMovieResponse(List<Movie> movies);
@@ -21,8 +21,6 @@ public interface MovieMapper {
     ResponseFullMovie toMovieResponse(Movie movies);
 
     @Mapping(target = "id", ignore = true)
-    // @Mapping(target = "reviews", source = "reviews")
-    //@Mapping(target = "price", source = "price")
     @Mapping(target = "poster", source = "picturePath")
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "countries", ignore = true)
