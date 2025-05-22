@@ -225,19 +225,7 @@ components:
           schema:
             type: string
       content: { }
-    Conflict:
-      description: |
-        Conflict Another request is in progress that prohibits the fulfilment of the current request, or the
-        current resource state is inconsistent with the request.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
+
     Forbidden:
       description: |
         Forbidden If the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond
@@ -252,46 +240,7 @@ components:
         '*/*':
           schema:
             $ref: '#/components/schemas/ProblemDetails'
-    InternalServerError:
-      description: |
-        Internal Server Error If there is an application error not related to the client's input that cannot be easily mapped to any other HTTP
-        response code ("catch all error"), the API producer shall respond withthis response code. The "ProblemDetails" structure shall be provided,
-        and shall include in the "detail" attribute more information about the source of the problem.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
-    MethodNotAllowed:
-      description: |
-        Method Not Allowed If a particular HTTP method is not supported for a particular resource, the API producer shall respond with this
-        response code. The "ProblemDetails" structure may be omitted.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
-    NotAcceptable:
-      description: |
-        Not Acceptable If the "Accept" HTTP header does not contain at least one name of a content type that is acceptable to the API producer,
-        the API producer shall respond with this response code. The "ProblemDetails" structure may be omitted in that case.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
+
     NotFound:
       description: |
         Not Found If the API producer did not find a current representation for the resource addressed by the URI passed in the request, or is not
@@ -306,53 +255,12 @@ components:
         '*/*':
           schema:
             $ref: '#/components/schemas/ProblemDetails'
-    RequestedRangeNotSatisfiable:
-      description: |
-        Requested Range Not Satisfiable This code is returned if the requested byte range in the Range HTTP header is not
-        present in the requested resource.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
-    ServiceUnavailable:
-      description: |
-        Service Unavailable If the API producer encounters an internal overload situation of itself or of a system it relies on, it should
-        respond with this response code, following the provisions in IETF RFC 7231 [13] for the use of the "Retry-After" HTTP header and for the
-        alternative to refuse the connection. The "ProblemDetails" structure may be omitted.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
+
     Unauthorized:
       description: |
         Unauthorized If the request contains no access token even though one is required, or if the request contains an authorization token that
         is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in
         the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.
-      headers:
-        Content-Type:
-          description: The MIME type of the body of the response.
-          schema:
-            type: string
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/ProblemDetails'
-    UnprocessableEntity:
-      description: |
-        Unprocessable Entity If the payload body of a request contains syntactically correct data (e.g. well-formed JSON) but the data cannot
-        be processed (e.g. because it fails validation against a schema), the API producer shall respond with this response code. The
-        "ProblemDetails" structure shall be provided, and should include in the "detail" attribute more information about the source of the problem.
-        NOTE 2: This error response code is only applicable for methods that have a request body.
       headers:
         Content-Type:
           description: The MIME type of the body of the response.
@@ -399,18 +307,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '416':
-          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+
     post:
       description: |
         Add new movie
@@ -461,18 +358,6 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '416':
-          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
   '/movie/genre/{genreId}':
     get:
@@ -509,18 +394,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '416':
-          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+
   '/movie/{id}':
     get:
       description: |
@@ -611,15 +485,3 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '416':
-          $ref: '#/components/responses/RequestedRangeNotSatisfiable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
