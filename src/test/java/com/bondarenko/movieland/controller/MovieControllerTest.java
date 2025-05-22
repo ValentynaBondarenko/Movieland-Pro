@@ -9,21 +9,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.http.MediaType;
-
 
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
-
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -81,6 +79,31 @@ class MovieControllerTest {
 
         verify(movieService, never()).saveMovie(any(MovieRequest.class));
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void shouldAllAdminUpdateMovieById() throws Exception {
+        // when + then
+        mockMvc.perform(put("/api/v1/movie/{id}", 100)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movieRequest)))
+                .andExpect(status().isOk());
+
+        verify(movieService).updateMovie(any(Integer.class), any(MovieRequest.class));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldRejectNotAdminRoleWhenUpdateMovieById() throws Exception {
+        // when + then
+        mockMvc.perform(put("/api/v1/movie/{id}", 100)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movieRequest)))
+                .andExpect(status().isForbidden());
+
+        verify(movieService, never()).updateMovie(any(Integer.class), any(MovieRequest.class));
+    }
+
 
     private MovieRequest getMovieRequest() {
         MovieRequest movieRequest = new MovieRequest();
