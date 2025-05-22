@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(GenreNotFoundException.class)
     public ResponseEntity<ProblemDetails> handleGenreNotFoundException(GenreNotFoundException ex) {
         ProblemDetails problemDetails = new ProblemDetails();

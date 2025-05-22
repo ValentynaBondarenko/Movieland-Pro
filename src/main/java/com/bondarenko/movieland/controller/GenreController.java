@@ -16,11 +16,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/genre")
+@RequestMapping(path = "/api/v1")
 public class GenreController implements GenreApi {
     private final GenreService genreService;
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<ResponseGenre>> findAllGenres() {
         log.info("Received request to find all genres.");
         List<ResponseGenre> response = genreService.getAll();
