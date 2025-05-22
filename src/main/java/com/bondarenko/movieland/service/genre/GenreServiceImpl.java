@@ -14,6 +14,6 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public List<ResponseGenre> getAll() {
-        return genreCache.fetchGenresFromDatabase();
+        return genreCache.getGenre();
     }
 }

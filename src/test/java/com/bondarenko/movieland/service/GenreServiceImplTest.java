@@ -6,18 +6,16 @@ import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
 import com.bondarenko.movieland.service.genre.GenreService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-@TestPropertySource(properties = "GENRE_CACHE_UPDATE=500")
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
@@ -31,14 +29,23 @@ class GenreServiceImplTest extends AbstractITest {
         DataSourceListener.reset();
     }
 
-//    @Test
-//    void testFindAllGenresFromCacheOnTheStartApp() {
-//        List<ResponseGenre> genres = genreService.getAll();
-//
-//        assertNotNull(genres);
-//        assertEquals(16, genres.size());
-//        DataSourceListener.assertSelectCount(0);
-//    }
+    @DisplayName("Should return genres from cache without additional DB queries")
+    @Test
+    void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
+        List<ResponseGenre> genres = genreService.getAll();
 
+        assertNotNull(genres);
+        assertEquals("Драма", genres.getFirst().getName());
+        assertEquals(16, genres.size());
+
+        DataSourceListener.assertSelectCount(0);
+
+        List<ResponseGenre> secondProbeOfGenres = genreCacheService.getGenre();
+        assertNotNull(secondProbeOfGenres);
+        assertEquals("Драма", genres.getFirst().getName());
+        assertEquals(16, secondProbeOfGenres.size());
+
+        DataSourceListener.assertSelectCount(0);
+    }
 
 }

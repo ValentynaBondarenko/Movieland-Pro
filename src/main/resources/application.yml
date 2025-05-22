@@ -35,7 +35,8 @@ movieland:
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
-  scheduled: 0 30 15 * * ? #update every day at 15:30
+  scheduled:
+    cron: 0 30 15 * * ? #update every day at 15:30
   zone: Europe/Kiev
   cache:
     timeout: 30 #30min
