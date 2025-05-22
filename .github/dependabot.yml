@@ -4,7 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "main"
-    automerge:
-      conditions:
-        - "status-success"
+    registries:
+      - github-packages
+
+registries:
+  github-packages:
+    type: "maven-repository"
+    url: "https://maven.pkg.github.com/ValentynaBondarenko/datasource-listener"
+    username: "${{ secrets.ARTIFACTORY_USERNAME }}"
+    password: "${{ secrets.ARTIFACTORY_PASSWORD }}"
+
