@@ -7,5 +7,4 @@ updates:
     target-branch: "main"
     automerge:
       conditions:
-        - "success"
-
+        - "status-success"
