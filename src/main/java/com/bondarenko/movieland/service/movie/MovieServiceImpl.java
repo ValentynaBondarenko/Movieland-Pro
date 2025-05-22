@@ -124,8 +124,6 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private List<Country> mapCountryIdToCountries(MovieRequest movieRequest) {
-
-
         return movieRequest.getCountries().stream()
                 .map(countryId -> countryRepository.findById(Long.valueOf(countryId))
                         .orElseThrow(() -> new CountryNotFoundException("Can't found country by id: " + countryId)))
@@ -134,7 +132,7 @@ public class MovieServiceImpl implements MovieService {
 
     private List<Genre> mapGenresIdToGenres(MovieRequest movieRequest) {
         return movieRequest.getGenres().stream()
-                .map(genreId -> genreRepository.findById(Long.valueOf(genreId))
+                .map(genreId -> genreRepository.findById(Long.valueOf(genreId))//  maybe better to use genre cache
                         .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId)))
                 .collect(Collectors.toCollection(ArrayList::new));
     }

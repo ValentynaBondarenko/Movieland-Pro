@@ -2,7 +2,6 @@ package com.bondarenko.movieland.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-@EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
