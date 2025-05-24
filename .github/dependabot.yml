@@ -7,10 +7,14 @@ updates:
     registries:
       - github-packages
 
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
 registries:
   github-packages:
     type: "maven-repository"
     url: "https://maven.pkg.github.com/ValentynaBondarenko/datasource-listener"
     username: "${{ secrets.ARTIFACTORY_USERNAME }}"
     password: "${{ secrets.ARTIFACTORY_PASSWORD }}"
-
