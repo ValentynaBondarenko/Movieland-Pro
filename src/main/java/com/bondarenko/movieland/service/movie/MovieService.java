@@ -12,11 +12,11 @@ public interface MovieService {
 
     List<ResponseMovie> getRandomMovies();
 
-    List<ResponseMovie> getMoviesByGenre(int genreId);
+    List<ResponseMovie> getMoviesByGenre(Integer genreId);
 
     void saveMovie(MovieRequest movieRequest);
 
-    ResponseFullMovie updateMovie(Integer id, MovieRequest movieRequest);
+    ResponseFullMovie updateMovie(Long id, MovieRequest movieRequest);
 
-    ResponseFullMovie getMovieById(Integer movieId, String currency);
+    ResponseFullMovie getMovieById(Long movieId, String currency);
 }

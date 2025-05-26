@@ -1,22 +1,24 @@
 package com.bondarenko.movieland.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "countries")
 public class Country {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private int id;
+    private Integer id; //? Long
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;
 
 }

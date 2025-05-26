@@ -11,10 +11,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -54,7 +52,7 @@ public class CurrencyConverter {
         updateCurrencyCache();
     }
 
-     void updateCurrencyCache() {
+    void updateCurrencyCache() {
         try {
             CurrencyExchange[] currencyExchanges = new ObjectMapper().readValue(new URL(exchangeApiUrl), CurrencyExchange[].class);
             currencyCache.clear();

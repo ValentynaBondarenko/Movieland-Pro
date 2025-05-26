@@ -15,6 +15,7 @@ components:
       properties:
         id:
           type: integer
+          format: int64
         nameUkrainian:
           type: string
         nameNative:
@@ -92,6 +93,7 @@ components:
       properties:
         id:
           type: integer
+          format: int64
         nameUkrainian:
           type: string
         nameNative:
@@ -137,7 +139,7 @@ components:
       properties:
         id:
           type: integer
-          format: int32
+          format: int64
           description: Unique review identifier
         user:
           $ref: '#/components/schemas/ResponseUser'
@@ -150,7 +152,7 @@ components:
       properties:
         id:
           type: integer
-          format: int32
+          format: int64
           description: Unique user identifier
         nickname:
           type: string
@@ -328,7 +330,7 @@ paths:
       responses:
         '201':
           description: Movie successfully created
-          content: {}
+          content: { }
         '400':
           $ref: '#/components/responses/BadRequest'
   '/movie/random':
@@ -412,7 +414,7 @@ paths:
           description: ID of the movie
           schema:
             type: integer
-            format: int32
+            format: int64
         - name: currency
           in: query
           required: false
@@ -444,6 +446,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           description: ID of the movie to edit
       requestBody:
         required: true

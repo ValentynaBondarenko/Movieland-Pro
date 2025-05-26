@@ -1,8 +1,22 @@
 package com.bondarenko.movieland.mapper;
 
-import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.entity.*;
-import org.mapstruct.*;
+import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.ResponseFullMovie;
+import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.ResponseCountry;
+import com.bondarenko.movieland.api.model.ResponseUser;
+import com.bondarenko.movieland.api.model.ResponseReview;
+import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.entity.Genre;
+import com.bondarenko.movieland.entity.Country;
+import com.bondarenko.movieland.entity.User;
+import com.bondarenko.movieland.entity.Review;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
+import org.mapstruct.IterableMapping;
 
 import java.util.List;
 
@@ -18,6 +32,7 @@ public interface MovieMapper {
     List<ResponseMovie> toMovieResponse(List<Movie> movies);
 
     @Mapping(target = "reviews", ignore = true)
+    @Mapping(source = "poster", target = "picturePath")
     ResponseFullMovie toMovieResponse(Movie movies);
 
     @Mapping(target = "id", ignore = true)

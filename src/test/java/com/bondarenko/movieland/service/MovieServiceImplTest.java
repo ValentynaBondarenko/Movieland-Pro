@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.service;
 
+import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.mapper.MovieMapper;
@@ -8,8 +9,8 @@ import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.bondarenko.listener.*;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -199,7 +200,7 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
-        ResponseFullMovie fullMovie = movieService.getMovieById(1, null);
+        ResponseFullMovie fullMovie = movieService.getMovieById(1L, null);
 
         assertNotNull(fullMovie);
 
@@ -269,7 +270,7 @@ class MovieServiceImplTest extends AbstractITest {
         MovieRequest movieRequest = getMovieRequest();
 
         //when
-         movieService.updateMovie(1, movieRequest);
+        movieService.updateMovie(1L, movieRequest);
 
     }
 
@@ -288,7 +289,7 @@ class MovieServiceImplTest extends AbstractITest {
 
     private ResponseMovie testDTO() {
         ResponseMovie movieDTO = new ResponseMovie();
-        movieDTO.setId(1);
+        movieDTO.setId(1L);
         movieDTO.setNameUkrainian("Втеча з Шоушенка");
         movieDTO.setNameNative("The Shawshank Redemption");
         movieDTO.setYearOfRelease(1994);

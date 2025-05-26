@@ -19,7 +19,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
                     ORDER BY RANDOM() 
                     LIMIT :limit 
             """, nativeQuery = true)
-    List<Movie> findRandomMovies(int limit);
+    List<Movie> findRandomMovies(Integer limit);
 
-    Optional<Movie> getMovieById(int movieId);
+    Optional<Movie> getMovieById(Long movieId);
 }

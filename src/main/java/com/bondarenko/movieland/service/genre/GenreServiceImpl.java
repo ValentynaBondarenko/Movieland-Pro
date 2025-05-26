@@ -1,11 +1,11 @@
 package com.bondarenko.movieland.service.genre;
 
-import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.service.cache.*;
-import lombok.*;
-import org.springframework.stereotype.*;
+import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @AllArgsConstructor

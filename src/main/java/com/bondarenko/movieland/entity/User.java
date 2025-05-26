@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "name", nullable = false, unique = true)
     private String nickname;
@@ -25,7 +25,4 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
 }

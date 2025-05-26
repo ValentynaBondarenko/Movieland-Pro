@@ -14,7 +14,7 @@ public class Review {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "review")
     private String text;
