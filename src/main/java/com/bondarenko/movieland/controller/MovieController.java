@@ -30,8 +30,8 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    public ResponseEntity<Void> editMovie(Integer id, MovieRequest movieRequest) {
-        log.info("Received request to edit by id={} movie {} .", id, movieRequest);
+    public ResponseEntity<Void> editMovie(Long id, MovieRequest movieRequest) {
+        log.info("Received request to edit by id={} movie name {} .", id, movieRequest.getNameNative());
         movieService.updateMovie(id, movieRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -44,7 +44,7 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    public ResponseEntity<ResponseFullMovie> getMovieById(Integer movieId, String currency) {
+    public ResponseEntity<ResponseFullMovie> getMovieById(Long movieId, String currency) {
 
         log.info("Received request to get movie by id: {}. And currency: {} .", movieId, currency);
         ResponseFullMovie fullMovie = movieService.getMovieById(movieId, currency);

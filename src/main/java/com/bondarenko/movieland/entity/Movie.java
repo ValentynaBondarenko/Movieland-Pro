@@ -1,7 +1,10 @@
 package com.bondarenko.movieland.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
@@ -11,7 +14,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "movies")
 @Accessors(chain = true)
@@ -20,7 +22,7 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movies_seq")
     @SequenceGenerator(name = "movies_seq", sequenceName = "movies_id_seq", allocationSize = 1)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "name_ukrainian")
     private String nameUkrainian;
@@ -57,6 +59,5 @@ public class Movie {
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<Review> reviews;
-
 
 }

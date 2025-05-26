@@ -22,14 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.eq;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -97,7 +91,7 @@ class MovieControllerTest {
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isOk());
 
-        verify(movieService).updateMovie(any(Integer.class), any(MovieRequest.class));
+        verify(movieService).updateMovie(any(Long.class), any(MovieRequest.class));
     }
 
     @Test
@@ -109,8 +103,9 @@ class MovieControllerTest {
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isForbidden());
 
-        verify(movieService, never()).updateMovie(any(Integer.class), any(MovieRequest.class));
+        verify(movieService, never()).updateMovie(any(Long.class), any(MovieRequest.class));
     }
+
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnAllMovies() throws Exception {
@@ -127,18 +122,18 @@ class MovieControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnMovieByIdWithCurrency() throws Exception {
-        int movieId = 1;
+        Long movieId = 1L;
         String currency = "USD";
 
         ResponseFullMovie responseMovie = new ResponseFullMovie();
-        when(movieService.getMovieById(eq(movieId), eq(currency))).thenReturn(responseMovie);
+        when(movieService.getMovieById(movieId, currency)).thenReturn(responseMovie);
 
         mockMvc.perform(get("/api/v1/movie/{id}", movieId)
                         .param("currency", currency))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(movieService).getMovieById(eq(movieId), eq(currency));
+        verify(movieService).getMovieById(movieId, currency);
     }
 
     @Test
@@ -146,13 +141,13 @@ class MovieControllerTest {
     void shouldReturnMoviesByGenre() throws Exception {
         int genreId = 5;
         List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
-        when(movieService.getMoviesByGenre(eq(genreId))).thenReturn(mockResponse);
+        when(movieService.getMoviesByGenre(genreId)).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/movie/genre/{id}", genreId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(movieService).getMoviesByGenre(eq(genreId));
+        verify(movieService).getMoviesByGenre(genreId);
     }
 
     @Test

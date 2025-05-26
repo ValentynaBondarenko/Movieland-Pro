@@ -1,14 +1,15 @@
 package com.bondarenko.movieland.configuration;
 
-import com.bondarenko.proxydatasource.*;
-import lombok.extern.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.context.annotation.*;
-import org.springframework.core.env.*;
-import org.springframework.jdbc.datasource.*;
+import com.bondarenko.proxydatasource.ProxyDataSource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import javax.sql.*;
+import javax.sql.DataSource;
 
 @Slf4j
 @TestConfiguration

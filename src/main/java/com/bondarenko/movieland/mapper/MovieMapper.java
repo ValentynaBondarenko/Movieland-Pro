@@ -18,6 +18,7 @@ public interface MovieMapper {
     List<ResponseMovie> toMovieResponse(List<Movie> movies);
 
     @Mapping(target = "reviews", ignore = true)
+    @Mapping(source = "poster", target = "picturePath")
     ResponseFullMovie toMovieResponse(Movie movies);
 
     @Mapping(target = "id", ignore = true)

@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,19 +59,18 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<ResponseMovie> getRandomMovies() {
         List<Movie> randomMovies = movieRepository.findRandomMovies(limit);
-        System.out.println(randomMovies);
         return movieMapper.toMovieResponse(randomMovies);
     }
 
     @Override
-    public List<ResponseMovie> getMoviesByGenre(int genreId) {
+    public List<ResponseMovie> getMoviesByGenre(Integer genreId) {
         List<Movie> movies = movieRepository.findByGenresId(genreId);
         return movieMapper.toMovieResponse(movies);
     }
 
     @Override
     @Transactional
-    public ResponseFullMovie getMovieById(Integer movieId, String currency) {
+    public ResponseFullMovie getMovieById(Long movieId, String currency) {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
@@ -97,13 +95,14 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public ResponseFullMovie updateMovie(Integer id, MovieRequest movieRequest) {
-        Movie movie = movieRepository.findById(id.longValue())
+    public ResponseFullMovie updateMovie(Long id, MovieRequest movieRequest) {
+        Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", id)));
 
-        movie.setNameUkrainian(movieRequest.getNameUkrainian());
-        movie.setNameNative(movieRequest.getNameNative());
-        movie.setPoster(movieRequest.getPicturePath());
+        movie.setNameUkrainian(movieRequest.getNameUkrainian())
+                .setNameNative(movieRequest.getNameNative())
+                .setPoster(movieRequest.getPicturePath());
+
         List<Genre> genres = mapGenresIdToGenres(movieRequest);
         movie.setGenres(genres);
         List<Country> countries = mapCountryIdToCountries(movieRequest);
@@ -119,8 +118,8 @@ public class MovieServiceImpl implements MovieService {
     private void enrichMovieWithGenresAndCountries(MovieRequest movieRequest, Movie movie) {
         List<Country> countries = mapCountryIdToCountries(movieRequest);
         List<Genre> genres = mapGenresIdToGenres(movieRequest);
-        movie.setGenres(new ArrayList<>(genres));
-        movie.setCountries(new ArrayList<>(countries));
+        movie.setGenres(new ArrayList<>(genres))
+                .setCountries(new ArrayList<>(countries));
     }
 
     private List<Country> mapCountryIdToCountries(MovieRequest movieRequest) {
