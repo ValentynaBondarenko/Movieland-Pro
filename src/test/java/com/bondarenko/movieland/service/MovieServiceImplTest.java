@@ -106,7 +106,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals(allMoviesWithSorting.size(), 25);
+        assertEquals(25, allMoviesWithSorting.size());
 
         ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(7.6, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
@@ -130,7 +130,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals(allMoviesWithSorting.size(), 25);
+        assertEquals( 25, allMoviesWithSorting.size());
 
         ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(8.9, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
@@ -154,7 +154,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals(allMoviesWithSorting.size(), 25);
+        assertEquals(25, allMoviesWithSorting.size());
 
         ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(200.6, Optional.ofNullable(movieDtoFirst.getPrice()).orElse(0.0), 0.001);
@@ -178,7 +178,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals(allMoviesWithSorting.size(), 25);
+        assertEquals(25, allMoviesWithSorting.size());
 
         ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(100.0, Optional.ofNullable(movieDtoFirst.getPrice()).orElse(0.0), 0.001);

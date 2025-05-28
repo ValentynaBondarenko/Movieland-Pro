@@ -31,7 +31,7 @@ movieland:
   genre:
     cache:
       update:
-        interval: ${GENRE_CACHE_UPDATE:14400000}
+        interval: ${GENRE_CACHE_UPDATE:14400000} # updated every 4 hours
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json

@@ -13,7 +13,7 @@ public class AbstractITest {
 
     @Container
     private static final PostgreSQLContainer<?> container =
-            new PostgreSQLContainer<>("postgres:alpine")
+            new PostgreSQLContainer<>("postgres:latest")
                     .withDatabaseName("test")
                     .withUsername("test")
                     .withPassword("test")
