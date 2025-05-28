@@ -25,25 +25,6 @@ public class GenreCacheAsideService {
     private final GenreMapper genreMapper;
     private final CopyOnWriteArrayList<ResponseGenre> genreCache = new CopyOnWriteArrayList<>();
 
-    @Value("${movieland.genre.cache.update.interval}")
-    private Integer cacheUpdateInterval;
-
-    /**
-     * Cache preloading on application startup.
-     * ⚠️ This may increase startup time slightly.
-     */
-    @PostConstruct
-    private void initialize() {
-        try {
-            log.info("Initializing genre cache...");
-            cacheLoading();
-        } catch (Exception e) {
-            log.error("Failed to update genre cache during initialization", e);
-            throw new RuntimeException("Failed to initialize genre cache", e);
-
-        }
-    }
-
     public List<ResponseGenre> getGenre() {
         if (genreCache.isEmpty()) {
             throw new GenreNotFoundException();
@@ -52,10 +33,10 @@ public class GenreCacheAsideService {
         return new ArrayList<>(genreCache);
     }
 
+    @PostConstruct
     @Scheduled(fixedDelayString = "${movieland.genre.cache.update.interval}")
     private void cacheLoading() {
         List<ResponseGenre> genresFromDb = fetchGenresFromDatabase();
-        genreCache.clear();
         genreCache.addAll(genresFromDb);
         log.info("Genre cache updated with {} items", genreCache.size());
     }
@@ -65,7 +46,7 @@ public class GenreCacheAsideService {
         List<ResponseGenre> responseGenres = Optional.of(genres)
                 .map(genreMapper::toGenreResponse)
                 .orElseThrow(GenreNotFoundException::new);
-        log.info("Fetched genres from database");
+        log.info("Genres successfully fetched from database");
         return new ArrayList<>(responseGenres);
     }
 }

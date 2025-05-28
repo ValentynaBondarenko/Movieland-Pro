@@ -1,6 +1,5 @@
 package com.bondarenko.movieland.service.genre;
 
-
 import com.bondarenko.movieland.api.model.ResponseGenre;
 
 import java.util.List;

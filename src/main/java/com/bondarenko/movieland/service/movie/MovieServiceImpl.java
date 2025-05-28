@@ -14,7 +14,7 @@ import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.CountryRepository;
 import com.bondarenko.movieland.repository.GenreRepository;
 import com.bondarenko.movieland.repository.MovieRepository;
-import com.bondarenko.movieland.service.converter.CurrencyConverter;
+import com.bondarenko.movieland.service.currency.CurrencyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +36,7 @@ public class MovieServiceImpl implements MovieService {
     private final GenreRepository genreRepository;
     private final CountryRepository countryRepository;
     private final MovieMapper movieMapper;
-    private final CurrencyConverter converter;
+    private final CurrencyServiceImpl converter;
     @Value("${movieland.movie.random.limit}")
     private int limit;
     private static final String RATING = "rating";
@@ -82,10 +82,6 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     public void saveMovie(MovieRequest movieRequest) {
         Movie movie = movieMapper.toMovie(movieRequest);
-
-        if (movie.getRating() == null) {
-            movie.setRating(BigDecimal.ZERO);
-        }
         enrichMovieWithGenresAndCountries(movieRequest, movie);
 
         movieRepository.save(movie);

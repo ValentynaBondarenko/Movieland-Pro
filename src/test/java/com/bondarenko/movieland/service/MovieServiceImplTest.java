@@ -3,15 +3,12 @@ package com.bondarenko.movieland.service;
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
-import com.bondarenko.movieland.mapper.MovieMapper;
-import com.bondarenko.movieland.service.converter.CurrencyConverter;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -27,11 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieService movieService;
-    @Mock
-    private CurrencyConverter currencyConverter;
-    @Mock
-    private MovieMapper movieMapper;
-
 
     @BeforeEach
     void setUp() {
@@ -57,26 +49,26 @@ class MovieServiceImplTest extends AbstractITest {
 
     }
 
-//    @Test
-//    @DataSet(value = "/datasets/movie/dataset_movies.yml")
-//    void testRandomMovies() {
-//        List<ResponseMovie> movies = movieService.getRandomMovies();
-//
-//        assertNotNull(movies);
-//        assertEquals(3, movies.size());
-//        movies.forEach(movie ->
-//                assertAll(
-//                        () -> assertNotNull(movie.getId()),
-//                        () -> assertNotNull(movie.getNameUkrainian()),
-//                        () -> assertNotNull(movie.getNameNative()),
-//                        () -> assertNotNull(movie.getPrice()),
-//                        () -> assertNotNull(movie.getDescription()),
-//                        () -> assertNotNull(movie.getPoster()),
-//                        () -> assertNotNull(movie.getYearOfRelease())
-//                )
-//        );
-//        DataSourceListener.assertSelectCount(1);
-//    }
+    @Test
+    @DataSet(value = "/datasets/movie/dataset_movies.yml")
+    void testRandomMovies() {
+        List<ResponseMovie> movies = movieService.getRandomMovies();
+
+        assertNotNull(movies);
+        assertEquals(3, movies.size());
+        movies.forEach(movie ->
+                assertAll(
+                        () -> assertNotNull(movie.getId()),
+                        () -> assertNotNull(movie.getNameUkrainian()),
+                        () -> assertNotNull(movie.getNameNative()),
+                        () -> assertNotNull(movie.getPrice()),
+                        () -> assertNotNull(movie.getDescription()),
+                        () -> assertNotNull(movie.getPoster()),
+                        () -> assertNotNull(movie.getYearOfRelease())
+                )
+        );
+        DataSourceListener.assertSelectCount(1);
+    }
 
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
@@ -281,6 +273,7 @@ class MovieServiceImplTest extends AbstractITest {
         movieRequest.setYearOfRelease(1994);
         movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
         movieRequest.setPrice(123.45);
+        movieRequest.setRating(9.5);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
         movieRequest.setCountries(Arrays.asList(1, 2));
         movieRequest.setGenres(Arrays.asList(1, 2, 3));

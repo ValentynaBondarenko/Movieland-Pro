@@ -1,4 +1,4 @@
-package com.bondarenko.movieland.service.converter;
+package com.bondarenko.movieland.service.currency;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 
 @Getter
-public class CurrencyExchange {
+public class CurrencyExchangeDto {
     @JsonProperty("cc")
     private String code;
 

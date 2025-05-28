@@ -1,35 +1,33 @@
-package com.bondarenko.movieland.service.converter;
+package com.bondarenko.movieland.service.currency;
 
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@Component
-public class CurrencyConverter {
+@Service
+public class CurrencyServiceImpl implements CurrencyService {
 
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
 
-    @Value("${exchange.scheduled.cron}")
-    private String scheduledCron;
-
-    private Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
-
-    @PostConstruct
-    public void initialize() {
-        updateCurrencyCache();
-    }
+    private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
     public BigDecimal convertCurrency(BigDecimal price, String currency) {
         if (currency == null) {
@@ -48,21 +46,25 @@ public class CurrencyConverter {
     }
 
     @Scheduled(cron = "${exchange.scheduled.cron}")
-    public void scheduledUpdateCurrencyCache() {
+    void scheduledUpdateCurrencyCache() {
         updateCurrencyCache();
     }
 
+    @PostConstruct
     void updateCurrencyCache() {
-        try {
-            CurrencyExchange[] currencyExchanges = new ObjectMapper().readValue(new URL(exchangeApiUrl), CurrencyExchange[].class);
-            currencyCache.clear();
-            for (CurrencyExchange exchange : currencyExchanges) {
-                currencyCache.put(exchange.getCode(), exchange.getRate());
-            }
-            log.info("Currency cache updated");
-        } catch (IOException e) {
-            log.error("Failed to update currency cache", e);
-            throw new RuntimeException("Can't update currency cache. The cache will remain unchanged", e);
-        }
+        log.info("Initializing currency cache...");
+        //rest template, web client
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<CurrencyExchangeDto[]> response = restTemplate.getForEntity(exchangeApiUrl, CurrencyExchangeDto[].class);
+
+        CurrencyExchangeDto[] currencyExchanges = Optional.ofNullable(response.getBody())
+                .orElseThrow(() -> {
+                    log.error("Currency API returned null body.");
+                    return new RuntimeException("Currency API returned null body.");
+                });
+
+        Arrays.stream(currencyExchanges)
+                .forEach(dto -> currencyCache.put(dto.getCode(), dto.getRate()));
+        log.info("Currency cache updated successfully");
     }
 }

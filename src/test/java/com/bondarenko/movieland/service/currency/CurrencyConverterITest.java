@@ -1,4 +1,4 @@
-package com.bondarenko.movieland.service.converter;
+package com.bondarenko.movieland.service.currency;
 
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
 class CurrencyConverterITest {
 
     @Mock
-    private CurrencyConverter currencyConverter;
+    private CurrencyServiceImpl currencyConverter;
 
     @InjectMocks
-    private CurrencyConverter converter;
+    private CurrencyServiceImpl converter;
 
     @BeforeEach
     void setUp() {
@@ -26,7 +26,7 @@ class CurrencyConverterITest {
     }
 
     @Test
-    public void testConvertCurrency_WhenCurrencyNotFound_ShouldThrowCurrencyExchangeException() {
+    void testConvertCurrency_WhenCurrencyNotFound_ShouldThrowCurrencyExchangeException() {
         // prepare
         String currency = "USD";
         BigDecimal price = new BigDecimal("100");
@@ -40,7 +40,7 @@ class CurrencyConverterITest {
     }
 
     @Test
-    public void testUpdateCurrencyCache_ShouldUpdateCacheSuccessfully() {
+    void testUpdateCurrencyCache_ShouldUpdateCacheSuccessfully() {
         // prepare
         doNothing().when(currencyConverter).updateCurrencyCache();
 
@@ -52,7 +52,7 @@ class CurrencyConverterITest {
     }
 
     @Test
-    public void testScheduledUpdateCurrencyCache_ShouldUpdateCacheOnSchedule() throws InterruptedException {
+    void testScheduledUpdateCurrencyCache_ShouldUpdateCacheOnSchedule() {
         // prepare
         doNothing().when(currencyConverter).scheduledUpdateCurrencyCache();
 

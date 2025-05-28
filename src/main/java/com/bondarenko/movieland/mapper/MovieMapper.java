@@ -39,7 +39,6 @@ public interface MovieMapper {
     @Mapping(target = "poster", source = "picturePath")
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "countries", ignore = true)
-    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "reviews", ignore = true)
     Movie toMovie(MovieRequest movieRequest);
 
