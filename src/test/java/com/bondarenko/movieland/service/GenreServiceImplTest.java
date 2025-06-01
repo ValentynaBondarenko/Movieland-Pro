@@ -2,21 +2,18 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.ResponseGenre;
-import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
+import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
 import com.bondarenko.movieland.service.genre.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
     private GenreService genreService;
@@ -32,20 +29,38 @@ class GenreServiceImplTest extends AbstractITest {
     @DisplayName("Should return genres from cache without additional DB queries")
     @Test
     void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
-        List<ResponseGenre> genres = genreService.getAll();
+        Set<ResponseGenre> genres = genreService.getAll();
 
         assertNotNull(genres);
-        assertEquals("Драма", genres.getFirst().getName());
+        assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
         assertEquals(16, genres.size());
 
         DataSourceListener.assertSelectCount(0);
 
-        List<ResponseGenre> secondProbeOfGenres = genreCacheService.getGenre();
+        Set<Genre> secondProbeOfGenres = genreCacheService.getGenre();
         assertNotNull(secondProbeOfGenres);
-        assertEquals("Драма", genres.getFirst().getName());
+        assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
         assertEquals(16, secondProbeOfGenres.size());
 
         DataSourceListener.assertSelectCount(0);
     }
+    @DisplayName("Should return only genres with matching IDs from cache")
+    @Test
+    void findByIdIn_shouldReturnGenresWithMatchingIds() {
+        //prepare
+        Set<Long> idsToFind = Set.of(1L, 3L, 5L);
+
+        // when
+        Set<Genre> result = genreService.findByIdIn(idsToFind);
+
+        // then
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        assertTrue(result.stream().allMatch(genre -> idsToFind.contains(genre.getId())));
+
+        // should not hit DB
+        DataSourceListener.assertSelectCount(0);
+    }
+
 
 }

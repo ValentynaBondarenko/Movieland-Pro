@@ -13,8 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
+import java.util.Set;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,23 +41,20 @@ class GenreControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Мелодрама"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("Драма"));
-
+                .andExpect(jsonPath("$[*].id", hasItems(1, 2)))
+                .andExpect(jsonPath("$[*].name", hasItems("Мелодрама", "Драма")));
         verify(genreService).getAll();
     }
 
-    private List<ResponseGenre> getMockGenres() {
+    private Set<ResponseGenre> getMockGenres() {
         ResponseGenre melodrama = new ResponseGenre();
-        melodrama.setId(1);
+        melodrama.setId(1L);
         melodrama.setName("Мелодрама");
 
         ResponseGenre drama = new ResponseGenre();
-        drama.setId(2);
+        drama.setId(2L);
         drama.setName("Драма");
 
-        return List.of(melodrama, drama);
+        return Set.of(melodrama, drama);
     }
 }

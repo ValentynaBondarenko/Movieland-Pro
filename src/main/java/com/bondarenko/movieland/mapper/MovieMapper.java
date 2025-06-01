@@ -1,24 +1,11 @@
 package com.bondarenko.movieland.mapper;
 
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
-import com.bondarenko.movieland.api.model.ResponseGenre;
-import com.bondarenko.movieland.api.model.ResponseCountry;
-import com.bondarenko.movieland.api.model.ResponseUser;
-import com.bondarenko.movieland.api.model.ResponseReview;
-import com.bondarenko.movieland.entity.Movie;
-import com.bondarenko.movieland.entity.Genre;
-import com.bondarenko.movieland.entity.Country;
-import com.bondarenko.movieland.entity.User;
-import com.bondarenko.movieland.entity.Review;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.Named;
-import org.mapstruct.IterableMapping;
+import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.entity.*;
+import org.mapstruct.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MovieMapper {
@@ -50,14 +37,14 @@ public interface MovieMapper {
 
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
-    List<ResponseGenre> mapGenres(List<Genre> genres);
+    List<ResponseGenre> mapGenres(Set<Genre> genres);
 
     @Named("mapGenre")
     ResponseGenre mapGenre(Genre genre);
 
     @Named("mapCountries")
     @IterableMapping(qualifiedByName = "mapCountry")
-    List<ResponseCountry> mapCountries(List<Country> countries);
+    List<ResponseCountry> mapCountries(Set<Country> countries);
 
     @Named("mapCountry")
     ResponseCountry mapCountry(Country country);

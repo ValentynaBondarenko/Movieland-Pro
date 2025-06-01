@@ -16,7 +16,7 @@ public class Country {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;

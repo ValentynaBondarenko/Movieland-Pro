@@ -2,25 +2,20 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-@DBRider
-@SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieService movieService;
@@ -34,13 +29,12 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMovies() {
-
         List<ResponseMovie> movies = movieService.findAll(null);
 
         assertNotNull(movies);
 
         assertEquals(25, movies.size());
-        ResponseMovie firstMovie = movies.get(0);
+        ResponseMovie firstMovie = movies.getFirst();
         ResponseMovie testMovie = testDTO();
         assertEquals(testMovie.getId(), firstMovie.getId());
         assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
@@ -130,7 +124,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals( 25, allMoviesWithSorting.size());
+        assertEquals(25, allMoviesWithSorting.size());
 
         ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(8.9, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
@@ -275,8 +269,8 @@ class MovieServiceImplTest extends AbstractITest {
         movieRequest.setPrice(123.45);
         movieRequest.setRating(9.5);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        movieRequest.setCountries(Arrays.asList(1, 2));
-        movieRequest.setGenres(Arrays.asList(1, 2, 3));
+        movieRequest.setCountries(new HashSet<>(Arrays.asList(1L, 2L)));
+        movieRequest.setGenres(new HashSet<>(Arrays.asList(1L, 2L, 3L)));
         return movieRequest;
     }
 

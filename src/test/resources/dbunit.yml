@@ -1,7 +1,7 @@
-cacheConnection: true
+cacheConnection: false
 alwaysCleanBefore: true
 alwaysCleanAfter: true
 properties:
   schema: PUBLIC
   caseSensitiveTableNames: true
-
+  driver: org.postgresql.Driver

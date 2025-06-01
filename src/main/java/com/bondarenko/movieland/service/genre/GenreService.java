@@ -1,9 +1,16 @@
 package com.bondarenko.movieland.service.genre;
 
 import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.entity.Genre;
 
-import java.util.List;
+import java.util.Set;
 
 public interface GenreService {
-    List<ResponseGenre> getAll();
+    Set<ResponseGenre> getAll();
+
+    Genre getGenreById(Long genreId);
+
+    Set<Genre> findByMovieId(Long movieId);
+
+    Set<Genre> findByIdIn(Set<Long> genreIds);
 }

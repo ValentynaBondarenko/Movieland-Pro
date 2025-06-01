@@ -1,9 +1,7 @@
 package com.bondarenko.movieland.service.currency;
 
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +9,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,6 +24,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
+    @Override
     public BigDecimal convertCurrency(BigDecimal price, String currency) {
         if (currency == null) {
             log.info("Default currency is UAH");
