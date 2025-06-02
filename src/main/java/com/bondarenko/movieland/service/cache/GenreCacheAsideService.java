@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
@@ -25,12 +23,12 @@ public class GenreCacheAsideService {
     private final GenreMapper genreMapper;
     private final CopyOnWriteArrayList<ResponseGenre> genreCache = new CopyOnWriteArrayList<>();
 
-    public List<ResponseGenre> getGenre() {
+    public Set<ResponseGenre> getGenre() {
         if (genreCache.isEmpty()) {
             throw new GenreNotFoundException();
         }
         log.info("Get all genres from cache, genreCache size: {}", genreCache.size());
-        return new ArrayList<>(genreCache);
+        return new HashSet<>(genreCache);
     }
 
     @PostConstruct

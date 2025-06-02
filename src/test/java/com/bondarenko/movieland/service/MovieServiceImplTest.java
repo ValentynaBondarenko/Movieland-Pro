@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,7 +74,7 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMoviesByGenre() {
-        int genreId = 1;
+        Long genreId = 1L;
         List<ResponseMovie> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
         assertNotNull(moviesByGenre);
@@ -275,8 +276,8 @@ class MovieServiceImplTest extends AbstractITest {
         movieRequest.setPrice(123.45);
         movieRequest.setRating(9.5);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        movieRequest.setCountries(Arrays.asList(1, 2));
-        movieRequest.setGenres(Arrays.asList(1, 2, 3));
+        movieRequest.setCountries(new HashSet<>(Arrays.asList(1L, 2L)));
+        movieRequest.setGenres(new HashSet<>(Arrays.asList(1L, 2L, 3L)));
         return movieRequest;
     }
 

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -13,7 +14,7 @@ public class GenreServiceImpl implements GenreService {
     private final GenreCacheAsideService genreCache;
 
     @Override
-    public List<ResponseGenre> getAll() {
+    public Set<ResponseGenre> getAll() {
         return genreCache.getGenre();
     }
 }

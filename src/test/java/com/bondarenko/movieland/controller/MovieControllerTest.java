@@ -19,6 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -139,7 +140,7 @@ class MovieControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnMoviesByGenre() throws Exception {
-        int genreId = 5;
+        Long genreId = 5L;
         List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
         when(movieService.getMoviesByGenre(genreId)).thenReturn(mockResponse);
 
@@ -171,8 +172,8 @@ class MovieControllerTest {
         movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
         movieRequest.setPrice(123.45);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        movieRequest.setCountries(Arrays.asList(1, 2));
-        movieRequest.setGenres(Arrays.asList(1, 2, 3));
+        movieRequest.setCountries(new HashSet<>(Arrays.asList(1L, 2L)));
+        movieRequest.setGenres(new HashSet<>(Arrays.asList(1L, 2L, 3L)));
         return movieRequest;
     }
 

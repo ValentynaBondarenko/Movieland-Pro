@@ -19,6 +19,7 @@ import org.mapstruct.Named;
 import org.mapstruct.IterableMapping;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MovieMapper {
@@ -50,14 +51,14 @@ public interface MovieMapper {
 
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
-    List<ResponseGenre> mapGenres(List<Genre> genres);
+    List<ResponseGenre> mapGenres(Set<Genre> genres);
 
     @Named("mapGenre")
     ResponseGenre mapGenre(Genre genre);
 
     @Named("mapCountries")
     @IterableMapping(qualifiedByName = "mapCountry")
-    List<ResponseCountry> mapCountries(List<Country> countries);
+    List<ResponseCountry> mapCountries(Set<Country> countries);
 
     @Named("mapCountry")
     ResponseCountry mapCountry(Country country);
