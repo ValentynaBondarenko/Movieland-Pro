@@ -52,7 +52,7 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Integer genreId) {
+    public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Long genreId) {
         log.info("Received request to find movies by genre with id: {}.", genreId);
         List<ResponseMovie> movies = movieService.getMoviesByGenre(genreId);
         return ResponseEntity.ok(movies);

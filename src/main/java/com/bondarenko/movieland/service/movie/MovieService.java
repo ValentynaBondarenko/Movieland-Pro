@@ -12,7 +12,7 @@ public interface MovieService {
 
     List<ResponseMovie> getRandomMovies();
 
-    List<ResponseMovie> getMoviesByGenre(Integer genreId);
+    List<ResponseMovie> getMoviesByGenre(Long genreId);
 
     void saveMovie(MovieRequest movieRequest);
 

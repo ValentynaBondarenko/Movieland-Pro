@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-    List<Movie> findByGenresId(int genre);
+    List<Movie> findByGenresId(Long genre);
 
     @Query(value = """
             SELECT m.id, m.name_ukrainian, m.name_native, m.year_of_release, m.description, 

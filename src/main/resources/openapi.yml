@@ -39,7 +39,7 @@ components:
       properties:
         id:
           type: integer
-          format: int32
+          format: int64
           description: Unique genre identifier
         name:
           type: string
@@ -85,11 +85,15 @@ components:
           type: array
           items:
             type: integer
+            format: int64
+          uniqueItems: true
           description: List of country IDs
         genres:
           type: array
           items:
             type: integer
+            format: int64
+          uniqueItems: true
           description: List of genre IDs
 
     ResponseFullMovie:
@@ -382,7 +386,7 @@ paths:
           description: ID of the genre
           schema:
             type: integer
-            format: int32
+            format: int64
       responses:
         '200':
           description: Successful response
@@ -482,6 +486,7 @@ paths:
             application/json:
               schema:
                 type: array
+                uniqueItems: true
                 items:
                   $ref: '#/components/schemas/ResponseGenre'
         '400':

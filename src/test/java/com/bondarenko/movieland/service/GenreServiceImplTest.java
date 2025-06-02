@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,17 +33,15 @@ class GenreServiceImplTest extends AbstractITest {
     @DisplayName("Should return genres from cache without additional DB queries")
     @Test
     void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
-        List<ResponseGenre> genres = genreService.getAll();
+        Set<ResponseGenre> genres = genreService.getAll();
 
         assertNotNull(genres);
-        assertEquals("Драма", genres.getFirst().getName());
         assertEquals(16, genres.size());
 
         DataSourceListener.assertSelectCount(0);
 
-        List<ResponseGenre> secondProbeOfGenres = genreCacheService.getGenre();
+        Set<ResponseGenre> secondProbeOfGenres = genreCacheService.getGenre();
         assertNotNull(secondProbeOfGenres);
-        assertEquals("Драма", genres.getFirst().getName());
         assertEquals(16, secondProbeOfGenres.size());
 
         DataSourceListener.assertSelectCount(0);
