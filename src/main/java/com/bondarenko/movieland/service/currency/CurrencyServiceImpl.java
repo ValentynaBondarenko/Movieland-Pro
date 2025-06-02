@@ -29,6 +29,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
+    @Override
     public BigDecimal convertCurrency(BigDecimal price, String currency) {
         if (currency == null) {
             log.info("Default currency is UAH");
