@@ -21,9 +21,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GenreCacheAsideService {
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
-    private final CopyOnWriteArrayList<ResponseGenre> genreCache = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Genre> genreCache = new CopyOnWriteArrayList<>();
 
-    public Set<ResponseGenre> getGenre() {
+    public Set<Genre> getGenre() {
         if (genreCache.isEmpty()) {
             throw new GenreNotFoundException();
         }
@@ -34,17 +34,14 @@ public class GenreCacheAsideService {
     @PostConstruct
     @Scheduled(fixedDelayString = "${movieland.genre.cache.update.interval}")
     private void cacheLoading() {
-        List<ResponseGenre> genresFromDb = fetchGenresFromDatabase();
+        List<Genre> genresFromDb = fetchGenresFromDatabase();
         genreCache.addAll(genresFromDb);
         log.info("Genre cache updated with {} items", genreCache.size());
     }
 
-    private List<ResponseGenre> fetchGenresFromDatabase() {
+    private List<Genre> fetchGenresFromDatabase() {
         List<Genre> genres = genreRepository.findAll();
-        List<ResponseGenre> responseGenres = Optional.of(genres)
-                .map(genreMapper::toGenreResponse)
-                .orElseThrow(GenreNotFoundException::new);
         log.info("Genres successfully fetched from database");
-        return new ArrayList<>(responseGenres);
+        return new ArrayList<>(genres);
     }
 }

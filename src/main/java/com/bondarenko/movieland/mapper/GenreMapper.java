@@ -10,5 +10,5 @@ import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface GenreMapper {
-    List<ResponseGenre> toGenreResponse(List<Genre> genres);
+    Set<ResponseGenre> toGenreResponse(Set<Genre> genres);
 }
