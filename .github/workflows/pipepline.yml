@@ -6,7 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
+  packages: read
 
 jobs:
   build:
@@ -27,15 +29,6 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: maven
-
-      - name: Configure Maven
-        uses: s4u/maven-settings-action@v3.1.0
-        with:
-          servers: '[{
-          "id": "github-bondarenko-packages", 
-          "username": "${{ secrets.ARTIFACTORY_USERNAME }}",
-          "password": "${{ secrets.ARTIFACTORY_PASSWORD }}"
-          }]'
 
       - name: Build with Maven
         run: mvn clean package
