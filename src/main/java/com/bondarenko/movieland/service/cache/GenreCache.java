@@ -16,18 +16,19 @@ public class GenreCache {
     private final GenreRepository genreRepository;
     private CustomCache<Genre> genreCache;
 
+    public Set<Genre> getGenres() {
+        return genreCache.getAll();
+    }
+
     @PostConstruct
-    public void init() {
+    private void init() {
         genreCache = new CustomCache<>(genreRepository::findAll);
         genreCache.refresh();
     }
 
-    @Scheduled(fixedDelayString = "${movieland.genre.cache.update.interval}")
-    public void refreshCache() {
+    @Scheduled(fixedDelayString = "${movieland.cache.update.interval}")
+    private void refreshCache() {
         genreCache.refresh();
     }
 
-    public Set<Genre> getGenres() {
-        return genreCache.getAll();
-    }
 }

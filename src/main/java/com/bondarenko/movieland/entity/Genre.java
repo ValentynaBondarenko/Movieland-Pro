@@ -1,10 +1,7 @@
 package com.bondarenko.movieland.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,10 +9,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "genres")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Genre {
     @Id
     @GeneratedValue
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)
