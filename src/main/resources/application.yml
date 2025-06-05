@@ -28,15 +28,14 @@ movieland:
   movie:
     random:
       limit: 3
-  genre:
-    cache:
-      update:
-        interval: ${GENRE_CACHE_UPDATE:14400000} # updated every 4 hours
+  cache:
+    update:
+      interval: ${CACHE_UPDATE:14400000} # updated every 4 hours
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
   scheduled:
-    cron: 0 30 15 * * ? #update every day at 15:30
+    cron: 0 0 0  * * ? #update every day at 00:00
   zone: Europe/Kiev
   cache:
     timeout: 30 #30min

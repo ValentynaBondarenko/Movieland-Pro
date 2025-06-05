@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.cache;
 
-import com.bondarenko.movieland.entity.Country;
-import com.bondarenko.movieland.repository.CountryRepository;
+import com.bondarenko.movieland.entity.Genre;
+import com.bondarenko.movieland.repository.GenreRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,25 +9,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+
 @Service
 @RequiredArgsConstructor
-public class CountryCache {
-    private final CountryRepository countryRepository;
-    private CustomCache<Country> countryCache;
+public class GenreCache {
+    private final GenreRepository genreRepository;
+    private CustomCache<Genre> genreCache;
 
-    public Set<Country> getCountries() {
-        return countryCache.getAll();
+    public Set<Genre> getGenres() {
+        return genreCache.getAll();
     }
 
     @PostConstruct
     private void init() {
-        countryCache = new CustomCache<>(countryRepository::findAll);
-        countryCache.refresh();
+        genreCache = new CustomCache<>(genreRepository::findAll);
+        genreCache.refresh();
     }
 
     @Scheduled(fixedDelayString = "${movieland.cache.update.interval}")
     private void refreshCache() {
-        countryCache.refresh();
+        genreCache.refresh();
     }
-}
 
+}

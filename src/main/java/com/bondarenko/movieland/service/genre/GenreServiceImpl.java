@@ -5,7 +5,7 @@ import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.exception.GenreNotFoundException;
 import com.bondarenko.movieland.mapper.GenreMapper;
 import com.bondarenko.movieland.repository.GenreRepository;
-import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
+import com.bondarenko.movieland.service.cache.GenreCache;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class GenreServiceImpl implements GenreService {
-    private final GenreCacheAsideService genreCache;
+    private final GenreCache genreCache;
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
 
     @Override
     public Set<ResponseGenre> getAll() {
-        return Optional.of(genreCache.getGenre())
+        return Optional.of(genreCache.getGenres())
                 .map(genreMapper::toGenreResponse)
                 .orElseThrow(GenreNotFoundException::new);
     }
@@ -44,7 +44,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Set<Genre> findByIdIn(Set<Long> genreIds) {
-        return genreCache.getGenre().stream()
+        return genreCache.getGenres().stream()
                 .filter(genre -> genreIds.contains(genre.getId()))
                 .collect(Collectors.toSet());
     }

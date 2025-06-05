@@ -4,7 +4,7 @@ import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.ResponseGenre;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.entity.Genre;
-import com.bondarenko.movieland.service.cache.GenreCacheAsideService;
+import com.bondarenko.movieland.service.cache.GenreCache;
 import com.bondarenko.movieland.service.genre.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ class GenreServiceImplTest extends AbstractITest {
     private GenreService genreService;
 
     @Autowired
-    private GenreCacheAsideService genreCacheService;
+    private GenreCache genreCacheService;
 
     @BeforeEach
     void setUp() {
@@ -42,7 +42,7 @@ class GenreServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(0);
 
-        Set<Genre> secondProbeOfGenres = genreCacheService.getGenre();
+        Set<Genre> secondProbeOfGenres = genreCacheService.getGenres();
         assertNotNull(secondProbeOfGenres);
         assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
         assertEquals(16, secondProbeOfGenres.size());
