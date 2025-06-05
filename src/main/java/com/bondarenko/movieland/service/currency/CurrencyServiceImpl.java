@@ -4,6 +4,7 @@ import com.bondarenko.movieland.exception.CurrencyExchangeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
-
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
+    private final RestTemplate restTemplate;
 
     private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
@@ -55,12 +57,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     void updateCurrencyCache() {
         log.info("Initializing currency cache...");
         //rest template, web client
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<CurrencyExchangeDto[]> response = restTemplate.getForEntity(exchangeApiUrl, CurrencyExchangeDto[].class);
 
         CurrencyExchangeDto[] currencyExchanges = Optional.ofNullable(response.getBody())
                 .orElseThrow(() -> {
-                    log.error("Currency API returned null body.");
+                    log.error("Currency API response was empty. Currency cache not updated.");
                     return new RuntimeException("Currency API returned null body.");
                 });
 
