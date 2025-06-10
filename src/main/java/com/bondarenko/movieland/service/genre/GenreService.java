@@ -1,12 +1,12 @@
 package com.bondarenko.movieland.service.genre;
 
-import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.GenreDTO;
 import com.bondarenko.movieland.entity.Genre;
 
 import java.util.Set;
 
 public interface GenreService {
-    Set<ResponseGenre> getAll();
+    Set<GenreDTO> getAll();
     Genre getGenreById(Long genreId);
 
     Set<Genre> findByMovieId(Long movieId);

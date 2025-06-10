@@ -15,12 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CustomCacheTest {
+class CacheTest {
 
     @Mock
     private GenreRepository genreRepository;
 
-    private CustomCache<Genre> cache;
+    private Cache<Genre> cache;
 
 
     @Test
@@ -29,7 +29,7 @@ class CustomCacheTest {
         Genre drama = new Genre(1L, "Drama");
         when(genreRepository.findAll()).thenReturn(List.of(drama));
 
-        cache = new CustomCache<>(genreRepository::findAll);
+        cache = new Cache<>(genreRepository::findAll);
         //when
         cache.refresh();
 

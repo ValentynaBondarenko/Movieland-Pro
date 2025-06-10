@@ -12,7 +12,6 @@ import lombok.*;
 @Table(name = "reviews")
 public class Review {
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private Long id;
 

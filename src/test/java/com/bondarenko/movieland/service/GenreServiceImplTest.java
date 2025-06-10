@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service;
 
 import com.bondarenko.listener.DataSourceListener;
-import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.GenreDTO;
 import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.service.cache.GenreCache;
@@ -34,7 +34,7 @@ class GenreServiceImplTest extends AbstractITest {
     @DisplayName("Should return genres from cache without additional DB queries")
     @Test
     void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
-        Set<ResponseGenre> genres = genreService.getAll();
+        Set<GenreDTO> genres = genreService.getAll();
 
         assertNotNull(genres);
         assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));

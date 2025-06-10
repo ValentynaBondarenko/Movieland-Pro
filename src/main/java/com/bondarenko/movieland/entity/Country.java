@@ -14,7 +14,6 @@ import lombok.Setter;
 @Table(name = "countries")
 public class Country {
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private Long id;
 

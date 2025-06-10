@@ -9,11 +9,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Supplier;
 
 @Slf4j
-public class CustomCache<T> {
+public class Cache<T> {
     private final Set<T> cache = new CopyOnWriteArraySet<>();
     private final Supplier<List<T>> dbFetcher;
 
-    public CustomCache(Supplier<List<T>> dbFetcher) {
+    public Cache(Supplier<List<T>> dbFetcher) {
         this.dbFetcher = dbFetcher;
     }
 

@@ -34,7 +34,7 @@ components:
         poster:
           type: string
 
-    ResponseGenre:
+    GenreDTO:
       type: object
       properties:
         id:
@@ -44,6 +44,18 @@ components:
         name:
           type: string
           description: Genre name
+
+    CountryDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique countrie identifier
+        name:
+          type: string
+          description: Countries name
+
     MovieSortCriteria:
       type: object
       properties:
@@ -55,6 +67,7 @@ components:
           type: string
           description: Sort direction for price (optional).
           enum: [ "ASC", "DESC" ]
+
     MovieRequest:
       type: object
       properties:
@@ -83,18 +96,16 @@ components:
           description: URL to the movie's picture
         countries:
           type: array
-          items:
-            type: integer
-            format: int64
           uniqueItems: true
-          description: List of country IDs
+          items:
+            $ref: '#/components/schemas/CountryDTO'
+          description: Set of countries (only genre names)
         genres:
           type: array
-          items:
-            type: integer
-            format: int64
           uniqueItems: true
-          description: List of genre IDs
+          items:
+            $ref: '#/components/schemas/GenreDTO'
+          description: Set of genres (only genre names)
 
     ResponseFullMovie:
       type: object
@@ -122,25 +133,15 @@ components:
         genres:
           type: array
           items:
-            $ref: '#/components/schemas/ResponseGenre'
+            $ref: '#/components/schemas/GenreDTO'
         countries:
           type: array
           items:
-            $ref: '#/components/schemas/ResponseCountry'
+            $ref: '#/components/schemas/CountryDTO'
         reviews:
           type: array
           items:
             $ref: '#/components/schemas/ResponseReview'
-    ResponseCountry:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-          description: Unique country identifier
-        name:
-          type: string
-          description: Country name
 
     ResponseReview:
       type: object
@@ -488,7 +489,7 @@ paths:
                 type: array
                 uniqueItems: true
                 items:
-                  $ref: '#/components/schemas/ResponseGenre'
+                  $ref: '#/components/schemas/GenreDTO'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

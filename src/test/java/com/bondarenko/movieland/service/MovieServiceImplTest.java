@@ -12,10 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -206,17 +203,17 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(123.45, fullMovie.getPrice(), 0.001);
         assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg", fullMovie.getPicturePath());
 
-        List<ResponseGenre> genres = fullMovie.getGenres();
+        List<GenreDTO> genres = fullMovie.getGenres();
         assertNotNull(genres);
         assertEquals(1, genres.size());
-        ResponseGenre genre = genres.get(0);
+        GenreDTO genre = genres.get(0);
         assertEquals(1, genre.getId());
         assertEquals("драма", genre.getName());
 
-        List<ResponseCountry> countries = fullMovie.getCountries();
+        List<CountryDTO> countries = fullMovie.getCountries();
         assertNotNull(countries);
         assertEquals(1, countries.size());
-        ResponseCountry country = countries.get(0);
+        CountryDTO country = countries.get(0);
         assertEquals(1, country.getId());
         assertEquals("США", country.getName());
 
@@ -276,8 +273,38 @@ class MovieServiceImplTest extends AbstractITest {
         movieRequest.setPrice(123.45);
         movieRequest.setRating(9.5);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        movieRequest.setCountries(new HashSet<>(Arrays.asList(1L, 2L)));
-        movieRequest.setGenres(new HashSet<>(Arrays.asList(1L, 2L, 3L)));
+
+        Set<CountryDTO> countries = new HashSet<>();
+        CountryDTO firstCountry = new CountryDTO();
+        firstCountry.setId(1L);
+        firstCountry.setName("США");
+        countries.add(firstCountry);
+
+        CountryDTO secondCountry = new CountryDTO();
+        secondCountry.setId(2L);
+        secondCountry.setName("Франція");
+        countries.add(secondCountry);
+
+        movieRequest.setCountries(countries);
+
+        Set<GenreDTO> genres = new HashSet<>();
+
+        GenreDTO firstGenre = new GenreDTO();
+        firstGenre.setId(1L);
+        firstGenre.setName("Драма");
+        genres.add(firstGenre);
+
+        GenreDTO secondGenre = new GenreDTO();
+        secondGenre.setId(2L);
+        secondGenre.setName("Кримінал");
+        genres.add(secondGenre);
+
+        GenreDTO thirdGenre = new GenreDTO();
+        thirdGenre.setId(3L);
+        thirdGenre.setName("Фентезі");
+        genres.add(thirdGenre);
+
+        movieRequest.setGenres(genres);
         return movieRequest;
     }
 

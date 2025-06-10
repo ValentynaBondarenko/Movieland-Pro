@@ -13,7 +13,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CountryCache {
     private final CountryRepository countryRepository;
-    private CustomCache<Country> countryCache;
+    private Cache<Country> countryCache;
 
     public Set<Country> getCountries() {
         return countryCache.getAll();
@@ -21,7 +21,7 @@ public class CountryCache {
 
     @PostConstruct
     private void init() {
-        countryCache = new CustomCache<>(countryRepository::findAll);
+        countryCache = new Cache<>(countryRepository::findAll);
         countryCache.refresh();
     }
 
