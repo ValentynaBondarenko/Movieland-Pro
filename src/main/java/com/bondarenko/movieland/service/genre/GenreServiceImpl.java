@@ -24,7 +24,7 @@ public class GenreServiceImpl implements GenreService {
     public Set<ResponseGenre> getAll() {
         return Optional.of(genreCache.getGenres())
                 .map(genreMapper::toGenreResponse)
-                .orElseThrow(GenreNotFoundException::new);
+                .orElseThrow(() -> new GenreNotFoundException("Can't find genre"));
     }
 
     @Override
