@@ -14,7 +14,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class GenreCache {
     private final GenreRepository genreRepository;
-    private CustomCache<Genre> genreCache;
+    private Cache<Genre> genreCache;
 
     public Set<Genre> getGenres() {
         return genreCache.getAll();
@@ -22,7 +22,7 @@ public class GenreCache {
 
     @PostConstruct
     private void init() {
-        genreCache = new CustomCache<>(genreRepository::findAll);
+        genreCache = new Cache<>(genreRepository::findAll);
         genreCache.refresh();
     }
 

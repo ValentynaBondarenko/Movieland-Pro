@@ -1,9 +1,6 @@
 package com.bondarenko.movieland.controller;
 
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -172,8 +170,38 @@ class MovieControllerTest {
         movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
         movieRequest.setPrice(123.45);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        movieRequest.setCountries(new HashSet<>(Arrays.asList(1L, 2L)));
-        movieRequest.setGenres(new HashSet<>(Arrays.asList(1L, 2L, 3L)));
+
+        Set<CountryDTO> countries = new HashSet<>();
+        CountryDTO firstCountry = new CountryDTO();
+        firstCountry.setId(1L);
+        firstCountry.setName("США");
+        countries.add(firstCountry);
+
+        CountryDTO secondCountry = new CountryDTO();
+        secondCountry.setId(2L);
+        secondCountry.setName("Франція");
+        countries.add(secondCountry);
+
+        movieRequest.setCountries(countries);
+
+        Set<GenreDTO> genres = new HashSet<>();
+
+        GenreDTO firstGenre = new GenreDTO();
+        firstGenre.setId(1L);
+        firstGenre.setName("Драма");
+        genres.add(firstGenre);
+
+        GenreDTO secondGenre = new GenreDTO();
+        secondGenre.setId(2L);
+        secondGenre.setName("Кримінал");
+        genres.add(secondGenre);
+
+        GenreDTO thirdGenre = new GenreDTO();
+        thirdGenre.setId(3L);
+        thirdGenre.setName("Фентезі");
+        genres.add(thirdGenre);
+
+        movieRequest.setGenres(genres);
         return movieRequest;
     }
 

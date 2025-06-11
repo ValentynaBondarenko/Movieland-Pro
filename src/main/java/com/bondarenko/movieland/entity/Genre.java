@@ -12,11 +12,11 @@ import lombok.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Genre {
     @Id
-    @GeneratedValue
     @Column(name = "id")
     @EqualsAndHashCode.Include
     private Long id;
 
+    @EqualsAndHashCode.Include
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 

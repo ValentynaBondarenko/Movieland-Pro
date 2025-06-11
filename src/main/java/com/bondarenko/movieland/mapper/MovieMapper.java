@@ -3,8 +3,8 @@ package com.bondarenko.movieland.mapper;
 import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.ResponseFullMovie;
 import com.bondarenko.movieland.api.model.ResponseMovie;
-import com.bondarenko.movieland.api.model.ResponseGenre;
-import com.bondarenko.movieland.api.model.ResponseCountry;
+import com.bondarenko.movieland.api.model.GenreDTO;
+import com.bondarenko.movieland.api.model.CountryDTO;
 import com.bondarenko.movieland.api.model.ResponseUser;
 import com.bondarenko.movieland.api.model.ResponseReview;
 import com.bondarenko.movieland.entity.Movie;
@@ -51,17 +51,17 @@ public interface MovieMapper {
 
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
-    List<ResponseGenre> mapGenres(Set<Genre> genres);
+    List<GenreDTO> mapGenres(Set<Genre> genres);
 
     @Named("mapGenre")
-    ResponseGenre mapGenre(Genre genre);
+    GenreDTO mapGenre(Genre genre);
 
     @Named("mapCountries")
     @IterableMapping(qualifiedByName = "mapCountry")
-    List<ResponseCountry> mapCountries(Set<Country> countries);
+    List<CountryDTO> mapCountries(Set<Country> countries);
 
     @Named("mapCountry")
-    ResponseCountry mapCountry(Country country);
+    CountryDTO mapCountry(Country country);
 
     @Named("mapUsers")
     @IterableMapping(qualifiedByName = "mapUser")

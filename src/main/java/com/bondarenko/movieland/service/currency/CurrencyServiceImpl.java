@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CurrencyServiceImpl implements CurrencyService {
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
     private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
@@ -56,12 +57,16 @@ public class CurrencyServiceImpl implements CurrencyService {
     @PostConstruct
     void updateCurrencyCache() {
         log.info("Initializing currency cache...");
-        //rest template, web client
-        ResponseEntity<CurrencyExchangeDto[]> response = restTemplate.getForEntity(exchangeApiUrl, CurrencyExchangeDto[].class);
+        //rest template, web client, rest client
+        CurrencyExchangeDto[] response = restClient
+                .get()
+                .uri(exchangeApiUrl)
+                .retrieve()
+                .body(CurrencyExchangeDto[].class);
 
-        CurrencyExchangeDto[] currencyExchanges = Optional.ofNullable(response.getBody())
+        CurrencyExchangeDto[] currencyExchanges = Optional.ofNullable(response)
                 .orElseThrow(() -> {
-                    log.error("Currency API response was empty. Currency cache not updated.");
+                    log.warn("Currency API response was empty. Currency cache not updated.");
                     return new RuntimeException("Currency API returned null body.");
                 });
 

@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.controller;
 
-import com.bondarenko.movieland.api.model.ResponseGenre;
+import com.bondarenko.movieland.api.model.GenreDTO;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.genre.GenreService;
 import org.junit.jupiter.api.Test;
@@ -48,12 +48,12 @@ class GenreControllerTest {
         verify(genreService).getAll();
     }
 
-    private Set<ResponseGenre> getMockGenres() {
-        ResponseGenre melodrama = new ResponseGenre();
+    private Set<GenreDTO> getMockGenres() {
+        GenreDTO melodrama = new GenreDTO();
         melodrama.setId(1L);
         melodrama.setName("Мелодрама");
 
-        ResponseGenre drama = new ResponseGenre();
+        GenreDTO drama = new GenreDTO();
         drama.setId(2L);
         drama.setName("Драма");
 
