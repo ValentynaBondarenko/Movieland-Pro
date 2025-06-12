@@ -2,9 +2,9 @@ package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.MovieApi;
 import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.api.model.FullMovieResponse;
+import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.service.movie.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,31 +37,31 @@ public class MovieController implements MovieApi {
     }
 
     @Override
-    public ResponseEntity<List<ResponseMovie>> findAllMovies(MovieSortCriteria movieSortCriteria) {
+    public ResponseEntity<List<MovieResponse>> findAllMovies(MovieSortRequest MovieSortRequest) {
         log.info("Received request to find all movies ");
-        List<ResponseMovie> response = movieService.findAll(movieSortCriteria);
+        List<MovieResponse> response = movieService.findAll(MovieSortRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<ResponseFullMovie> getMovieById(Long movieId, String currency) {
+    public ResponseEntity<FullMovieResponse> getMovieById(Long movieId, String currency) {
 
         log.info("Received request to get movie by id: {}. And currency: {} .", movieId, currency);
-        ResponseFullMovie fullMovie = movieService.getMovieById(movieId, currency);
+        FullMovieResponse fullMovie = movieService.getMovieById(movieId, currency);
         return ResponseEntity.ok(fullMovie);
     }
 
     @Override
-    public ResponseEntity<List<ResponseMovie>> getMoviesByGenre(Long genreId) {
+    public ResponseEntity<List<MovieResponse>> getMoviesByGenre(Long genreId) {
         log.info("Received request to find movies by genre with id: {}.", genreId);
-        List<ResponseMovie> movies = movieService.getMoviesByGenre(genreId);
+        List<MovieResponse> movies = movieService.getMoviesByGenre(genreId);
         return ResponseEntity.ok(movies);
     }
 
     @Override
-    public ResponseEntity<List<ResponseMovie>> getRandomMovies() {
+    public ResponseEntity<List<MovieResponse>> getRandomMovies() {
         log.info("Received request to find random movies.");
-        List<ResponseMovie> response = movieService.getRandomMovies();
+        List<MovieResponse> response = movieService.getRandomMovies();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

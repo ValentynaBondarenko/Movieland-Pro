@@ -33,13 +33,13 @@ class MovieServiceImplTest extends AbstractITest {
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMovies() {
 
-        List<ResponseMovie> movies = movieService.findAll(null);
+        List<MovieResponse> movies = movieService.findAll(null);
 
         assertNotNull(movies);
 
         assertEquals(25, movies.size());
-        ResponseMovie firstMovie = movies.get(0);
-        ResponseMovie testMovie = testDTO();
+        MovieResponse firstMovie = movies.get(0);
+        MovieResponse testMovie = testDTO();
         assertEquals(testMovie.getId(), firstMovie.getId());
         assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
         assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
@@ -50,7 +50,7 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "/datasets/movie/dataset_movies.yml")
     void testRandomMovies() {
-        List<ResponseMovie> movies = movieService.getRandomMovies();
+        List<MovieResponse> movies = movieService.getRandomMovies();
 
         assertNotNull(movies);
         assertEquals(3, movies.size());
@@ -72,7 +72,7 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMoviesByGenre() {
         Long genreId = 1L;
-        List<ResponseMovie> moviesByGenre = movieService.getMoviesByGenre(genreId);
+        List<MovieResponse> moviesByGenre = movieService.getMoviesByGenre(genreId);
 
         assertNotNull(moviesByGenre);
         assertEquals(1, moviesByGenre.size());
@@ -95,21 +95,21 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllWithSortingDescendingByAscendingRating() {
         //prepare
-        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
                 .priceDirection(null)
-                .ratingDirection(MovieSortCriteria.RatingDirectionEnum.ASC);
+                .ratingDirection(MovieSortRequest.RatingDirectionEnum.ASC);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
+        List<MovieResponse> allMoviesWithSorting = movieService.findAll(movieSortRequest);
 
         //then
         assertNotNull(allMoviesWithSorting);
         assertEquals(25, allMoviesWithSorting.size());
 
-        ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
+        MovieResponse movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(7.6, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
 
-        ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
+        MovieResponse movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(8.9, Optional.ofNullable(movieDtoLast.getRating()).orElse(0.0), 0.001);
 
         DataSourceListener.assertSelectCount(1);
@@ -119,21 +119,21 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllWithSortingDescendingByDESCRating() {
         //prepare
-        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
                 .priceDirection(null)
-                .ratingDirection(MovieSortCriteria.RatingDirectionEnum.DESC);
+                .ratingDirection(MovieSortRequest.RatingDirectionEnum.DESC);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
+        List<MovieResponse> allMoviesWithSorting = movieService.findAll(movieSortRequest);
 
         //then
         assertNotNull(allMoviesWithSorting);
         assertEquals( 25, allMoviesWithSorting.size());
 
-        ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
+        MovieResponse movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(8.9, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
 
-        ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
+        MovieResponse movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(7.6, Optional.ofNullable(movieDtoLast.getRating()).orElse(0.0), 0.001);
 
         DataSourceListener.assertSelectCount(1);
@@ -143,21 +143,21 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByDESCPrice() {
         //prepare
-        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
-                .priceDirection(MovieSortCriteria.PriceDirectionEnum.DESC)
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
+                .priceDirection(MovieSortRequest.PriceDirectionEnum.DESC)
                 .ratingDirection(null);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
+        List<MovieResponse> allMoviesWithSorting = movieService.findAll(movieSortRequest);
 
         //then
         assertNotNull(allMoviesWithSorting);
         assertEquals(25, allMoviesWithSorting.size());
 
-        ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
+        MovieResponse movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(200.6, Optional.ofNullable(movieDtoFirst.getPrice()).orElse(0.0), 0.001);
 
-        ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
+        MovieResponse movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(100.0, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
 
         DataSourceListener.assertSelectCount(1);
@@ -167,21 +167,21 @@ class MovieServiceImplTest extends AbstractITest {
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testFindAllMoviesWithSortingDescendingByASCPrice() {
         //prepare
-        MovieSortCriteria movieSortCriteria = new MovieSortCriteria()
-                .priceDirection(MovieSortCriteria.PriceDirectionEnum.ASC)
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
+                .priceDirection(MovieSortRequest.PriceDirectionEnum.ASC)
                 .ratingDirection(null);
 
         //when
-        List<ResponseMovie> allMoviesWithSorting = movieService.findAll(movieSortCriteria);
+        List<MovieResponse> allMoviesWithSorting = movieService.findAll(movieSortRequest);
 
         //then
         assertNotNull(allMoviesWithSorting);
         assertEquals(25, allMoviesWithSorting.size());
 
-        ResponseMovie movieDtoFirst = allMoviesWithSorting.get(0);
+        MovieResponse movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(100.0, Optional.ofNullable(movieDtoFirst.getPrice()).orElse(0.0), 0.001);
 
-        ResponseMovie movieDtoLast = allMoviesWithSorting.get(24);
+        MovieResponse movieDtoLast = allMoviesWithSorting.get(24);
         assertEquals(200.6, Optional.ofNullable(movieDtoLast.getPrice()).orElse(0.0), 0.001);
 
         DataSourceListener.assertSelectCount(1);
@@ -190,7 +190,7 @@ class MovieServiceImplTest extends AbstractITest {
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
-        ResponseFullMovie fullMovie = movieService.getMovieById(1L, null);
+        FullMovieResponse fullMovie = movieService.getMovieById(1L, null);
 
         assertNotNull(fullMovie);
 
@@ -203,35 +203,35 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(123.45, fullMovie.getPrice(), 0.001);
         assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg", fullMovie.getPicturePath());
 
-        List<GenreDTO> genres = fullMovie.getGenres();
+        List<GenreResponse> genres = fullMovie.getGenres();
         assertNotNull(genres);
         assertEquals(1, genres.size());
-        GenreDTO genre = genres.get(0);
+        GenreResponse genre = genres.get(0);
         assertEquals(1, genre.getId());
         assertEquals("драма", genre.getName());
 
-        List<CountryDTO> countries = fullMovie.getCountries();
+        List<CountryResponse> countries = fullMovie.getCountries();
         assertNotNull(countries);
         assertEquals(1, countries.size());
-        CountryDTO country = countries.get(0);
+        CountryResponse country = countries.get(0);
         assertEquals(1, country.getId());
         assertEquals("США", country.getName());
 
-        List<ResponseReview> reviews = fullMovie.getReviews();
+        List<ReviewResponse> reviews = fullMovie.getReviews();
         assertNotNull(reviews);
         assertEquals(2, reviews.size());
 
-        ResponseReview review1 = reviews.get(0);
+        ReviewResponse review1 = reviews.get(0);
         assertEquals(1, review1.getId());
-        ResponseUser user1 = review1.getUser();
+        UserResponse user1 = review1.getUser();
         assertNotNull(user1);
         assertEquals(1, user1.getId());
         assertEquals("Дарлін Едвардс", user1.getNickname());
         assertEquals("Геніальний фільм! Дивишся і думаєш «Так не буває!», але пізніше розумієш, що саме так і має бути. Починаєш знову осмислювати значення фрази, яку постійно використовуєш у своєму житті, «Надія помирає останньою». Адже якщо ти не надієшся, то все в твоєму житті гасне, не залишається сенсу. Фільм наповнений безліччю правильних афоризмів. Я впевнена, що буду переглядати його сотні разів.", review1.getText());
 
-        ResponseReview review2 = reviews.get(1);
+        ReviewResponse review2 = reviews.get(1);
         assertEquals(2, review2.getId());
-        ResponseUser user2 = review2.getUser();
+        UserResponse user2 = review2.getUser();
         assertNotNull(user2);
         assertEquals(2, user2.getId());
         assertEquals("Габріель Джексон", user2.getNickname());
@@ -274,32 +274,32 @@ class MovieServiceImplTest extends AbstractITest {
         movieRequest.setRating(9.5);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
 
-        Set<CountryDTO> countries = new HashSet<>();
-        CountryDTO firstCountry = new CountryDTO();
+        Set<CountryResponse> countries = new HashSet<>();
+        CountryResponse firstCountry = new CountryResponse();
         firstCountry.setId(1L);
         firstCountry.setName("США");
         countries.add(firstCountry);
 
-        CountryDTO secondCountry = new CountryDTO();
+        CountryResponse secondCountry = new CountryResponse();
         secondCountry.setId(2L);
         secondCountry.setName("Франція");
         countries.add(secondCountry);
 
         movieRequest.setCountries(countries);
 
-        Set<GenreDTO> genres = new HashSet<>();
+        Set<GenreResponse> genres = new HashSet<>();
 
-        GenreDTO firstGenre = new GenreDTO();
+        GenreResponse firstGenre = new GenreResponse();
         firstGenre.setId(1L);
         firstGenre.setName("Драма");
         genres.add(firstGenre);
 
-        GenreDTO secondGenre = new GenreDTO();
+        GenreResponse secondGenre = new GenreResponse();
         secondGenre.setId(2L);
         secondGenre.setName("Кримінал");
         genres.add(secondGenre);
 
-        GenreDTO thirdGenre = new GenreDTO();
+        GenreResponse thirdGenre = new GenreResponse();
         thirdGenre.setId(3L);
         thirdGenre.setName("Фентезі");
         genres.add(thirdGenre);
@@ -308,8 +308,8 @@ class MovieServiceImplTest extends AbstractITest {
         return movieRequest;
     }
 
-    private ResponseMovie testDTO() {
-        ResponseMovie movieDTO = new ResponseMovie();
+    private MovieResponse testDTO() {
+        MovieResponse movieDTO = new MovieResponse();
         movieDTO.setId(1L);
         movieDTO.setNameUkrainian("Втеча з Шоушенка");
         movieDTO.setNameNative("The Shawshank Redemption");

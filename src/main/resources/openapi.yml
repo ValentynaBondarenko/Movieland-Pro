@@ -10,7 +10,7 @@ servers:
 
 components:
   schemas:
-    ResponseMovie:
+    MovieResponse:
       type: object
       properties:
         id:
@@ -34,7 +34,7 @@ components:
         poster:
           type: string
 
-    GenreDTO:
+    GenreResponse:
       type: object
       properties:
         id:
@@ -45,7 +45,7 @@ components:
           type: string
           description: Genre name
 
-    CountryDTO:
+    CountryResponse:
       type: object
       properties:
         id:
@@ -56,7 +56,7 @@ components:
           type: string
           description: Countries name
 
-    MovieSortCriteria:
+    MovieSortRequest:
       type: object
       properties:
         ratingDirection:
@@ -98,16 +98,16 @@ components:
           type: array
           uniqueItems: true
           items:
-            $ref: '#/components/schemas/CountryDTO'
+            $ref: '#/components/schemas/CountryResponse'
           description: Set of countries (only genre names)
         genres:
           type: array
           uniqueItems: true
           items:
-            $ref: '#/components/schemas/GenreDTO'
+            $ref: '#/components/schemas/GenreResponse'
           description: Set of genres (only genre names)
 
-    ResponseFullMovie:
+    FullMovieResponse:
       type: object
       properties:
         id:
@@ -133,17 +133,17 @@ components:
         genres:
           type: array
           items:
-            $ref: '#/components/schemas/GenreDTO'
+            $ref: '#/components/schemas/GenreResponse'
         countries:
           type: array
           items:
-            $ref: '#/components/schemas/CountryDTO'
+            $ref: '#/components/schemas/CountryResponse'
         reviews:
           type: array
           items:
-            $ref: '#/components/schemas/ResponseReview'
+            $ref: '#/components/schemas/ReviewResponse'
 
-    ResponseReview:
+    ReviewResponse:
       type: object
       properties:
         id:
@@ -151,12 +151,12 @@ components:
           format: int64
           description: Unique review identifier
         user:
-          $ref: '#/components/schemas/ResponseUser'
+          $ref: '#/components/schemas/UserResponse'
         text:
           type: string
           description: Review text
 
-    ResponseUser:
+    UserResponse:
       type: object
       properties:
         id:
@@ -294,11 +294,11 @@ paths:
       tags:
         - Movie
       parameters:
-        - name: movieSortCriteria
+        - name: MovieSortRequest
           in: query
           description: Sort criteria for movies (optional).
           schema:
-            $ref: '#/components/schemas/MovieSortCriteria'
+            $ref: '#/components/schemas/MovieSortRequest'
           required: false
       responses:
         '200':
@@ -308,7 +308,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseMovie'
+                  $ref: '#/components/schemas/MovieResponse'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -360,7 +360,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseMovie'
+                  $ref: '#/components/schemas/MovieResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -396,7 +396,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseMovie'
+                  $ref: '#/components/schemas/MovieResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -436,7 +436,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseFullMovie'
+                $ref: '#/components/schemas/FullMovieResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -489,7 +489,7 @@ paths:
                 type: array
                 uniqueItems: true
                 items:
-                  $ref: '#/components/schemas/GenreDTO'
+                  $ref: '#/components/schemas/GenreResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

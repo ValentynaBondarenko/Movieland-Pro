@@ -108,14 +108,14 @@ class MovieControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnAllMovies() throws Exception {
-        List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
+        List<MovieResponse> mockResponse = List.of(new MovieResponse());
         when(movieService.findAll(any())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/movie"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(movieService).findAll(any(MovieSortCriteria.class));
+        verify(movieService).findAll(any(MovieSortRequest.class));
     }
 
     @Test
@@ -124,8 +124,8 @@ class MovieControllerTest {
         Long movieId = 1L;
         String currency = "USD";
 
-        ResponseFullMovie responseMovie = new ResponseFullMovie();
-        when(movieService.getMovieById(movieId, currency)).thenReturn(responseMovie);
+        FullMovieResponse MovieResponse = new FullMovieResponse();
+        when(movieService.getMovieById(movieId, currency)).thenReturn(MovieResponse);
 
         mockMvc.perform(get("/api/v1/movie/{id}", movieId)
                         .param("currency", currency))
@@ -139,7 +139,7 @@ class MovieControllerTest {
     @WithMockUser(roles = "USER")
     void shouldReturnMoviesByGenre() throws Exception {
         Long genreId = 5L;
-        List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
+        List<MovieResponse> mockResponse = List.of(new MovieResponse());
         when(movieService.getMoviesByGenre(genreId)).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/movie/genre/{id}", genreId))
@@ -152,7 +152,7 @@ class MovieControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnRandomMovies() throws Exception {
-        List<ResponseMovie> mockResponse = List.of(new ResponseMovie());
+        List<MovieResponse> mockResponse = List.of(new MovieResponse());
         when(movieService.getRandomMovies()).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/movie/random"))
@@ -171,32 +171,32 @@ class MovieControllerTest {
         movieRequest.setPrice(123.45);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
 
-        Set<CountryDTO> countries = new HashSet<>();
-        CountryDTO firstCountry = new CountryDTO();
+        Set<CountryResponse> countries = new HashSet<>();
+        CountryResponse firstCountry = new CountryResponse();
         firstCountry.setId(1L);
         firstCountry.setName("США");
         countries.add(firstCountry);
 
-        CountryDTO secondCountry = new CountryDTO();
+        CountryResponse secondCountry = new CountryResponse();
         secondCountry.setId(2L);
         secondCountry.setName("Франція");
         countries.add(secondCountry);
 
         movieRequest.setCountries(countries);
 
-        Set<GenreDTO> genres = new HashSet<>();
+        Set<GenreResponse> genres = new HashSet<>();
 
-        GenreDTO firstGenre = new GenreDTO();
+        GenreResponse firstGenre = new GenreResponse();
         firstGenre.setId(1L);
         firstGenre.setName("Драма");
         genres.add(firstGenre);
 
-        GenreDTO secondGenre = new GenreDTO();
+        GenreResponse secondGenre = new GenreResponse();
         secondGenre.setId(2L);
         secondGenre.setName("Кримінал");
         genres.add(secondGenre);
 
-        GenreDTO thirdGenre = new GenreDTO();
+        GenreResponse thirdGenre = new GenreResponse();
         thirdGenre.setId(3L);
         thirdGenre.setName("Фентезі");
         genres.add(thirdGenre);

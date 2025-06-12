@@ -1,9 +1,9 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.api.model.FullMovieResponse;
+import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
@@ -36,10 +36,10 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public List<ResponseMovie> findAll(MovieSortCriteria movieSortCriteria) {
+    public List<MovieResponse> findAll(MovieSortRequest MovieSortRequest) {
         List<Movie> movies;
-        if (movieSortCriteria != null) {
-            Sort sort = buildSort(movieSortCriteria);
+        if (MovieSortRequest != null) {
+            Sort sort = buildSort(MovieSortRequest);
             movies = movieRepository.findAll(sort);
         } else {
             movies = movieRepository.findAll();
@@ -49,21 +49,21 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public List<ResponseMovie> getRandomMovies() {
+    public List<MovieResponse> getRandomMovies() {
         List<Movie> randomMovies = movieRepository.findRandomMovies(limit);
         log.info("Random movies count: {}", randomMovies.size());
         return movieMapper.toMovieResponse(randomMovies);
     }
 
     @Override
-    public List<ResponseMovie> getMoviesByGenre(Long genreId) {
+    public List<MovieResponse> getMoviesByGenre(Long genreId) {
         List<Movie> movies = movieRepository.findByGenresId(genreId);
         return movieMapper.toMovieResponse(movies);
     }
 
     @Override
     @Transactional
-    public ResponseFullMovie getMovieById(Long movieId, String currency) {
+    public FullMovieResponse getMovieById(Long movieId, String currency) {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
@@ -84,7 +84,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public ResponseFullMovie updateMovie(Long id, MovieRequest movieRequest) {
+    public FullMovieResponse updateMovie(Long id, MovieRequest movieRequest) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", id)));
 
@@ -95,14 +95,14 @@ public class MovieServiceImpl implements MovieService {
 
         movieRepository.save(movie);
 
-        ResponseFullMovie response = movieMapper.toMovieResponse(movie);
+        FullMovieResponse response = movieMapper.toMovieResponse(movie);
         log.info("Successfully updated movie id {} to the database", movie.getId());
         return response;
     }
 
-    private Sort buildSort(MovieSortCriteria movieSortCriteria) {
-        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortCriteria.getRatingDirection()));
-        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortCriteria.getPriceDirection()));
+    private Sort buildSort(MovieSortRequest MovieSortRequest) {
+        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(MovieSortRequest.getRatingDirection()));
+        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(MovieSortRequest.getPriceDirection()));
 
         if (ratingDirection.isPresent()) {
             return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
@@ -112,11 +112,11 @@ public class MovieServiceImpl implements MovieService {
         return Sort.unsorted();
     }
 
-    private Sort.Direction convertRatingDirection(MovieSortCriteria.RatingDirectionEnum ratingDirection) {
+    private Sort.Direction convertRatingDirection(MovieSortRequest.RatingDirectionEnum ratingDirection) {
         return (ratingDirection == null) ? null : Sort.Direction.valueOf(ratingDirection.getValue());
     }
 
-    private Sort.Direction convertPriceDirection(MovieSortCriteria.PriceDirectionEnum priceDirection) {
+    private Sort.Direction convertPriceDirection(MovieSortRequest.PriceDirectionEnum priceDirection) {
         return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
     }
 

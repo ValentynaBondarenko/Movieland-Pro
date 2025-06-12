@@ -1,12 +1,12 @@
 package com.bondarenko.movieland.mapper;
 
 import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
-import com.bondarenko.movieland.api.model.GenreDTO;
-import com.bondarenko.movieland.api.model.CountryDTO;
-import com.bondarenko.movieland.api.model.ResponseUser;
-import com.bondarenko.movieland.api.model.ResponseReview;
+import com.bondarenko.movieland.api.model.FullMovieResponse;
+import com.bondarenko.movieland.api.model.MovieResponse;
+import com.bondarenko.movieland.api.model.GenreResponse;
+import com.bondarenko.movieland.api.model.CountryResponse;
+import com.bondarenko.movieland.api.model.UserResponse;
+import com.bondarenko.movieland.api.model.ReviewResponse;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.entity.Country;
@@ -30,11 +30,11 @@ public interface MovieMapper {
     @Mapping(target = "picturePath", ignore = true)
     @Mapping(target = "rating", ignore = true)
     @Mapping(target = "reviews", ignore = true)
-    List<ResponseMovie> toMovieResponse(List<Movie> movies);
+    List<MovieResponse> toMovieResponse(List<Movie> movies);
 
     @Mapping(target = "reviews", ignore = true)
     @Mapping(source = "poster", target = "picturePath")
-    ResponseFullMovie toMovieResponse(Movie movies);
+    FullMovieResponse toMovieResponse(Movie movies);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "poster", source = "picturePath")
@@ -47,33 +47,33 @@ public interface MovieMapper {
     @Mapping(target = "genres", qualifiedByName = "mapGenres")
     @Mapping(target = "countries", qualifiedByName = "mapCountries")
     @Mapping(target = "reviews", qualifiedByName = "mapReviews")
-    ResponseFullMovie toFullMovie(Movie movie);
+    FullMovieResponse toFullMovie(Movie movie);
 
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
-    List<GenreDTO> mapGenres(Set<Genre> genres);
+    List<GenreResponse> mapGenres(Set<Genre> genres);
 
     @Named("mapGenre")
-    GenreDTO mapGenre(Genre genre);
+    GenreResponse mapGenre(Genre genre);
 
     @Named("mapCountries")
     @IterableMapping(qualifiedByName = "mapCountry")
-    List<CountryDTO> mapCountries(Set<Country> countries);
+    List<CountryResponse> mapCountries(Set<Country> countries);
 
     @Named("mapCountry")
-    CountryDTO mapCountry(Country country);
+    CountryResponse mapCountry(Country country);
 
     @Named("mapUsers")
     @IterableMapping(qualifiedByName = "mapUser")
-    List<ResponseUser> mapUsers(List<User> users);
+    List<UserResponse> mapUsers(List<User> users);
 
     @Named("mapUser")
-    ResponseUser mapUser(User user);
+    UserResponse mapUser(User user);
 
     @Named("mapReviews")
     @IterableMapping(qualifiedByName = "mapReview")
-    List<ResponseReview> mapReviews(List<Review> reviews);
+    List<ReviewResponse> mapReviews(List<Review> reviews);
 
     @Named("mapReview")
-    ResponseReview mapReview(Review review);
+    ReviewResponse mapReview(Review review);
 }

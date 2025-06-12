@@ -1,22 +1,22 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.MovieSortCriteria;
-import com.bondarenko.movieland.api.model.ResponseFullMovie;
-import com.bondarenko.movieland.api.model.ResponseMovie;
+import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.api.model.FullMovieResponse;
+import com.bondarenko.movieland.api.model.MovieResponse;
 
 import java.util.List;
 
 public interface MovieService {
-    List<ResponseMovie> findAll(MovieSortCriteria movieSortCriteria);
+    List<MovieResponse> findAll(MovieSortRequest MovieSortRequest);
 
-    List<ResponseMovie> getRandomMovies();
+    List<MovieResponse> getRandomMovies();
 
-    List<ResponseMovie> getMoviesByGenre(Long genreId);
+    List<MovieResponse> getMoviesByGenre(Long genreId);
 
     void saveMovie(MovieRequest movieRequest);
 
-    ResponseFullMovie updateMovie(Long id, MovieRequest movieRequest);
+    FullMovieResponse updateMovie(Long id, MovieRequest movieRequest);
 
-    ResponseFullMovie getMovieById(Long movieId, String currency);
+    FullMovieResponse getMovieById(Long movieId, String currency);
 }
