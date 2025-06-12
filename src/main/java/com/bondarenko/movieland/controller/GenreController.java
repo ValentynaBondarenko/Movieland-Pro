@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.GenreApi;
-import com.bondarenko.movieland.api.model.GenreDTO;
+import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.service.genre.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,9 @@ public class GenreController implements GenreApi {
     private final GenreService genreService;
 
     @Override
-    public ResponseEntity<Set<GenreDTO>> findAllGenres() {
+    public ResponseEntity<Set<GenreResponse>> findAllGenres() {
         log.info("Received request to find all genres.");
-        Set<GenreDTO> response = genreService.getAll();
+        Set<GenreResponse> response = genreService.getAll();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.enrichment;
 
-import com.bondarenko.movieland.api.model.CountryDTO;
-import com.bondarenko.movieland.api.model.GenreDTO;
+import com.bondarenko.movieland.api.model.CountryResponse;
+import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.entity.Country;
 import com.bondarenko.movieland.entity.Genre;
@@ -23,12 +23,12 @@ public class EnrichmentServiceImpl implements EnrichmentService {
     @Override
     public Movie enrichMovie(Movie movie, MovieRequest movieRequest) {
         Set<Long> genreIds = movieRequest.getGenres().stream()
-                .map(GenreDTO::getId)
+                .map(GenreResponse::getId)
                 .collect(Collectors.toSet());
         Set<Genre> genres = genreService.findByIdIn(genreIds);
 
         Set<Long> countryIds = movieRequest.getCountries().stream()
-                .map(CountryDTO::getId)
+                .map(CountryResponse::getId)
                 .collect(Collectors.toSet());
         Set<Country> countries = countryService.findByIdIn(countryIds);
 

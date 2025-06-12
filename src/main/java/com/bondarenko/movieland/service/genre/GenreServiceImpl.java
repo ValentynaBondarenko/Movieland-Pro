@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.service.genre;
 
-import com.bondarenko.movieland.api.model.GenreDTO;
+import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.exception.GenreNotFoundException;
 import com.bondarenko.movieland.mapper.GenreMapper;
@@ -21,7 +21,7 @@ public class GenreServiceImpl implements GenreService {
     private final GenreMapper genreMapper;
 
     @Override
-    public Set<GenreDTO> getAll() {
+    public Set<GenreResponse> getAll() {
         return Optional.of(genreCache.getGenres())
                 .map(genreMapper::toGenreResponse)
                 .orElseThrow(() -> new GenreNotFoundException("Can't find genre"));
