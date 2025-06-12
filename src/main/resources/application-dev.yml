@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:8200/movieland?characterEncoding=UTF-8
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  main:
+    banner-mode: off
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
+    contexts: dev
+  jpa:
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+liquibase:
+  change-log: classpath:changelog.xml
+  outputEncoding: UTF-8
+  enabled: true
+
+logging:
+  config: classpath:logback.xml
+  level:
+    liquibase: INFO
+
+movieland:
+  movie:
+    random:
+      limit: 3
+  cache:
+    update:
+      interval: ${CACHE_UPDATE:14400000} # updated every 4 hours
+exchange:
+  api:
+    url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
+  scheduled:
+    cron: 0 0 0  * * ? #update every day at 00:00
+  zone: Europe/Kiev
+  cache:
+    timeout: 30 #30min

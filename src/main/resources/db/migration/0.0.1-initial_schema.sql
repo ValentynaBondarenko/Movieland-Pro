@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS movies_countries
     PRIMARY KEY (movie_id, country_id)
 );
 
-CREATE TABLE reviews
+CREATE TABLE IF NOT EXISTS reviews
 (
     id       SERIAL PRIMARY KEY,
     movie_id INT  NOT NULL,
