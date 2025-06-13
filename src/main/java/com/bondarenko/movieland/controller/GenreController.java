@@ -1,7 +1,8 @@
 package com.bondarenko.movieland.controller;
 
-import com.bondarenko.movieland.api.GenreApi;
+import com.bondarenko.movieland.api.GenresApi;
 import com.bondarenko.movieland.api.model.GenreResponse;
+import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.service.genre.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1")
-public class GenreController implements GenreApi {
+public class GenreController implements GenresApi {
     private final GenreService genreService;
 
     @Override

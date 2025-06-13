@@ -38,7 +38,7 @@ class GenreControllerTest {
     void shouldReturnAllGenres() throws Exception {
         when(genreService.getAll()).thenReturn(getMockGenres());
 
-        mockMvc.perform(get("/api/v1/genre"))
+        mockMvc.perform(get("/api/v1/genres"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2))
