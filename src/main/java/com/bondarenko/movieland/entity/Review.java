@@ -15,7 +15,7 @@ public class Review {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "review")
+    @Column(name = "review", columnDefinition = "text")
     private String text;
 
     @ManyToOne
@@ -26,3 +26,14 @@ public class Review {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 }
+/**
+ * CREATE TABLE reviews
+ * (
+ * id       SERIAL PRIMARY KEY,
+ * movie_id INT  NOT NULL,
+ * user_id  INT  NOT NULL,
+ * review   TEXT NOT NULL,
+ * FOREIGN KEY (movie_id) REFERENCES movies (id),
+ * FOREIGN KEY (user_id) REFERENCES users (id)
+ * );
+ */
