@@ -47,7 +47,7 @@ class MovieControllerTest {
     @WithMockUser(roles = "ADMIN")
     void shouldAllAdminCanAddNewMovie() throws Exception {
         // when + then
-        mockMvc.perform(post("/api/v1/movie")
+        mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isCreated());
@@ -61,7 +61,7 @@ class MovieControllerTest {
     void shouldForbidNotAdminFromAddingMovie() throws Exception {
 
         // when + then
-        mockMvc.perform(post("/api/v1/movie")
+        mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isForbidden());
@@ -73,7 +73,7 @@ class MovieControllerTest {
     @Test
     void shouldRejectUnauthorizedUser() throws Exception {
         // when + then
-        mockMvc.perform(post("/api/v1/movie")
+        mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isUnauthorized());
@@ -85,7 +85,7 @@ class MovieControllerTest {
     @WithMockUser(roles = "ADMIN")
     void shouldAllAdminUpdateMovieById() throws Exception {
         // when + then
-        mockMvc.perform(put("/api/v1/movie/{id}", 100)
+        mockMvc.perform(put("/api/v1/movies/{id}", 100)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isOk());
@@ -97,7 +97,7 @@ class MovieControllerTest {
     @WithMockUser(roles = "USER")
     void shouldRejectNotAdminRoleWhenUpdateMovieById() throws Exception {
         // when + then
-        mockMvc.perform(put("/api/v1/movie/{id}", 100)
+        mockMvc.perform(put("/api/v1/movies/{id}", 100)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movieRequest)))
                 .andExpect(status().isForbidden());
@@ -111,7 +111,7 @@ class MovieControllerTest {
         List<MovieResponse> mockResponse = List.of(new MovieResponse());
         when(movieService.findAll(any())).thenReturn(mockResponse);
 
-        mockMvc.perform(get("/api/v1/movie"))
+        mockMvc.perform(get("/api/v1/movies"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
@@ -127,7 +127,7 @@ class MovieControllerTest {
         FullMovieResponse MovieResponse = new FullMovieResponse();
         when(movieService.getMovieById(movieId, currency)).thenReturn(MovieResponse);
 
-        mockMvc.perform(get("/api/v1/movie/{id}", movieId)
+        mockMvc.perform(get("/api/v1/movies/{id}", movieId)
                         .param("currency", currency))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
@@ -142,7 +142,7 @@ class MovieControllerTest {
         List<MovieResponse> mockResponse = List.of(new MovieResponse());
         when(movieService.getMoviesByGenre(genreId)).thenReturn(mockResponse);
 
-        mockMvc.perform(get("/api/v1/movie/genre/{id}", genreId))
+        mockMvc.perform(get("/api/v1/movies/genres/{genreId}", genreId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
@@ -155,7 +155,7 @@ class MovieControllerTest {
         List<MovieResponse> mockResponse = List.of(new MovieResponse());
         when(movieService.getRandomMovies()).thenReturn(mockResponse);
 
-        mockMvc.perform(get("/api/v1/movie/random"))
+        mockMvc.perform(get("/api/v1/movies/random"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 

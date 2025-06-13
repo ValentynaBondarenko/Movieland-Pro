@@ -283,7 +283,7 @@ components:
             $ref: '#/components/schemas/ProblemDetails'
 
 paths:
-  '/movie':
+  '/movies':
     get:
       description: |
         Get all movies with optional sorting by rating and price.
@@ -342,7 +342,7 @@ paths:
           content: { }
         '400':
           $ref: '#/components/responses/BadRequest'
-  '/movie/random':
+  '/movies/random':
     get:
       description: |
         Get randome movies .
@@ -370,7 +370,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  '/movie/genre/{genreId}':
+  '/movies/genres/{genreId}':
     get:
       description: |
         Get movies by genre.
@@ -406,7 +406,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  '/movie/{id}':
+  '/movies/{id}':
     get:
       description: |
         Get movie by id.
@@ -470,7 +470,7 @@ paths:
           description: Invalid input
         '404':
           description: Movie not found
-  '/genre':
+  '/genres':
     get:
       description: |
         Get all genres.
