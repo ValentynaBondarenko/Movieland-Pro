@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @DBRider
-@SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class MovieServiceImplTest extends AbstractITest {
     @Autowired
     private MovieService movieService;
