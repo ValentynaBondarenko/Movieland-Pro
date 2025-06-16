@@ -15,10 +15,10 @@ countries:
 movies:
   - name_ukrainian: 'Втеча з Шоушенка'
     name_native: 'The Shawshank Redemption'
-    year_of_release: 1999
-    description: 'Обвинувачений у жахливому злочині, Джон Коффі опиняється...'
-    rating: 8.9
-    price: 134.67
+    year_of_release: 1994
+    description: 'Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...'
+    rating: 9.5
+    price: 123.45
     poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg'
 
 movies_genres:

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -127,7 +128,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals( 25, allMoviesWithSorting.size());
+        assertEquals(25, allMoviesWithSorting.size());
 
         MovieResponse movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(8.9, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
@@ -248,6 +249,27 @@ class MovieServiceImplTest extends AbstractITest {
 
         //when
         movieService.saveMovie(movieRequest);
+        FullMovieResponse created = movieService.getMovieById(2L, null);
+        assertNotNull(created);
+
+        assertEquals(2L, created.getId());
+        assertEquals("Втеча з Шоушенка", created.getNameUkrainian());
+        assertEquals("The Shawshank Redemption", created.getNameNative());
+        assertEquals("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...", created.getDescription());
+        assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg", created.getPicturePath());
+        assertEquals(1994, created.getYearOfRelease());
+        assertEquals(123.45, created.getPrice());
+        assertEquals(9.5, created.getRating());
+
+        assertTrue(created.getReviews().isEmpty());
+
+        Set<String> expectedGenres = Set.of("драма", "кримінал", "трилер");
+        Set<String> actualGenres = created.getGenres().stream().map(GenreResponse::getName).collect(Collectors.toSet());
+        assertEquals(expectedGenres, actualGenres);
+
+        Set<String> expectedCountries = Set.of("США", "Франція");
+        Set<String> actualCountries = created.getCountries().stream().map(CountryResponse::getName).collect(Collectors.toSet());
+        assertEquals(expectedCountries, actualCountries);
 
     }
 
@@ -259,7 +281,29 @@ class MovieServiceImplTest extends AbstractITest {
         MovieRequest movieRequest = getMovieRequest();
 
         //when
-        movieService.updateMovie(1L, movieRequest);
+        FullMovieResponse fullMovieResponse = movieService.updateMovie(1L, movieRequest);
+
+        // then
+        assertNotNull(fullMovieResponse);
+        assertEquals(1, fullMovieResponse.getId());
+        assertEquals("Втеча з Шоушенка", fullMovieResponse.getNameUkrainian());
+        assertEquals("The Shawshank Redemption", fullMovieResponse.getNameNative());
+        assertEquals("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...", fullMovieResponse.getDescription());
+        assertEquals("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg",
+                fullMovieResponse.getPicturePath());
+        assertEquals(1994, fullMovieResponse.getYearOfRelease());
+        assertEquals(123.45, fullMovieResponse.getPrice());
+        assertEquals(9.5, fullMovieResponse.getRating());
+        assertTrue(fullMovieResponse.getReviews().isEmpty());
+
+        assertEquals("кримінал", fullMovieResponse.getGenres().get(0).getName());
+        assertEquals("драма", fullMovieResponse.getGenres().get(1).getName());
+        assertEquals("трилер", fullMovieResponse.getGenres().get(2).getName());
+        assertEquals(3, fullMovieResponse.getGenres().size());
+
+        assertEquals("США", fullMovieResponse.getCountries().getFirst().getName());
+        assertEquals("Франція", fullMovieResponse.getCountries().getLast().getName());
+        assertEquals(2, fullMovieResponse.getCountries().size());
 
     }
 

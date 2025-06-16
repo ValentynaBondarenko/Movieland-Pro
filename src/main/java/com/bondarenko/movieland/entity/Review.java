@@ -15,7 +15,7 @@ public class Review {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "review")
+    @Column(name = "review", columnDefinition = "text", nullable = false)
     private String text;
 
     @ManyToOne

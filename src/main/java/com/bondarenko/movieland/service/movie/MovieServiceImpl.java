@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -90,7 +91,12 @@ public class MovieServiceImpl implements MovieService {
 
         movie.setNameUkrainian(movieRequest.getNameUkrainian())
                 .setNameNative(movieRequest.getNameNative())
+                .setYearOfRelease(movieRequest.getYearOfRelease())
+                .setDescription(movieRequest.getDescription())
+                .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getPrice())))
+                .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getRating())))
                 .setPoster(movieRequest.getPicturePath());
+
         movie = enrichmentService.enrichMovie(movie, movieRequest);
 
         movieRepository.save(movie);

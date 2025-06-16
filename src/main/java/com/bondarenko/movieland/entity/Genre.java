@@ -17,7 +17,7 @@ public class Genre {
     private Long id;
 
     @EqualsAndHashCode.Include
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;
 
 }

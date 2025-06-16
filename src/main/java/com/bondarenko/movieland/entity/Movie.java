@@ -25,25 +25,25 @@ public class Movie {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name_ukrainian")
+    @Column(name = "name_ukrainian", nullable = false)
     private String nameUkrainian;
 
-    @Column(name = "name_native")
+    @Column(name = "name_native", nullable = false)
     private String nameNative;
 
-    @Column(name = "year_of_release")
+    @Column(name = "year_of_release", nullable = false)
     private Integer yearOfRelease;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false, columnDefinition = "text")
     private String description;
 
-    @Column(name = "rating")
+    @Column(name = "rating", nullable = false)
     private BigDecimal rating;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "poster")
+    @Column(name = "poster", columnDefinition = "text", nullable = false)
     private String poster;
 
     @ManyToMany
