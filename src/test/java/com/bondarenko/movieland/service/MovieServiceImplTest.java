@@ -127,7 +127,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         //then
         assertNotNull(allMoviesWithSorting);
-        assertEquals( 25, allMoviesWithSorting.size());
+        assertEquals(25, allMoviesWithSorting.size());
 
         MovieResponse movieDtoFirst = allMoviesWithSorting.get(0);
         assertEquals(8.9, Optional.ofNullable(movieDtoFirst.getRating()).orElse(0.0), 0.001);
@@ -259,30 +259,44 @@ class MovieServiceImplTest extends AbstractITest {
         MovieRequest movieRequest = getMovieRequest();
 
         //when
-        movieService.updateMovie(1L, movieRequest);
+        FullMovieResponse fullMovieResponse = movieService.updateMovie(1L, movieRequest);
+
+        // then
+        assertNotNull(fullMovieResponse);
+        assertEquals(1, fullMovieResponse.getId());
+        assertEquals("Мої думки тихі", fullMovieResponse.getNameUkrainian());
+        assertEquals("My Thoughts Are Silent", fullMovieResponse.getNameNative());
+        assertEquals("Зазнавши безліч невдач у роботі та особистому житті, молодий звукорежисер Вадим отримує контракт на запис звуків закарпатських тварин...", fullMovieResponse.getDescription());
+        assertEquals("https://upload.wikimedia.org/wikipedia/en/thumb/9/9b/My_Thoughts_Are_Silent_poster.jpg/250px-My_Thoughts_Are_Silent_poster.jpg", fullMovieResponse.getPicturePath());
+        assertEquals(2019, fullMovieResponse.getYearOfRelease());
+        assertEquals(160.0, fullMovieResponse.getPrice());
+        assertEquals(7.8, fullMovieResponse.getRating());
+        assertTrue(fullMovieResponse.getReviews().isEmpty());
+
+        assertEquals("драма", fullMovieResponse.getGenres().getFirst().getName());
+        assertEquals("комедія", fullMovieResponse.getGenres().getLast().getName());
+        assertEquals(2, fullMovieResponse.getGenres().size());
+
+        assertEquals("Україна", fullMovieResponse.getCountries().getFirst().getName());
+        assertEquals(1, fullMovieResponse.getCountries().size());
 
     }
 
     private MovieRequest getMovieRequest() {
         MovieRequest movieRequest = new MovieRequest();
-        movieRequest.setNameUkrainian("Втеча з Шоушенка");
-        movieRequest.setNameNative("The Shawshank Redemption");
-        movieRequest.setYearOfRelease(1994);
-        movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
-        movieRequest.setPrice(123.45);
-        movieRequest.setRating(9.5);
-        movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
+        movieRequest.setNameUkrainian("Мої думки тихі");
+        movieRequest.setNameNative("My Thoughts Are Silent");
+        movieRequest.setYearOfRelease(2019);
+        movieRequest.setDescription("Зазнавши безліч невдач у роботі та особистому житті, молодий звукорежисер Вадим отримує контракт на запис звуків закарпатських тварин для канадської компанії. Це може стати його шансом почати нове життя за кордоном, але в подорож разом із ним вирушає енергійна мама, що докорінно змінює всі плани.");
+        movieRequest.setPrice(160.0);
+        movieRequest.setRating(7.8);
+        movieRequest.setPicturePath("https://upload.wikimedia.org/wikipedia/en/thumb/9/9b/My_Thoughts_Are_Silent_poster.jpg/250px-My_Thoughts_Are_Silent_poster.jpg");
 
         Set<CountryResponse> countries = new HashSet<>();
         CountryResponse firstCountry = new CountryResponse();
-        firstCountry.setId(1L);
-        firstCountry.setName("США");
+        firstCountry.setId(3L);
+        firstCountry.setName("Україна");
         countries.add(firstCountry);
-
-        CountryResponse secondCountry = new CountryResponse();
-        secondCountry.setId(2L);
-        secondCountry.setName("Франція");
-        countries.add(secondCountry);
 
         movieRequest.setCountries(countries);
 
@@ -294,18 +308,14 @@ class MovieServiceImplTest extends AbstractITest {
         genres.add(firstGenre);
 
         GenreResponse secondGenre = new GenreResponse();
-        secondGenre.setId(2L);
-        secondGenre.setName("Кримінал");
+        secondGenre.setId(4L);
+        secondGenre.setName("Комедія");
         genres.add(secondGenre);
-
-        GenreResponse thirdGenre = new GenreResponse();
-        thirdGenre.setId(3L);
-        thirdGenre.setName("Фентезі");
-        genres.add(thirdGenre);
 
         movieRequest.setGenres(genres);
         return movieRequest;
     }
+
 
     private MovieResponse testDTO() {
         MovieResponse movieDTO = new MovieResponse();

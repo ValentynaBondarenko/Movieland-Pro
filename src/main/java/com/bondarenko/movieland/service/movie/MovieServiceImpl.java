@@ -90,7 +90,12 @@ public class MovieServiceImpl implements MovieService {
 
         movie.setNameUkrainian(movieRequest.getNameUkrainian())
                 .setNameNative(movieRequest.getNameNative())
-                .setPoster(movieRequest.getPicturePath());
+                .setYearOfRelease(movieRequest.getYearOfRelease())
+                .setDescription(movieRequest.getDescription())
+                .setPrice(BigDecimal.valueOf(movieRequest.getPrice()))
+                .setPoster(movieRequest.getPicturePath())
+                .setRating(BigDecimal.valueOf(movieRequest.getRating()));
+
         movie = enrichmentService.enrichMovie(movie, movieRequest);
 
         movieRepository.save(movie);

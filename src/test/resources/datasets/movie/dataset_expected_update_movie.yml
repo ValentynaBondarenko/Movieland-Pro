@@ -1,36 +1,29 @@
 genres:
   - id: 1
     name: 'драма'
-  - id: 2
-    name: 'кримінал'
-  - id: 3
-    name: 'трилер'
+  - id: 7
+    name: 'комедія'
 
 countries:
-  - id: 1
-    name: 'США'
-  - id: 2
-    name: 'Франція'
+  - id: 8
+    name: 'Україна'
 
 movies:
-  - name_ukrainian: 'Втеча з Шоушенка'
-    name_native: 'The Shawshank Redemption'
-    year_of_release: 1999
-    description: 'Обвинувачений у жахливому злочині, Джон Коффі опиняється...'
-    rating: 8.9
-    price: 134.67
-    poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg'
+  - id: 1
+    name_ukrainian: 'Мої думки тихі'
+    name_native: 'My Thoughts Are Silent'
+    year_of_release: 2019
+    description: 'Зазнавши безліч невдач у роботі та особистому житті, молодий звукорежисер Вадим отримує контракт на запис звуків закарпатських тварин...'
+    rating: 7.8
+    price: 160.0
+    poster: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9b/My_Thoughts_Are_Silent_poster.jpg/250px-My_Thoughts_Are_Silent_poster.jpg'
 
 movies_genres:
   - movie_id: 1
     genre_id: 1
   - movie_id: 1
-    genre_id: 2
-  - movie_id: 1
-    genre_id: 3
+    genre_id: 7
 
 movies_countries:
   - movie_id: 1
-    country_id: 1
-  - movie_id: 1
-    country_id: 2
+    country_id: 8
