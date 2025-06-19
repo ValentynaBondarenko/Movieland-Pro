@@ -6,8 +6,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.Duration;
+
 @ActiveProfiles("test")
 @Testcontainers
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
@@ -19,7 +23,9 @@ public class AbstractITest {
                     .withDatabaseName("test")
                     .withUsername("test")
                     .withPassword("test")
-                    .withReuse(true);
+                    .withReuse(true)
+                    .waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*\\n", 1))
+                    .withStartupTimeout(Duration.ofSeconds(120));
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {

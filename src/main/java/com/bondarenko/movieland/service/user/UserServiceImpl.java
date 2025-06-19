@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         String password = userRequest.getPassword();
 
         User user = userRepository.findByEmail(email)
-                .filter(u -> passwordEncoder.matches(password, u.getPassword()))
+                .filter(currentUser -> passwordEncoder.matches(password, currentUser.getPassword()))
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid email " + email + " or password"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
