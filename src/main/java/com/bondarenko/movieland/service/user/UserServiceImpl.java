@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.user;
 
 import com.bondarenko.movieland.api.model.UserRequest;
-import com.bondarenko.movieland.api.model.UserResponse;
+import com.bondarenko.movieland.api.model.UserUUIDResponse;
 import com.bondarenko.movieland.entity.User;
 import com.bondarenko.movieland.mapper.UserMapper;
 import com.bondarenko.movieland.repository.UserRepository;
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     private final TokenCache cache;
 
     @Override
-    public UserResponse login(UserRequest userRequest) {
+    public UserUUIDResponse login(UserRequest userRequest) {
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
 
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
         UUID token = TokenUtil.generateUUID();
 
-        UserResponse userResponse = userMapper.toUserResponse(user);
+        UserUUIDResponse userResponse = userMapper.toUserResponse(user);
         userResponse.setUuid(token);
 
         cache.putToken(token);

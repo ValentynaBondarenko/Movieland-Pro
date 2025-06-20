@@ -23,14 +23,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Enable Testcontainers reuse
-        run: |
-          echo "testcontainers.reuse.enable=true" >> $HOME/.testcontainers.properties
-          echo "Created ~/.testcontainers.properties:"
-          ls -la $HOME | grep .testcontainers.properties
-          cat $HOME/.testcontainers.properties
-          
-
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
@@ -39,7 +31,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn clean package -Dspring.profiles.active=dev
+        run: mvn clean package -Dspring.profiles.active=test
 
       - name: SonarCloud Scan
         run: |

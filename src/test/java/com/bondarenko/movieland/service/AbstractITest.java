@@ -6,29 +6,27 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.time.Duration;
 
 @ActiveProfiles("test")
-@Testcontainers
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
-public class AbstractITest {
+public abstract class AbstractITest {
 
     @Container
     private static final PostgreSQLContainer<?> container =
             new PostgreSQLContainer<>("postgres:latest")
+                    .withReuse(true)
                     .withDatabaseName("test")
                     .withUsername("test")
-                    .withPassword("test")
-                    .withReuse(true)
-                    .waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*\\n", 1))
-                    .withStartupTimeout(Duration.ofSeconds(120));
+                    .withPassword("test");
+
+    static {
+        container.start();
+    }
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {
+        System.out.println("Postgres container url: " + container.getJdbcUrl());
         registry.add("spring.datasource.url", container::getJdbcUrl);
         registry.add("spring.datasource.username", container::getUsername);
         registry.add("spring.datasource.password", container::getPassword);

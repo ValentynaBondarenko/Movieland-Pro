@@ -2,7 +2,7 @@ package com.bondarenko.movieland.service.user;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.UserRequest;
-import com.bondarenko.movieland.api.model.UserResponse;
+import com.bondarenko.movieland.api.model.UserUUIDResponse;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -32,7 +32,7 @@ class UserServiceITest extends AbstractITest {
         UserRequest userRequest = new UserRequest("ronald.reynolds66@example.com", "paco");
 
         // when
-        UserResponse userResponse = userService.login(userRequest);
+        UserUUIDResponse userResponse = userService.login(userRequest);
 
         // then
         assertNotNull(userResponse);

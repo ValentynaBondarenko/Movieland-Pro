@@ -151,7 +151,7 @@ components:
           format: int64
           description: Unique review identifier
         user:
-          $ref: '#/components/schemas/UserResponse'
+          $ref: '#/components/schemas/UserIdResponse'
         text:
           type: string
           description: Review text
@@ -174,7 +174,7 @@ components:
           description: User's password
           minLength: 8
 
-    UserResponse:
+    UserUUIDResponse:
       type: object
       description: Response object for successful authentication.
       properties:
@@ -183,6 +183,20 @@ components:
           format: uuid
           description: Unique user identifier
           example: e5e84a87-2732-422e-8b1a-bd61ad7ec399
+        nickname:
+          type: string
+          description: User's nickname
+          example: Jane Doe
+
+    UserIdResponse:
+      type: object
+      description: Response user.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique user identifier
+          example: 1
         nickname:
           type: string
           description: User's nickname
@@ -546,7 +560,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserUUIDResponse'
               example:
                 uuid: "e5e84a87-2732-422e-8b1a-bd61ad7ec399"
                 nickname: "Jane Doe"

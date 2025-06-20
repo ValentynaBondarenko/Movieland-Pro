@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.controller;
 
 
-import com.bondarenko.movieland.api.model.UserResponse;
+import com.bondarenko.movieland.api.model.UserUUIDResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.user.UserService;
 import com.bondarenko.movieland.web.controller.UserController;
@@ -45,7 +45,7 @@ class UserControllerTest {
                     }
                 """;
 
-        var userResponse = new UserResponse();
+        var userResponse = new UserUUIDResponse();
         userResponse.setUuid(UUID.fromString("e5e84a87-2732-422e-8b1a-bd61ad7ec399"));
         userResponse.setNickname("Рональд Рейнольдс");
 

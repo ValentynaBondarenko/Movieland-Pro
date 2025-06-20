@@ -3,7 +3,7 @@ package com.bondarenko.movieland.web.controller;
 import com.bondarenko.movieland.api.LoginApi;
 import com.bondarenko.movieland.api.LogoutApi;
 import com.bondarenko.movieland.api.model.UserRequest;
-import com.bondarenko.movieland.api.model.UserResponse;
+import com.bondarenko.movieland.api.model.UserUUIDResponse;
 import com.bondarenko.movieland.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,10 @@ public class UserController implements LoginApi, LogoutApi {
 
     @PostMapping("/login")
     @Override
-    public ResponseEntity<UserResponse> loginUser(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserUUIDResponse> loginUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("Login user request: {}", userRequest.getEmail());
 
-        UserResponse userResponse = securityService.login(userRequest);
+        UserUUIDResponse userResponse = securityService.login(userRequest);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
 
     }
