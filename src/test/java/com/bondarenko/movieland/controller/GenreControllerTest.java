@@ -3,6 +3,7 @@ package com.bondarenko.movieland.controller;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.genre.GenreService;
+import com.bondarenko.movieland.web.controller.GenreController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.hasItems;

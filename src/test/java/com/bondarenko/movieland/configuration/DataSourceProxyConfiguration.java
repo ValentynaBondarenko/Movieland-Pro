@@ -24,6 +24,7 @@ public class DataSourceProxyConfiguration {
         return new ProxyDataSource(actualDataSource());
     }
 
+
     @Bean
     public DataSource actualDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

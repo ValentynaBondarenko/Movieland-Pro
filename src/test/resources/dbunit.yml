@@ -1,4 +1,4 @@
-cacheConnection: true
+cacheConnection: false
 alwaysCleanBefore: true
 alwaysCleanAfter: true
 properties:

@@ -1,4 +1,4 @@
-package com.bondarenko.movieland.controller;
+package com.bondarenko.movieland.web.controller;
 
 import com.bondarenko.movieland.api.GenresApi;
 import com.bondarenko.movieland.api.model.GenreResponse;
