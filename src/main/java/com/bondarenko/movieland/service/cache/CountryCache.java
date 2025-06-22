@@ -5,11 +5,12 @@ import com.bondarenko.movieland.repository.CountryRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-@Service
+import com.bondarenko.movieland.service.annotation.CacheService;
+
+@CacheService
 @RequiredArgsConstructor
 public class CountryCache {
     private final CountryRepository countryRepository;
