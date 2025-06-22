@@ -11,10 +11,11 @@ import org.testcontainers.junit.jupiter.Container;
 @ActiveProfiles("test")
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 public abstract class AbstractITest {
+    private static final String POSTGRES_VERSION = "postgres:17.5";
 
     @Container
     private static final PostgreSQLContainer<?> container =
-            new PostgreSQLContainer<>("postgres:latest")
+            new PostgreSQLContainer<>(POSTGRES_VERSION)
                     .withReuse(true)
                     .withDatabaseName("test")
                     .withUsername("test")
@@ -26,7 +27,6 @@ public abstract class AbstractITest {
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {
-        System.out.println("Postgres container url: " + container.getJdbcUrl());
         registry.add("spring.datasource.url", container::getJdbcUrl);
         registry.add("spring.datasource.username", container::getUsername);
         registry.add("spring.datasource.password", container::getPassword);
