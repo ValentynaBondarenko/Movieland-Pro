@@ -151,21 +151,56 @@ components:
           format: int64
           description: Unique review identifier
         user:
-          $ref: '#/components/schemas/UserResponse'
+          $ref: '#/components/schemas/UserIdResponse'
         text:
           type: string
           description: Review text
 
-    UserResponse:
+    UserRequest:
       type: object
+      description: >
+        Request object for user authentication. Contains the user's email and password,
+        which must be validated for correctness and non-emptiness.
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+        password:
+          type: string
+          description: User's password
+          minLength: 8
+
+    UserUUIDResponse:
+      type: object
+      description: Response object for successful authentication.
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          description: Unique user identifier
+          example: e5e84a87-2732-422e-8b1a-bd61ad7ec399
+        nickname:
+          type: string
+          description: User's nickname
+          example: Jane Doe
+
+    UserIdResponse:
+      type: object
+      description: Response user.
       properties:
         id:
           type: integer
           format: int64
           description: Unique user identifier
+          example: 1
         nickname:
           type: string
           description: User's nickname
+          example: Jane Doe
 
     ProblemDetails:
       required:
@@ -342,6 +377,7 @@ paths:
           content: { }
         '400':
           $ref: '#/components/responses/BadRequest'
+
   '/movies/random':
     get:
       description: |
@@ -470,13 +506,13 @@ paths:
           description: Invalid input
         '404':
           description: Movie not found
+
   '/genres':
     get:
       description: |
         Get all genres.
 
         The GET method finds all genres.
-      summary: Get all genres
       operationId: findAllGenres
       tags:
         - Genre
@@ -498,3 +534,59 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+
+  '/login':
+    post:
+      summary: User login
+      description: |
+        Authenticate user and generate token.
+
+        The POST method validates user credentials and returns a token.
+      operationId: loginUser
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+            example:
+              email: "jane.doe@example.com"
+              password: "password"
+      responses:
+        '200':
+          description: Successful login, returns token and nickname
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUUIDResponse'
+              example:
+                uuid: "e5e84a87-2732-422e-8b1a-bd61ad7ec399"
+                nickname: "Jane Doe"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  '/logout':
+    delete:
+      description: |
+        Logout user by invalidating the token.
+
+        The DELETE method requires a valid token in the header.
+      summary: User logout
+      operationId: logoutUser
+      tags:
+        - Auth
+      parameters:
+        - in: header
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token to invalidate (logout)
+      responses:
+        '204':
+          description: Successful logout
+        '400':
+          $ref: '#/components/responses/BadRequest'

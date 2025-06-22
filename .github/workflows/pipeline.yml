@@ -31,7 +31,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn clean package -Dspring.profiles.active=dev
+        run: mvn clean package -Dspring.profiles.active=test
 
       - name: SonarCloud Scan
         run: |

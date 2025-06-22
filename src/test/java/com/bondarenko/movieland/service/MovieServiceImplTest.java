@@ -2,7 +2,6 @@ package com.bondarenko.movieland.service;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.*;
-import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -10,9 +9,11 @@ import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -223,7 +224,8 @@ class MovieServiceImplTest extends AbstractITest {
 
         ReviewResponse review1 = reviews.get(0);
         assertEquals(1, review1.getId());
-        UserResponse user1 = review1.getUser();
+
+        UserIdResponse user1 = review1.getUser();
         assertNotNull(user1);
         assertEquals(1, user1.getId());
         assertEquals("Дарлін Едвардс", user1.getNickname());
@@ -231,9 +233,8 @@ class MovieServiceImplTest extends AbstractITest {
 
         ReviewResponse review2 = reviews.get(1);
         assertEquals(2, review2.getId());
-        UserResponse user2 = review2.getUser();
+        UserIdResponse user2 = review2.getUser();
         assertNotNull(user2);
-        assertEquals(2, user2.getId());
         assertEquals("Габріель Джексон", user2.getNickname());
         assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
 
