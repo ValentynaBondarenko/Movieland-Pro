@@ -2,13 +2,12 @@ package com.bondarenko.movieland.service.cache;
 
 import com.bondarenko.movieland.entity.Country;
 import com.bondarenko.movieland.repository.CountryRepository;
+import com.bondarenko.movieland.service.annotation.CacheService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Set;
-
-import com.bondarenko.movieland.service.annotation.CacheService;
 
 @CacheService
 @RequiredArgsConstructor
