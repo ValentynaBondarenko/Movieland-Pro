@@ -5,7 +5,7 @@ import com.bondarenko.movieland.api.model.FullMovieResponse;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.api.model.CountryResponse;
-import com.bondarenko.movieland.api.model.UserResponse;
+import com.bondarenko.movieland.api.model.UserIdResponse;
 import com.bondarenko.movieland.api.model.ReviewResponse;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.entity.Genre;
@@ -65,10 +65,10 @@ public interface MovieMapper {
 
     @Named("mapUsers")
     @IterableMapping(qualifiedByName = "mapUser")
-    List<UserResponse> mapUsers(List<User> users);
+    List<UserIdResponse> mapUsers(List<User> users);
 
     @Named("mapUser")
-    UserResponse mapUser(User user);
+    UserIdResponse mapUser(User user);
 
     @Named("mapReviews")
     @IterableMapping(qualifiedByName = "mapReview")

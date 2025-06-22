@@ -33,6 +33,9 @@ movieland:
   cache:
     update:
       interval: ${CACHE_UPDATE:14400000} # updated every 4 hours
+  security:
+    token:
+      expiry-hours: 2 # expired after 2 hours
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json

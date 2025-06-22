@@ -7,19 +7,23 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+
 @ActiveProfiles("test")
-@Testcontainers
 @SpringBootTest(classes = {DataSourceProxyConfiguration.class})
-public class AbstractITest {
+public abstract class AbstractITest {
+    private static final String POSTGRES_VERSION = "postgres:17.5";
 
     @Container
     private static final PostgreSQLContainer<?> container =
-            new PostgreSQLContainer<>("postgres:latest")
+            new PostgreSQLContainer<>(POSTGRES_VERSION)
+                    .withReuse(true)
                     .withDatabaseName("test")
                     .withUsername("test")
-                    .withPassword("test")
-                    .withReuse(true);
+                    .withPassword("test");
+
+    static {
+        container.start();
+    }
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {

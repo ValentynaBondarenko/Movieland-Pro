@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest(classes = {DataSourceProxyConfiguration.class})
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
     private GenreService genreService;
