@@ -7,7 +7,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.Set;
+import java.util.List;
 
 
 @CacheService
@@ -16,7 +16,7 @@ public class GenreCache {
     private final GenreRepository genreRepository;
     private Cache<Genre> genreCache;
 
-    public Set<Genre> getGenres() {
+    public List<Genre> getGenres() {
         return genreCache.getAll();
     }
 

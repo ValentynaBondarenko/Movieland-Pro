@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
@@ -39,7 +40,7 @@ class GenreServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(0);
 
-        Set<Genre> secondProbeOfGenres = genreCacheService.getGenres();
+        List<Genre> secondProbeOfGenres = genreCacheService.getGenres();
         assertNotNull(secondProbeOfGenres);
         assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
         assertEquals(16, secondProbeOfGenres.size());

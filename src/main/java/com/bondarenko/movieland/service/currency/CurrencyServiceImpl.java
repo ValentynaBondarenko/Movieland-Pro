@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.service.currency;
 
+import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
     @Override
-    public BigDecimal convertCurrency(BigDecimal price, String currency) {
+    public BigDecimal convertCurrency(BigDecimal price, CurrencyType currency) {
         if (currency == null) {
             log.info("Default currency is UAH");
             return price;

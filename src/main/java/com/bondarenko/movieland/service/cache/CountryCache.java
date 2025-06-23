@@ -7,7 +7,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.Set;
+import java.util.List;
 
 @CacheService
 @RequiredArgsConstructor
@@ -15,7 +15,7 @@ public class CountryCache {
     private final CountryRepository countryRepository;
     private Cache<Country> countryCache;
 
-    public Set<Country> getCountries() {
+    public List<Country> getCountries() {
         return countryCache.getAll();
     }
 

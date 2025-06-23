@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.service.currency;
 
+import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class CurrencyConverterITest {
     @Test
     void testConvertCurrency_WhenCurrencyNotFound_ShouldThrowCurrencyExchangeException() {
         // prepare
-        String currency = "USD";
+        CurrencyType currency =CurrencyType.USD;
         BigDecimal price = new BigDecimal("100");
 
         // when

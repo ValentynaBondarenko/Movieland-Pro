@@ -4,6 +4,7 @@ import com.bondarenko.movieland.api.model.FullMovieResponse;
 import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
@@ -64,7 +65,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Transactional
-    public FullMovieResponse getMovieById(Long movieId, String currency) {
+    public FullMovieResponse getMovieById(Long movieId, CurrencyType currency) {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
