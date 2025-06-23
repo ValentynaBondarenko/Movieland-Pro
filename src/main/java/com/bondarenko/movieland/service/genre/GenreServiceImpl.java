@@ -9,6 +9,7 @@ import com.bondarenko.movieland.service.cache.GenreCache;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Set<GenreResponse> getAll() {
         return Optional.of(genreCache.getGenres())
-                .map(genreMapper::toGenreResponse)
+                .map(list -> genreMapper.toGenreResponse(new HashSet<>(list)))
                 .orElseThrow(() -> new GenreNotFoundException("Can't find genre"));
     }
 

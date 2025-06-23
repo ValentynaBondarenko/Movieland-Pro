@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.cache.security;
 
+import com.bondarenko.movieland.service.annotation.CacheService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+@CacheService
 public class TokenCache {
     @Value("${movieland.security.token.expiry-hours}")
     private long tokenExpiryHours;

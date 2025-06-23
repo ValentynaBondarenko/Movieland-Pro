@@ -2,6 +2,7 @@ package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.configuration.SecurityConfig;
+import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.bondarenko.movieland.web.controller.MovieController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -122,13 +123,13 @@ class MovieControllerTest {
     @WithMockUser(roles = "USER")
     void shouldReturnMovieByIdWithCurrency() throws Exception {
         Long movieId = 1L;
-        String currency = "USD";
+        CurrencyType currency = CurrencyType.USD;
 
         FullMovieResponse MovieResponse = new FullMovieResponse();
         when(movieService.getMovieById(movieId, currency)).thenReturn(MovieResponse);
 
         mockMvc.perform(get("/api/v1/movies/{id}", movieId)
-                        .param("currency", currency))
+                        .param("currency", currency.name()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 

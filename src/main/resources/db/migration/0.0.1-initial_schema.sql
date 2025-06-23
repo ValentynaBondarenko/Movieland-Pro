@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS movies
     description     TEXT          NOT NULL,
     rating          DECIMAL(3, 1) NOT NULL,
     price           DECIMAL(5, 2) NOT NULL,
-    poster          TEXT  NOT NULL
+    poster          TEXT          NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS genres

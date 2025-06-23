@@ -2,21 +2,21 @@ package com.bondarenko.movieland.service.cache;
 
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.repository.GenreRepository;
+import com.bondarenko.movieland.service.annotation.CacheService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
 
-@Service
+@CacheService
 @RequiredArgsConstructor
 public class GenreCache {
     private final GenreRepository genreRepository;
     private Cache<Genre> genreCache;
 
-    public Set<Genre> getGenres() {
+    public List<Genre> getGenres() {
         return genreCache.getAll();
     }
 

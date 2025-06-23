@@ -1,24 +1,23 @@
-package com.bondarenko.movieland.service;
+package com.bondarenko.movieland.service.genre;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.configuration.DataSourceProxyConfiguration;
 import com.bondarenko.movieland.entity.Genre;
+import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.service.cache.GenreCache;
-import com.bondarenko.movieland.service.genre.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Set;
 
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class GenreServiceImplTest extends AbstractITest {
+class GenreServicelTest extends AbstractITest {
     @Autowired
     private GenreService genreService;
 
@@ -41,13 +40,14 @@ class GenreServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(0);
 
-        Set<Genre> secondProbeOfGenres = genreCacheService.getGenres();
+        List<Genre> secondProbeOfGenres = genreCacheService.getGenres();
         assertNotNull(secondProbeOfGenres);
         assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
         assertEquals(16, secondProbeOfGenres.size());
 
         DataSourceListener.assertSelectCount(0);
     }
+
     @DisplayName("Should return only genres with matching IDs from cache")
     @Test
     void findByIdIn_shouldReturnGenresWithMatchingIds() {

@@ -2,20 +2,20 @@ package com.bondarenko.movieland.service.cache;
 
 import com.bondarenko.movieland.entity.Country;
 import com.bondarenko.movieland.repository.CountryRepository;
+import com.bondarenko.movieland.service.annotation.CacheService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
-@Service
+@CacheService
 @RequiredArgsConstructor
 public class CountryCache {
     private final CountryRepository countryRepository;
     private Cache<Country> countryCache;
 
-    public Set<Country> getCountries() {
+    public List<Country> getCountries() {
         return countryCache.getAll();
     }
 
