@@ -1,1 +1,2 @@
-CREATE DATABASE movieland;
+CREATE
+DATABASE movieland;

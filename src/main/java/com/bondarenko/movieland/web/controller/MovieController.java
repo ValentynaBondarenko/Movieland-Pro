@@ -5,6 +5,7 @@ import com.bondarenko.movieland.api.model.FullMovieResponse;
 import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.movie.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,9 @@ public class MovieController implements MoviesApi {
     public ResponseEntity<FullMovieResponse> getMovieById(@PathVariable("movieId") Long movieId,
                                                           @RequestParam(name = "currency", required = false) String currency) {
         log.info("Received request to get movie by id: {}. And currency: {} .", movieId, currency);
-        FullMovieResponse fullMovie = movieService.getMovieById(movieId, currency);
+        CurrencyType currencyType = CurrencyType.from(currency);
+
+        FullMovieResponse fullMovie = movieService.getMovieById(movieId, currencyType);
         return ResponseEntity.ok(fullMovie);
     }
 

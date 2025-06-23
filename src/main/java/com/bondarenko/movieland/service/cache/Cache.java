@@ -2,29 +2,34 @@ package com.bondarenko.movieland.service.cache;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 @Slf4j
 public class Cache<T> {
-    private final Set<T> cache = new CopyOnWriteArraySet<>();
+    private final List<T> cache = new CopyOnWriteArrayList<>();
     private final Supplier<List<T>> dbFetcher;
 
     public Cache(Supplier<List<T>> dbFetcher) {
         this.dbFetcher = dbFetcher;
     }
 
-    public Set<T> getAll() {
-        return new HashSet<>(cache);
+    public List<T> getAll() {
+        return new ArrayList<>(cache);
     }
 
     public void refresh() {
         List<T> dataFromDb = dbFetcher.get();
-        cache.addAll(dataFromDb);
+        addIfNotPresent(dataFromDb);
         log.info("Cache updated, new size: {}", cache.size());
+    }
+
+    private void addIfNotPresent(List<T> data) {
+        data.stream()
+                .filter(element -> !cache.contains(element))
+                .forEach(cache::add);
     }
 
 }

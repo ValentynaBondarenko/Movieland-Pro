@@ -1,22 +1,8 @@
 package com.bondarenko.movieland.mapper;
 
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieResponse;
-import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.api.model.CountryResponse;
-import com.bondarenko.movieland.api.model.UserIdResponse;
-import com.bondarenko.movieland.api.model.ReviewResponse;
-import com.bondarenko.movieland.entity.Movie;
-import com.bondarenko.movieland.entity.Genre;
-import com.bondarenko.movieland.entity.Country;
-import com.bondarenko.movieland.entity.User;
-import com.bondarenko.movieland.entity.Review;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.Named;
-import org.mapstruct.IterableMapping;
+import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.entity.*;
+import org.mapstruct.*;
 
 import java.util.List;
 import java.util.Set;

@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +36,7 @@ class CacheTest {
         //when
         cache.refresh();
 
-        Set<Genre> genres = cache.getAll();
+        List<Genre> genres = cache.getAll();
         //then
         assertEquals(1, genres.size());
         assertTrue(genres.contains(drama));
