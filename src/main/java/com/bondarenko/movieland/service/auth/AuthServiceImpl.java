@@ -1,29 +1,45 @@
-package com.bondarenko.movieland.service.user;
+package com.bondarenko.movieland.service.auth;
 
+import com.bondarenko.movieland.api.model.UserJWTResponse;
 import com.bondarenko.movieland.api.model.UserRequest;
-import com.bondarenko.movieland.api.model.UserUUIDResponse;
 import com.bondarenko.movieland.entity.User;
 import com.bondarenko.movieland.mapper.UserMapper;
 import com.bondarenko.movieland.repository.UserRepository;
-import com.bondarenko.movieland.service.cache.security.TokenCache;
-import com.bondarenko.movieland.util.TokenUtil;
+import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
+import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final TokenCache cache;
+    private final TokenService tokenService;
+    private final TokenBlacklist blacklistCache;
 
     @Override
-    public UserUUIDResponse login(UserRequest userRequest) {
+    public UserJWTResponse login(UserRequest userRequest) {
+        User user = authenticate(userRequest);
+
+        String token = tokenService.generateToken(userRequest.getEmail());
+
+        UserJWTResponse userResponse = userMapper.toUserResponse(user);
+        userResponse.token(token);
+
+        return userResponse;
+    }
+
+
+    @Override
+    public void logout(String token) {
+        blacklistCache.addToken(token);
+    }
+
+    private User authenticate(UserRequest userRequest) {
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
 
@@ -34,20 +50,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new InvalidCredentialsException("Invalid email or password");
         }
-
-        UUID token = TokenUtil.generateUUID();
-
-        UserUUIDResponse userResponse = userMapper.toUserResponse(user);
-        userResponse.setUuid(token);
-
-        cache.putToken(token);
-
-        return userResponse;
-    }
-
-    @Override
-    public void logout(UUID uuid) {
-        cache.removeToken(uuid);
+        return user;
     }
 
 }

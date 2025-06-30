@@ -1,10 +1,10 @@
 package com.bondarenko.movieland.controller;
 
 
-import com.bondarenko.movieland.api.model.UserUUIDResponse;
+import com.bondarenko.movieland.api.model.UserJWTResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
-import com.bondarenko.movieland.service.user.UserService;
-import com.bondarenko.movieland.web.controller.UserController;
+import com.bondarenko.movieland.service.auth.AuthService;
+import com.bondarenko.movieland.web.controller.AuthController;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +25,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import(SecurityConfig.class)
-@WebMvcTest(UserController.class)
+@WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = true)
-class UserControllerTest {
+class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private AuthService userService;
 
     @Test
     @WithMockUser(roles = "USER")
@@ -45,8 +45,8 @@ class UserControllerTest {
                     }
                 """;
 
-        var userResponse = new UserUUIDResponse();
-        userResponse.setUuid(UUID.fromString("e5e84a87-2732-422e-8b1a-bd61ad7ec399"));
+        var userResponse = new UserJWTResponse();
+        userResponse.setToken("e5e84a87-2732-422e-8b1a-bd61ad7ec399");
         userResponse.setNickname("Рональд Рейнольдс");
 
         when(userService.login(any())).thenReturn(userResponse);
@@ -88,15 +88,15 @@ class UserControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldLogoutSuccessfully() throws Exception {
-        String uuid = "e5e84a87-2732-422e-8b1a-bd61ad7ec399";
+        String token = "e5e84a87-2732-422e-8b1a-bd61ad7ec399";
 
-        doNothing().when(userService).logout(UUID.fromString(uuid));
+        doNothing().when(userService).logout(token);
 
         mockMvc.perform(delete("/api/v1/logout")
-                        .header("uuid", uuid))
+                        .header("uuid", token))
                 .andExpect(status().isNoContent());
 
-        verify(userService).logout(UUID.fromString(uuid));
+        verify(userService).logout(token);
     }
 
     @Test

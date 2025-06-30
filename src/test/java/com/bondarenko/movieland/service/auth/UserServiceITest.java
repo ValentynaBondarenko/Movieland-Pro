@@ -1,8 +1,8 @@
-package com.bondarenko.movieland.service.user;
+package com.bondarenko.movieland.service.auth;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.UserRequest;
-import com.bondarenko.movieland.api.model.UserUUIDResponse;
+import com.bondarenko.movieland.api.model.UserJWTResponse;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DBRider
 class UserServiceITest extends AbstractITest {
     @Autowired
-    private UserService userService;
+    private AuthService userService;
 
     @BeforeEach
     void resetDataSourceListener() {
@@ -32,12 +32,12 @@ class UserServiceITest extends AbstractITest {
         UserRequest userRequest = new UserRequest("ronald.reynolds66@example.com", "paco");
 
         // when
-        UserUUIDResponse userResponse = userService.login(userRequest);
+        UserJWTResponse userResponse = userService.login(userRequest);
 
         // then
         assertNotNull(userResponse);
         assertEquals("Рональд Рейнольдс", userResponse.getNickname());
-        assertNotNull(userResponse.getUuid(), "UUID token must be generated");
+        assertNotNull(userResponse.getToken(), "UUID token must be generated");
         DataSourceListener.assertSelectCount(1);
     }
 
