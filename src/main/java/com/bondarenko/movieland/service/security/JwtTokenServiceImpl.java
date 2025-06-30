@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.service.security;
 
+import com.bondarenko.movieland.entity.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,6 @@ import java.util.Date;
 public class JwtTokenServiceImpl implements TokenService {
     private final Key key;
     private final long tokenExpiryMs;
-   // private final JwtParser jwtParser;
 
     public JwtTokenServiceImpl(
             @Value("${movieland.security.token.secret}") String secret,
@@ -24,26 +24,15 @@ public class JwtTokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String generateToken(String email) {
+    public String generateToken(String email, String nickname, Role role) {
         return Jwts.builder()
                 .subject(email)
+                .claim("nickname", nickname)
+                .claim("role", role.name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiryMs))
                 .signWith(key)
                 .compact();
     }
-
-    @Override
-    public boolean validateToken(String token) {
-        //jwtParser.parseClaimsJws()
-
-        return false;
-    }
-
-    @Override
-    public String extractExpireDate(String token) {
-        return "";
-    }
-
 
 }

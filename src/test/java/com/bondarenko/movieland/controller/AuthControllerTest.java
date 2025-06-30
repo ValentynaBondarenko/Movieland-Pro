@@ -44,6 +44,7 @@ class AuthControllerTest {
                 """;
 
         var userResponse = new UserJWTResponse();
+        //todo Valid token
         userResponse.setToken("e5e84a87-2732-422e-8b1a-bd61ad7ec399");
         userResponse.setNickname("Рональд Рейнольдс");
 
@@ -54,7 +55,7 @@ class AuthControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.uuid").value("e5e84a87-2732-422e-8b1a-bd61ad7ec399"))
+                .andExpect(jsonPath("$.token").value("e5e84a87-2732-422e-8b1a-bd61ad7ec399"))
                 .andExpect(jsonPath("$.nickname").value("Рональд Рейнольдс"));
 
         verify(userService).login(any());
@@ -89,9 +90,9 @@ class AuthControllerTest {
         String token = "e5e84a87-2732-422e-8b1a-bd61ad7ec399";
 
         doNothing().when(userService).logout(token);
-
+//todo Valid token
         mockMvc.perform(delete("/api/v1/logout")
-                        .header("uuid", token))
+                        .header("token", token))
                 .andExpect(status().isNoContent());
 
         verify(userService).logout(token);
@@ -101,9 +102,10 @@ class AuthControllerTest {
     @WithMockUser(roles = "USER")
     void shouldReturnBadRequestOnInvalidUuidLogout() throws Exception {
         String invalidUuid = "not-a-uuid";
+//todo Valid token
 
         mockMvc.perform(delete("/api/v1/logout")
-                        .header("uuid", invalidUuid))
+                        .header("token", invalidUuid))
                 .andExpect(status().isBadRequest());
 
         verify(userService, never()).logout(any());

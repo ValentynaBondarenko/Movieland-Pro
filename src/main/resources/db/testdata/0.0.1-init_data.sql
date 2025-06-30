@@ -1,9 +1,9 @@
 INSERT INTO users (name, email, password, role)
 VALUES ('Рональд Рейнольдс', 'ronald.reynolds66@example.com', 'paco', 'User'),
        ('Дарлін Едвардс', 'darlene.edwards15@example.com', 'bricks', 'User'),
-       ('Габріель Джексон', 'gabriel.jackson91@example.com', 'hjkl', 'User'),
+       ('Габріель Джексон', 'gabriel.jackson91@example.com', 'hjkl', 'Guest'),
        ('Деріл Брайант', 'daryl.bryant94@example.com', 'exodus', 'User'),
-       ('Ніл Паркер', 'neil.parker43@example.com', '878787', 'User'),
+       ('Ніл Паркер', 'neil.parker43@example.com', '878787', 'Admin'),
        ('Тревіс Райт', 'travis.wright36@example.com', 'smart', 'User'),
        ('Амелія Кеннеді', 'amelia.kennedy58@example.com', 'beaker', 'User'),
        ('Айда Девіс', 'ida.davis80@example.com', 'pepsi1', 'User'),

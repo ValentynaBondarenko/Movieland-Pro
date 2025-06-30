@@ -23,7 +23,7 @@ public class AuthController implements LoginApi, LogoutApi {
     @PostMapping("/login")
     @Override
     public ResponseEntity<UserJWTResponse> loginUser(@Valid @RequestBody UserRequest userRequest) {
-        log.info("Login user request: {}", userRequest.getEmail());
+        log.info("Login user request with email {} ", userRequest.getEmail());
 
         UserJWTResponse userResponse = securityService.login(userRequest);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);

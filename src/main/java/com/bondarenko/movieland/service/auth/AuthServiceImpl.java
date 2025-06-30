@@ -2,7 +2,9 @@ package com.bondarenko.movieland.service.auth;
 
 import com.bondarenko.movieland.api.dto.UserJWTResponse;
 import com.bondarenko.movieland.api.dto.UserRequest;
+import com.bondarenko.movieland.entity.Role;
 import com.bondarenko.movieland.entity.User;
+import com.bondarenko.movieland.entity.dto.UserDTO;
 import com.bondarenko.movieland.mapper.UserMapper;
 import com.bondarenko.movieland.repository.UserRepository;
 import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
@@ -24,13 +26,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserJWTResponse login(UserRequest userRequest) {
         User user = authenticate(userRequest);
+        String email = user.getEmail();
+        String userNickname = user.getNickname();
+        Role role = user.getRole();
 
-        String token = tokenService.generateToken(userRequest.getEmail());
+        String token = tokenService.generateToken(email, userNickname, role);
 
-        UserJWTResponse userResponse = userMapper.toUserResponse(user);
-        userResponse.token(token);
-
-        return userResponse;
+        return userMapper.toUserResponse(userNickname, token);
     }
 
 
@@ -48,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid email " + email + " or password"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid password");
         }
         return user;
     }

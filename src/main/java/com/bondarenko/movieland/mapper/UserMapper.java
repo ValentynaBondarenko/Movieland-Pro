@@ -9,4 +9,6 @@ import org.mapstruct.MappingConstants;
 public interface UserMapper {
 
     UserJWTResponse toUserResponse(User user);
+
+    UserJWTResponse toUserResponse(String userNickname, String token);
 }
