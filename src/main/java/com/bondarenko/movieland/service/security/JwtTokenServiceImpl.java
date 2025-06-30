@@ -1,7 +1,5 @@
 package com.bondarenko.movieland.service.security;
 
-import com.bondarenko.movieland.api.model.UserRequest;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
