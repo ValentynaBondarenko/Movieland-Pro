@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.auth;
 
-import com.bondarenko.movieland.api.model.UserJWTResponse;
-import com.bondarenko.movieland.api.model.UserRequest;
+import com.bondarenko.movieland.api.dto.UserJWTResponse;
+import com.bondarenko.movieland.api.dto.UserRequest;
 
 public interface AuthService {
     UserJWTResponse login(UserRequest userRequest);

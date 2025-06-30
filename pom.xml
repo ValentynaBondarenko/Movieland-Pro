@@ -201,7 +201,7 @@
                                 <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
                             <apiPackage>com.bondarenko.movieland.api</apiPackage>
-                            <modelPackage>com.bondarenko.movieland.api.model</modelPackage>
+                            <modelPackage>com.bondarenko.movieland.api.dto</modelPackage>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}</artifactId>
                             <artifactVersion>${project.version}</artifactVersion>

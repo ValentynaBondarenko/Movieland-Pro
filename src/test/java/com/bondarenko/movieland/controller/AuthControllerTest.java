@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.controller;
 
 
-import com.bondarenko.movieland.api.model.UserJWTResponse;
+import com.bondarenko.movieland.api.dto.UserJWTResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.auth.AuthService;
 import com.bondarenko.movieland.web.controller.AuthController;

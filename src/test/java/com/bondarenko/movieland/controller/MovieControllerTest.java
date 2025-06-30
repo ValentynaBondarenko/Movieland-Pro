@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.controller;
 
-import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.api.dto.*;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.movie.MovieService;

@@ -1,8 +1,8 @@
 package com.bondarenko.movieland.service.auth;
 
 import com.bondarenko.listener.DataSourceListener;
-import com.bondarenko.movieland.api.model.UserJWTResponse;
-import com.bondarenko.movieland.api.model.UserRequest;
+import com.bondarenko.movieland.api.dto.UserJWTResponse;
+import com.bondarenko.movieland.api.dto.UserRequest;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
 import com.github.database.rider.core.api.dataset.DataSet;

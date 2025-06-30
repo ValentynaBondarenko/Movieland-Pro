@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.auth;
 
-import com.bondarenko.movieland.api.model.UserJWTResponse;
-import com.bondarenko.movieland.api.model.UserRequest;
+import com.bondarenko.movieland.api.dto.UserJWTResponse;
+import com.bondarenko.movieland.api.dto.UserRequest;
 import com.bondarenko.movieland.entity.User;
 import com.bondarenko.movieland.mapper.UserMapper;
 import com.bondarenko.movieland.repository.UserRepository;
