@@ -1,8 +1,12 @@
 package com.bondarenko.movieland.service.security;
 
-import com.bondarenko.movieland.entity.Role;
+import com.bondarenko.movieland.entity.dto.UserDetails;
+
 
 public interface TokenService {
-    String generateToken(String email, String nickname, Role role);
+    String generateToken(UserDetails userDetails);
 
+    boolean isTokenValid(String token, UserDetails userDetails);
+
+    void validateToken(String token);
 }

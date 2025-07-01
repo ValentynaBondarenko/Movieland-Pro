@@ -4,8 +4,10 @@ package com.bondarenko.movieland.controller;
 import com.bondarenko.movieland.api.dto.UserJWTResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.auth.AuthService;
+import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.web.controller.AuthController;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
+import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,6 +34,9 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService userService;
+
+    @MockBean
+    private TokenService tokenService;
 
     @Test
     @WithMockUser(roles = "USER")
@@ -92,7 +97,7 @@ class AuthControllerTest {
         doNothing().when(userService).logout(token);
 //todo Valid token
         mockMvc.perform(delete("/api/v1/logout")
-                        .header("token", token))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
 
         verify(userService).logout(token);
@@ -100,12 +105,13 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser(roles = "USER")
-    void shouldReturnBadRequestOnInvalidUuidLogout() throws Exception {
-        String invalidUuid = "not-a-uuid";
-//todo Valid token
+    void shouldReturnBadRequestOnInvalidTokenLogout() throws Exception {
+        String invalidJwt = "not-a-token";
+        doThrow(new JwtException("Invalid token"))
+                .when(tokenService).validateToken(invalidJwt);
 
         mockMvc.perform(delete("/api/v1/logout")
-                        .header("token", invalidUuid))
+                        .header("Authorization", "Bearer " + invalidJwt))
                 .andExpect(status().isBadRequest());
 
         verify(userService, never()).logout(any());

@@ -2,9 +2,8 @@ package com.bondarenko.movieland.service.auth;
 
 import com.bondarenko.movieland.api.dto.UserJWTResponse;
 import com.bondarenko.movieland.api.dto.UserRequest;
-import com.bondarenko.movieland.entity.Role;
 import com.bondarenko.movieland.entity.User;
-import com.bondarenko.movieland.entity.dto.UserDTO;
+import com.bondarenko.movieland.entity.dto.UserDetails;
 import com.bondarenko.movieland.mapper.UserMapper;
 import com.bondarenko.movieland.repository.UserRepository;
 import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
@@ -26,15 +25,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserJWTResponse login(UserRequest userRequest) {
         User user = authenticate(userRequest);
-        String email = user.getEmail();
-        String userNickname = user.getNickname();
-        Role role = user.getRole();
 
-        String token = tokenService.generateToken(email, userNickname, role);
+        UserDetails userDetails = userMapper.toUserDetails(user);
+        String token = tokenService.generateToken(userDetails);
 
-        return userMapper.toUserResponse(userNickname, token);
+        return userMapper.toUserResponse(userDetails.nickname(), token);
     }
-
 
     @Override
     public void logout(String token) {

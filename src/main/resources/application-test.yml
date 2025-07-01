@@ -19,6 +19,7 @@ liquibase:
   change-log: classpath:changelog.xml
   outputEncoding: UTF-8
   enabled: true
+  drop-first: true
 
 logging:
   config: classpath:logback.xml

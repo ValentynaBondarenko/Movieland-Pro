@@ -5,6 +5,8 @@ import com.bondarenko.movieland.api.LogoutApi;
 import com.bondarenko.movieland.api.dto.UserJWTResponse;
 import com.bondarenko.movieland.api.dto.UserRequest;
 import com.bondarenko.movieland.service.auth.AuthService;
+import com.bondarenko.movieland.service.security.TokenService;
+import io.jsonwebtoken.JwtException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController implements LoginApi, LogoutApi {
     private final AuthService securityService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     @Override
@@ -32,11 +35,21 @@ public class AuthController implements LoginApi, LogoutApi {
 
     @DeleteMapping("/logout")
     @Override
-    public ResponseEntity<Void> logoutUser(@RequestHeader("token") String token) {
-        log.info("Logout user with user token: {}", token);
+    public ResponseEntity<Void> logoutUser(@RequestHeader("Authorization") String authHeader) {
+        log.info("Logout request: {}", authHeader);
 
-        securityService.logout(token);
-        return ResponseEntity.noContent().build();
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String token = authHeader.substring(7);
+        try {
+            tokenService.validateToken(token);
+            securityService.logout(token);
+            return ResponseEntity.noContent().build();
+        } catch (JwtException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }
