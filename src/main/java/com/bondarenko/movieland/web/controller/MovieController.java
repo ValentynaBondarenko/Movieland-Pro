@@ -1,10 +1,10 @@
 package com.bondarenko.movieland.web.controller;
 
 import com.bondarenko.movieland.api.MoviesApi;
-import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.MovieResponse;
-import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.api.dto.FullMovieResponse;
+import com.bondarenko.movieland.api.dto.MovieRequest;
+import com.bondarenko.movieland.api.dto.MovieResponse;
+import com.bondarenko.movieland.api.dto.MovieSortRequest;
 import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.movie.MovieService;
 import jakarta.validation.Valid;

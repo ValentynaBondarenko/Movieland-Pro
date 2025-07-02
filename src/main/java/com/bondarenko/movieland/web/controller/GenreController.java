@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.web.controller;
 
 import com.bondarenko.movieland.api.GenresApi;
-import com.bondarenko.movieland.api.model.GenreResponse;
+import com.bondarenko.movieland.api.dto.GenreResponse;
 import com.bondarenko.movieland.service.genre.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

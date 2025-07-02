@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service;
 
 import com.bondarenko.listener.DataSourceListener;
-import com.bondarenko.movieland.api.model.GenreResponse;
+import com.bondarenko.movieland.api.dto.GenreResponse;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.service.cache.GenreCache;
 import com.bondarenko.movieland.service.genre.GenreService;

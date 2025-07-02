@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service;
 
 import com.bondarenko.listener.DataSourceListener;
-import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.api.dto.*;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;

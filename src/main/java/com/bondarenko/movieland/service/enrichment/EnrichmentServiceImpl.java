@@ -1,8 +1,8 @@
 package com.bondarenko.movieland.service.enrichment;
 
-import com.bondarenko.movieland.api.model.CountryResponse;
-import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.dto.CountryResponse;
+import com.bondarenko.movieland.api.dto.GenreResponse;
+import com.bondarenko.movieland.api.dto.MovieRequest;
 import com.bondarenko.movieland.entity.Country;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.entity.Movie;

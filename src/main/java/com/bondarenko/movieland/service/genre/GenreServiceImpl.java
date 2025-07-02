@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.service.genre;
 
-import com.bondarenko.movieland.api.model.GenreResponse;
+import com.bondarenko.movieland.api.dto.GenreResponse;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.exception.GenreNotFoundException;
 import com.bondarenko.movieland.mapper.GenreMapper;

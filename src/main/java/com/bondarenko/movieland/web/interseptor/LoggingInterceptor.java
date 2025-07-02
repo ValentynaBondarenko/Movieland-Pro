@@ -1,8 +1,9 @@
 package com.bondarenko.movieland.web.interseptor;
 
-import com.bondarenko.movieland.util.TokenUtil;
+import com.bondarenko.movieland.service.security.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
+@RequiredArgsConstructor
 public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String REQUEST_ID = "requestId";
@@ -20,8 +22,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        String requestId = TokenUtil.generateUUID().toString();
-        MDC.put(REQUEST_ID, requestId);
+       // String requestId = service.generateToken("email");
+        MDC.put(REQUEST_ID, "requestId");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = "guest";
 
