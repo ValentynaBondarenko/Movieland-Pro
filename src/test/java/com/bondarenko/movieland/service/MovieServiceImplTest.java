@@ -242,7 +242,7 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
-    @DataSet("datasets/movie/dataset_before_add_movie.yml")
+    @DataSet(value = "datasets/movie/dataset_before_add_movie.yml", cleanBefore = true)
     @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml")
     void saveNewMovieToTheDatabase() {
         //prepare

@@ -16,7 +16,7 @@ public abstract class AbstractITest {
     @Container
     private static final PostgreSQLContainer<?> container =
             new PostgreSQLContainer<>(POSTGRES_VERSION)
-                    .withReuse(true)
+                    .withReuse(false)
                     .withDatabaseName("test")
                     .withUsername("test")
                     .withPassword("test");
