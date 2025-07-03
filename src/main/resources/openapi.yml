@@ -174,19 +174,19 @@ components:
           description: User's password
           minLength: 8
 
-    UserUUIDResponse:
+    UserJWTResponse:
       type: object
       description: Response object for successful authentication.
       properties:
-        uuid:
-          type: string
-          format: uuid
-          description: Unique user identifier
-          example: e5e84a87-2732-422e-8b1a-bd61ad7ec399
         nickname:
           type: string
           description: User's nickname
           example: Jane Doe
+        token:
+          type: string
+          format: string
+          description: JWT access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.D5rM-XuOaB
 
     UserIdResponse:
       type: object
@@ -559,9 +559,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserUUIDResponse'
+                $ref: '#/components/schemas/UserJWTResponse'
               example:
-                uuid: "e5e84a87-2732-422e-8b1a-bd61ad7ec399"
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.D5rM-XuOaB"
                 nickname: "Jane Doe"
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -578,11 +578,11 @@ paths:
         - Auth
       parameters:
         - in: header
-          name: uuid
+          name: token
           required: true
           schema:
             type: string
-            format: uuid
+            format: string
           description: Token to invalidate (logout)
       responses:
         '204':
