@@ -35,7 +35,7 @@ movieland:
   security:
     token:
       expiry-ms: 7200000 # expired after 2 hours
-      secret: verysecretkeyverysecretkey1234
+      secret: eW91ci12ZXJ5LXNlY3VyZS1zZWNyZXQta2V5LXdpdGgtYXQtbGVhc3QtMzItYnl0ZXMh
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
