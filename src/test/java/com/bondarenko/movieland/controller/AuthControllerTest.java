@@ -7,6 +7,8 @@ import com.bondarenko.movieland.service.auth.AuthService;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.web.controller.AuthController;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
+import io.jsonwebtoken.JwtException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,8 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,11 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = true)
 class AuthControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
-    private AuthService userService;
+    private AuthService authService;
 
     @MockBean
     private TokenService tokenService;
@@ -41,41 +41,42 @@ class AuthControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldLoginSuccessfully() throws Exception {
-//        var requestJson = """
-//                    {
-//                        "email": "ronald.reynolds66@example.com",
-//                        "password": "paco"
-//                    }
-//                """;
-//
-//        var userResponse = new UserJWTResponse();
-////userResponse.setUuid(UUID.fromString("e5e84a87-2732-422e-8b1a-bd61ad7ec399"));
-//        userResponse.setNickname("Рональд Рейнольдс");
-//
-//        when(userService.login(any())).thenReturn(userResponse);
-//
-//        mockMvc.perform(post("/api/v1/login")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(requestJson))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.uuid").value("e5e84a87-2732-422e-8b1a-bd61ad7ec399"))
-//                .andExpect(jsonPath("$.nickname").value("Рональд Рейнольдс"));
-//
-//        verify(userService).login(any());
+        var requestJson = """
+                    {
+                        "email": "ronald.reynolds66@example.com",
+                        "password": "paco"
+                    }
+                """;
+
+        var userResponse = getUserJWTResponse();
+
+        when(authService.login(any())).thenReturn(userResponse);
+
+        mockMvc.perform(post("/api/v1/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.token").value("test.jwt.token"))
+                .andExpect(jsonPath("$.nickname").value("Рональд Рейнольдс"))
+                .andExpect(header().string("Authorization", "Bearer " + "test.jwt.token"));
+
+        verify(authService).login(any());
     }
+
 
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnBadRequestWhenLoginFails() throws Exception {
         var requestJson = """
-                    {
-                        "email": "wrong@example.com",
-                        "password": "wrongpass"
-                    }
+                {
+                    "email": "wrong@example.com",
+                    "password": "wrongpass"
+                }
                 """;
 
-        when(userService.login(any())).thenThrow(new InvalidCredentialsException("Invalid credentials"));
+        when(authService.login(any()))
+                .thenThrow(new InvalidCredentialsException("Invalid credentials"));
 
         mockMvc.perform(post("/api/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,32 +86,69 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.detail").value("Wrong email or password. Please check your credentials and try again."))
                 .andExpect(jsonPath("$.path").value("/api/v1/login"));
 
-        verify(userService).login(any());
+        verify(authService).login(any());
     }
 
     @Test
     @WithMockUser(roles = "USER")
     void shouldLogoutSuccessfully() throws Exception {
-//        String uuid = "e5e84a87-2732-422e-8b1a-bd61ad7ec399";
-//
-//        doNothing().when(userService).logout(UUID.fromString(uuid));
-//
-//        mockMvc.perform(delete("/api/v1/logout")
-//                        .header("uuid", uuid))
-//                .andExpect(status().isNoContent());
-//
-//        verify(userService).logout(UUID.fromString(uuid));
+        String validToken = "valid.jwt.token";
+        String authHeader = "Bearer " + validToken;
+
+        doNothing().when(tokenService).validateToken(validToken);
+        doNothing().when(authService).logout(validToken);
+
+        mockMvc.perform(delete("/api/v1/logout")
+                        .header("Authorization", authHeader))
+                .andExpect(status().isNoContent());
+
+        verify(tokenService).validateToken(validToken);
+        verify(authService).logout(validToken);
     }
 
     @Test
     @WithMockUser(roles = "USER")
-    void shouldReturnBadRequestOnInvalidUuidLogout() throws Exception {
-        String invalidUuid = "not-a-uuid";
-
-        mockMvc.perform(delete("/api/v1/logout")
-                        .header("uuid", invalidUuid))
+    void shouldReturnBadRequestWhenAuthorizationHeaderMissing() throws Exception {
+        mockMvc.perform(delete("/api/v1/logout"))
                 .andExpect(status().isBadRequest());
 
-        verify(userService, never()).logout(any());
+        verifyNoInteractions(tokenService);
+        verifyNoInteractions(authService);
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldReturnBadRequestWhenAuthorizationHeaderMalformed() throws Exception {
+        String malformedHeader = "BadTokenWithoutBearerPrefix";
+
+        mockMvc.perform(delete("/api/v1/logout")
+                        .header("Authorization", malformedHeader))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(tokenService);
+        verifyNoInteractions(authService);
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldReturnBadRequestWhenTokenValidationFails() throws Exception {
+        String invalidToken = "invalid.jwt.token";
+        String authHeader = "Bearer " + invalidToken;
+
+        doThrow(new JwtException("Invalid token")).when(tokenService).validateToken(invalidToken);
+
+        mockMvc.perform(delete("/api/v1/logout")
+                        .header("Authorization", authHeader))
+                .andExpect(status().isBadRequest());
+
+        verify(tokenService).validateToken(invalidToken);
+        verifyNoInteractions(authService);
+    }
+
+    private @NotNull UserJWTResponse getUserJWTResponse() {
+        var userResponse = new UserJWTResponse();
+        userResponse.setToken("test.jwt.token");
+        userResponse.setNickname("Рональд Рейнольдс");
+        return userResponse;
     }
 }

@@ -2,15 +2,14 @@ package com.bondarenko.movieland.web.controller;
 
 import com.bondarenko.movieland.api.LoginApi;
 import com.bondarenko.movieland.api.LogoutApi;
-import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.api.model.UserJWTResponse;
+import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.service.auth.AuthService;
 import com.bondarenko.movieland.service.security.TokenService;
 import io.jsonwebtoken.JwtException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +29,9 @@ public class AuthController implements LoginApi, LogoutApi {
         log.info("Login user request with email {} ", userRequest.getEmail());
 
         UserJWTResponse userResponse = securityService.login(userRequest);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
-
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + userResponse.getToken())
+                .body(userResponse);
     }
 
     @DeleteMapping("/logout")
