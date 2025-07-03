@@ -5,7 +5,7 @@ import com.bondarenko.movieland.entity.dto.UserDetails;
 public interface TokenService {
     String generateToken(UserDetails userDetails);
 
-    boolean isTokenValid(String token, UserDetails userDetails);
+    Long getExpirationMillis(String token);
 
     void validateToken(String token);
 }

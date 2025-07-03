@@ -42,18 +42,18 @@ public class JwtTokenServiceImpl implements TokenService {
                 .compact();
     }
 
-    @Override
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        String email = extractEmailFromToken(token);
-        String nickname = extractNicknameFromToken(token);
-        String role = extractRoleFromToken(token);
-
-        return nickname.equals(userDetails.nickname())
-                && role.equals(userDetails.role().name())
-                && email.equals(userDetails.email())
-                && !isTokenExpired(token);
-
-    }
+//    @Override
+//    public boolean isTokenValid(String token, UserDetails userDetails) {
+//        String email = extractEmailFromToken(token);
+//        String nickname = extractNicknameFromToken(token);
+//        String role = extractRoleFromToken(token);
+//
+//        return nickname.equals(userDetails.nickname())
+//                && role.equals(userDetails.role().name())
+//                && email.equals(userDetails.email())
+//                && !isTokenExpired(token);
+//
+//    }
 
     @Override
     public void validateToken(String token) {
@@ -70,7 +70,13 @@ public class JwtTokenServiceImpl implements TokenService {
             throw e;
         }
     }
+
     // Expired  time
+    @Override
+    public Long getExpirationMillis(String token) {
+        return extractExpiration(token).getTime();
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }

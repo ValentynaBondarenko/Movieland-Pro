@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.auth;
 
-import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.api.model.UserJWTResponse;
+import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.entity.User;
 import com.bondarenko.movieland.entity.dto.UserDetails;
 import com.bondarenko.movieland.mapper.UserMapper;
@@ -19,7 +19,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final TokenBlacklist cache;
     private final TokenService tokenService;
     private final TokenBlacklist blacklistCache;
 
@@ -33,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
         return userMapper.toUserResponse(userDetails.nickname(), token);
     }
 
+    @Override
     public void logout(String token) {
         blacklistCache.addToken(token);
     }
@@ -42,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
         String password = userRequest.getPassword();
 
         User user = userRepository.findByEmail(email)
-                .filter(currentUser -> passwordEncoder.matches(password, currentUser.getPassword()))
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid email " + email + " or password"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -51,4 +50,5 @@ public class AuthServiceImpl implements AuthService {
 
         return user;
     }
+
 }
