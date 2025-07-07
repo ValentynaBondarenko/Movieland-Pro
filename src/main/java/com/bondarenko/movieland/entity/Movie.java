@@ -61,4 +61,20 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id=" + id +
+                ", nameUkrainian='" + nameUkrainian + '\'' +
+                ", nameNative='" + nameNative + '\'' +
+                ", yearOfRelease=" + yearOfRelease +
+                ", description='" + description + '\'' +
+                ", rating=" + rating +
+                ", price=" + price +
+                ", poster='" + poster + '\'' +
+                ", genres=" + genres +
+                ", countries=" + countries +
+                ", reviews=" + reviews +
+                '}';
+    }
 }

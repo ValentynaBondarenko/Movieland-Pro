@@ -6,4 +6,6 @@ import com.bondarenko.movieland.entity.Movie;
 public interface EnrichmentService {
     Movie enrichMovie(Movie movie, MovieRequest movieDto);
 
+    void enrichMovie(Movie movie);
+
 }

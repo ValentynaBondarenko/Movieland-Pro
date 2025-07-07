@@ -38,10 +38,10 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public List<MovieResponse> findAll(MovieSortRequest MovieSortRequest) {
+    public List<MovieResponse> findAll(MovieSortRequest movieSortRequest) {
         List<Movie> movies;
-        if (MovieSortRequest != null) {
-            Sort sort = buildSort(MovieSortRequest);
+        if (movieSortRequest != null) {
+            Sort sort = buildSort(movieSortRequest);
             movies = movieRepository.findAll(sort);
         } else {
             movies = movieRepository.findAll();
@@ -63,13 +63,37 @@ public class MovieServiceImpl implements MovieService {
         return movieMapper.toMovieResponse(movies);
     }
 
+    /**
+     * [ getMovieById() ]  <-- @Transactional (Main transaction Begin)
+     * |
+     * |---> movieRepository.getMovieById()
+     * |          (Main Tx: Begin → Query → Commit → (stop Main Tx))
+     * |
+     * |---> enrichMovie(movie)
+     * |      |
+     * |      |---> genreService.findByMovieId()
+     * |      |          (@Transactional(REQUIRES_NEW): Begin → Query → Commit → Close)
+     * |      |
+     * |      |---> countryService.findByMovieId()
+     * |      |          (@Transactional(REQUIRES_NEW): Begin → Query → Commit → Close)
+     * |      |
+     * |      |---> reviewService.findByMovieId()
+     * |                 (@Transactional(REQUIRES_NEW): Begin → Query → Commit → Close)
+     * |
+     * |--->  enriched Movie
+     * (Main Tx: Resume → Commit → Close)
+     */
+
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public FullMovieResponse getMovieById(Long movieId, CurrencyType currency) {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
         movie.setPrice(correctMoviePrice);
+        // For example, not all data is stored in a single database,
+        // and it may not be possible to fetch everything within one transaction.
+        enrichmentService.enrichMovie(movie);
         return movieMapper.toFullMovie(movie);
     }
 
@@ -77,7 +101,7 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     public void saveMovie(MovieRequest movieRequest) {
         Movie movie = movieMapper.toMovie(movieRequest);
-        movie = enrichmentService.enrichMovie(movie, movieRequest);
+        enrichmentService.enrichMovie(movie, movieRequest);
 
         movieRepository.save(movie);
 
@@ -98,7 +122,7 @@ public class MovieServiceImpl implements MovieService {
                 .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getRating())))
                 .setPoster(movieRequest.getPicturePath());
 
-        movie = enrichmentService.enrichMovie(movie, movieRequest);
+        enrichmentService.enrichMovie(movie, movieRequest);
 
         movieRepository.save(movie);
 
@@ -107,9 +131,9 @@ public class MovieServiceImpl implements MovieService {
         return response;
     }
 
-    private Sort buildSort(MovieSortRequest MovieSortRequest) {
-        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(MovieSortRequest.getRatingDirection()));
-        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(MovieSortRequest.getPriceDirection()));
+    private Sort buildSort(MovieSortRequest movieSortRequest) {
+        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortRequest.getRatingDirection()));
+        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortRequest.getPriceDirection()));
 
         if (ratingDirection.isPresent()) {
             return Sort.by(new Sort.Order(ratingDirection.get(), RATING));

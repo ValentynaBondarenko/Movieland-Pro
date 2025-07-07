@@ -6,4 +6,6 @@ import java.util.Set;
 
 public interface CountryService {
     Set<Country> findByIdIn(Set<Long> countryIds);
+
+    Set<Country> findByMovieId(Long id);
 }

@@ -8,6 +8,8 @@ import com.bondarenko.movieland.repository.GenreRepository;
 import com.bondarenko.movieland.service.cache.GenreCache;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -33,7 +35,7 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findById(genreId)
                 .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId));
     }
-
+    @Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = true)
     @Override
     public Set<Genre> findByMovieId(Long movieId) {
         Set<Genre> genres = genreRepository.findByMovieId(movieId);
