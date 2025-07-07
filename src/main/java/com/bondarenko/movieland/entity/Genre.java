@@ -23,4 +23,11 @@ public class Genre {
     @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;
 
+    @Override
+    public String toString() {
+        return "Genre{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

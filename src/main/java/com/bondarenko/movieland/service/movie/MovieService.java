@@ -9,7 +9,7 @@ import com.bondarenko.movieland.entity.CurrencyType;
 import java.util.List;
 
 public interface MovieService {
-    List<MovieResponse> findAll(MovieSortRequest MovieSortRequest);
+    List<MovieResponse> findAll(MovieSortRequest movieSortRequest);
 
     List<MovieResponse> getRandomMovies();
 
