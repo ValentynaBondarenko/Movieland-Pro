@@ -1,10 +1,10 @@
-package com.bondarenko.movieland.service;
+package com.bondarenko.movieland.service.genre;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.entity.Genre;
+import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.service.cache.GenreCache;
-import com.bondarenko.movieland.service.genre.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

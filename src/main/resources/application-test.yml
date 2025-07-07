@@ -10,7 +10,7 @@ spring:
     change-log: classpath:db/changelog/changelog.xml
     contexts: test
   jpa:
-    show-sql: false
+    show-sql: true
     open-in-view: false
     hibernate:
       ddl-auto: none
@@ -32,6 +32,10 @@ movieland:
   cache:
     update:
       interval: ${CACHE_UPDATE:14400000} # updated every 4 hours
+  security:
+    token:
+      expiry-ms: 7200000 # expired after 2 hours
+      secret: eW91ci12ZXJ5LXNlY3VyZS1zZWNyZXQta2V5LXdpdGgtYXQtbGVhc3QtMzItYnl0ZXMh
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
