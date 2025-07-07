@@ -4,25 +4,21 @@ import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.service.AbstractITest;
-import com.bondarenko.movieland.service.cache.GenreCache;
+import com.bondarenko.movieland.service.cache.GenreCacheProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.*;
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
     private GenreService genreService;
 
     @Autowired
-    private GenreCache genreCacheService;
+    private GenreCacheProxy genreCacheService;
 
     @BeforeEach
     void setUp() {
@@ -32,17 +28,20 @@ class GenreServiceImplTest extends AbstractITest {
     @DisplayName("Should return genres from cache without additional DB queries")
     @Test
     void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
-        Set<GenreResponse> genres = genreService.getAll();
+        Set<GenreResponse> genres = genreService.findAll();
 
         assertNotNull(genres);
-        assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
+        assertTrue(genres.stream().anyMatch(g -> {
+            assert g.getName() != null;
+            return g.getName().equals("Драма");
+        }));
         assertEquals(16, genres.size());
 
         DataSourceListener.assertSelectCount(0);
 
-        List<Genre> secondProbeOfGenres = genreCacheService.getGenres();
+        Set<GenreResponse> secondProbeOfGenres = genreCacheService.findAll();
         assertNotNull(secondProbeOfGenres);
-        assertTrue(genres.stream().anyMatch(g -> g.getName().equals("Драма")));
+        assertTrue(genres.stream().anyMatch(g -> g.getName() != null && g.getName().equals("Драма")));
         assertEquals(16, secondProbeOfGenres.size());
 
         DataSourceListener.assertSelectCount(0);
@@ -62,8 +61,7 @@ class GenreServiceImplTest extends AbstractITest {
         assertEquals(3, result.size());
         assertTrue(result.stream().allMatch(genre -> idsToFind.contains(genre.getId())));
 
-        // should not hit DB
-        DataSourceListener.assertSelectCount(0);
+       DataSourceListener.assertSelectCount(0);
     }
 
 }

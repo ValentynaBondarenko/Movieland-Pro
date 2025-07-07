@@ -6,8 +6,9 @@ import com.bondarenko.movieland.entity.Genre;
 import java.util.Set;
 
 public interface GenreService {
-    Set<GenreResponse> getAll();
+    Set<GenreResponse> findAll();
 
+    //for cache
     Genre getGenreById(Long genreId);
 
     Set<Genre> findByMovieId(Long movieId);

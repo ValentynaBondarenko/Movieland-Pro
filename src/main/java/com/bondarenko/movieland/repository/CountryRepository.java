@@ -17,4 +17,6 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
             "JOIN movies_countries mc ON c.id = mc.country_id \n" +
             "WHERE mc.movie_id = :movieId", nativeQuery = true)
     Set<Country> findByMovieId(@Param("movieId") Long movieId);
+
+    Set<Country> findByIdIn(Set<Long> countryIds);
 }
