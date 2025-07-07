@@ -8,6 +8,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * TokenBlacklist — a service for managing a blacklist of JWT tokens.
+ * <p>
+ * This class allows adding tokens to a temporary in-memory blacklist
+ * (e.g., after user logout) and automatically cleans up expired tokens.
+ */
+
 @CacheService
 @AllArgsConstructor
 public class TokenBlacklist {
@@ -26,4 +33,7 @@ public class TokenBlacklist {
         blacklist.entrySet().removeIf(token -> token.getValue() < now);
     }
 
+    public boolean isBlacklisted(String token) {
+        return blacklist.containsKey(token);
+    }
 }

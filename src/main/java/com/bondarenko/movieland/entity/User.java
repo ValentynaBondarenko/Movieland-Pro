@@ -28,4 +28,14 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }

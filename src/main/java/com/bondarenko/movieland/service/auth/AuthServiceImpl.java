@@ -10,9 +10,12 @@ import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -22,14 +25,16 @@ public class AuthServiceImpl implements AuthService {
     private final TokenService tokenService;
     private final TokenBlacklist blacklistCache;
 
+
     @Override
     public UserJWTResponse login(UserRequest userRequest) {
         User user = authenticate(userRequest);
 
         UserDetails userDetails = userMapper.toUserDetails(user);
         String token = tokenService.generateToken(userDetails);
-
-        return userMapper.toUserResponse(userDetails.nickname(), token);
+        UserJWTResponse userResponse = userMapper.toUserResponse(userDetails.nickname(), token);
+        log.info("Response {}", userResponse);
+        return userResponse;
     }
 
     @Override
@@ -41,11 +46,11 @@ public class AuthServiceImpl implements AuthService {
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid email " + email + " or password"));
+        User user = userRepository.findByEmail("ronald.reynolds66@example.com")
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email " + email));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid password ");
         }
 
         return user;

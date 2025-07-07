@@ -1,6 +1,5 @@
 package com.bondarenko.movieland.web.interseptor;
 
-import com.bondarenko.movieland.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;

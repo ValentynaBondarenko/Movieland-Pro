@@ -8,4 +8,6 @@ public interface TokenService {
     Long getExpirationMillis(String token);
 
     void validateToken(String token);
+
+    boolean isTokenValid(String token, UserDetails userDetails);
 }

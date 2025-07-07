@@ -1,6 +1,0 @@
-users:
-  - id: 1
-    name: "Рональд Рейнольдс"
-    email: "ronald.reynolds66@example.com"
-    password: "$2a$10$Oq6Omf2TZP.BvJ3OPPFNj.9CT.hHeUXc2QDFJSVK72eUTR9SeTn/2"
-    role: "User"

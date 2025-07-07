@@ -8,10 +8,7 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
-
-    UserJWTResponse toUserResponse(User user);
-
-    UserJWTResponse toUserResponse(String userNickname, String token);
+    UserJWTResponse toUserResponse(String nickname, String token);
 
     UserDetails toUserDetails(User user);
 
