@@ -36,7 +36,7 @@ class GenreControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void shouldReturnAllGenres() throws Exception {
-        when(genreService.getAll()).thenReturn(getMockGenres());
+        when(genreService.findAll()).thenReturn(getMockGenres());
 
         mockMvc.perform(get("/api/v1/genres"))
                 .andExpect(status().isOk())
@@ -45,7 +45,7 @@ class GenreControllerTest {
                 .andExpect(jsonPath("$[*].id", hasItems(1, 2)))
                 .andExpect(jsonPath("$[*].name", hasItems("Мелодрама", "Драма")));
 
-        verify(genreService).getAll();
+        verify(genreService).findAll();
     }
 
     private Set<GenreResponse> getMockGenres() {

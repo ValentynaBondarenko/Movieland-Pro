@@ -25,7 +25,7 @@ public class GenreController implements GenresApi {
     @Override
     public ResponseEntity<Set<GenreResponse>> findAllGenres() {
         log.info("Received request to find all genres.");
-        Set<GenreResponse> response = genreService.getAll();
+        Set<GenreResponse> response = genreService.findAll();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

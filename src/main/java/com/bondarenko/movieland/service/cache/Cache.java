@@ -26,7 +26,7 @@ public class Cache<T> {
         log.info("Cache updated, new size: {}", cache.size());
     }
 
-    private void addIfNotPresent(List<T> data) {
+    public void addIfNotPresent(List<T> data) {
         data.stream()
                 .filter(element -> !cache.contains(element))
                 .forEach(cache::add);
