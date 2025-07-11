@@ -1,4 +1,4 @@
-package com.bondarenko.movieland.entity.dto;
+package com.bondarenko.movieland.service.auth.dto;
 
 import com.bondarenko.movieland.entity.Role;
 

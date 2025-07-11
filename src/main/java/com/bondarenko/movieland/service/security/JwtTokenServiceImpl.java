@@ -1,6 +1,6 @@
 package com.bondarenko.movieland.service.security;
 
-import com.bondarenko.movieland.entity.dto.UserDetails;
+import com.bondarenko.movieland.service.auth.dto.UserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

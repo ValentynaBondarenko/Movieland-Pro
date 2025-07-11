@@ -1,4 +1,4 @@
-package com.bondarenko.movieland.service.currency;
+package com.bondarenko.movieland.service.currency.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

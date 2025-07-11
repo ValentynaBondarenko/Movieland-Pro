@@ -1,7 +1,9 @@
 package com.bondarenko.movieland.entity;
 
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
+import lombok.AllArgsConstructor;
 
+//@AllArgsConstructor
 public enum CurrencyType {
     AED,
     AUD,
@@ -46,6 +48,11 @@ public enum CurrencyType {
     VND,
     XDR,
     ZAR;
+  //  private final String type;
+//
+//    private CurrencyType(String type) {
+//        this.type = type;
+//    }
 
     public static CurrencyType from(String value) {
         try {

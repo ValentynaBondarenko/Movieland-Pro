@@ -3,7 +3,7 @@ package com.bondarenko.movieland.service.auth;
 import com.bondarenko.movieland.api.model.UserJWTResponse;
 import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.entity.User;
-import com.bondarenko.movieland.entity.dto.UserDetails;
+import com.bondarenko.movieland.service.auth.dto.UserDetails;
 import com.bondarenko.movieland.mapper.UserMapper;
 import com.bondarenko.movieland.repository.UserRepository;
 import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
