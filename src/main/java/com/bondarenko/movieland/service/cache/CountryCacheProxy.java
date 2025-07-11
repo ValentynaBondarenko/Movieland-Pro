@@ -21,12 +21,16 @@ public class CountryCacheProxy implements CountryService {
     private Cache<Country> countryCache;
 
     @PostConstruct
+    //A @PostConstruct method must not have any parameters, must not throw a checked exception, and must return void.
+    //method.invoke(bean);
+    //@PostConstruct is meant for simple technical setup, not business logic.
     private void init() {
         countryCache = new Cache<>(countryServiceImpl::findAll);
         countryCache.refresh();
     }
 
     @Scheduled(fixedDelayString = "${movieland.cache.update.interval}")
+    //method.invoke(bean); without params
     private void refreshCache() {
         countryCache.refresh();
     }

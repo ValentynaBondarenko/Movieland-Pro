@@ -2,6 +2,7 @@ package com.bondarenko.movieland.service.currency;
 
 import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
+import com.bondarenko.movieland.service.currency.dto.CurrencyExchangeDto;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

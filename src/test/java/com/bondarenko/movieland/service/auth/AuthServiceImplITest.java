@@ -4,7 +4,7 @@ import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.UserJWTResponse;
 import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.entity.Role;
-import com.bondarenko.movieland.entity.dto.UserDetails;
+import com.bondarenko.movieland.service.auth.dto.UserDetails;
 import com.bondarenko.movieland.repository.UserRepository;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.service.cache.security.TokenBlacklist;

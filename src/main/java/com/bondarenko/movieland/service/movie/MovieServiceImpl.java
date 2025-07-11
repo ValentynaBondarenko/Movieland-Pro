@@ -132,10 +132,12 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private Sort buildSort(MovieSortRequest movieSortRequest) {
+        //QueryBuilder???????
         Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortRequest.getRatingDirection()));
         Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortRequest.getPriceDirection()));
 
         if (ratingDirection.isPresent()) {
+            //not a string?
             return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
         } else if (priceDirection.isPresent()) {
             return Sort.by(new Sort.Order(priceDirection.get(), PRICE));
