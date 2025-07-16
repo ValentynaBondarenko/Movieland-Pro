@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @CacheService
 @RequiredArgsConstructor
 public class GenreCacheProxy implements GenreService {
-    private final GenreServiceImpl genreServiceImpl;
+    private final GenreService genreService;
     private final GenreMapper genreMapper;
 
     private Cache<Genre> genreCache;
@@ -28,7 +28,7 @@ public class GenreCacheProxy implements GenreService {
     @PostConstruct
     private void init() {
         genreCache = new Cache<>(() -> {
-            Set<GenreResponse> all = genreServiceImpl.findAll();
+            Set<GenreResponse> all = genreService.findAll();
             Set<Genre> genre = genreMapper.toGenre(all);
             return new ArrayList<>(genre);
         });
@@ -49,7 +49,7 @@ public class GenreCacheProxy implements GenreService {
 
     @Override
     public Set<Genre> findByMovieId(Long movieId) {
-        Set<Genre> genres = genreServiceImpl.findByMovieId(movieId);
+        Set<Genre> genres = genreService.findByMovieId(movieId);
         genreCache.addIfNotPresent(new ArrayList<>(genres));
         return genres;
     }
