@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @CacheService
 @RequiredArgsConstructor
 public class CountryCacheProxy implements CountryService {
-    private final CountryServiceImpl countryServiceImpl;
+    private final CountryService countryService;
     private Cache<Country> countryCache;
 
     @PostConstruct
@@ -25,7 +25,7 @@ public class CountryCacheProxy implements CountryService {
     //method.invoke(bean);
     //@PostConstruct is meant for simple technical setup, not business logic.
     private void init() {
-        countryCache = new Cache<>(countryServiceImpl::findAll);
+        countryCache = new Cache<>(countryService::findAll);
         countryCache.refresh();
     }
 
@@ -44,7 +44,7 @@ public class CountryCacheProxy implements CountryService {
 
     @Override
     public Set<Country> findByMovieId(Long id) {
-        Set<Country> countries = countryServiceImpl.findByMovieId(id);
+        Set<Country> countries = countryService.findByMovieId(id);
         countryCache.addIfNotPresent(new ArrayList<>(countries));
         return countries;
     }
