@@ -24,7 +24,6 @@
         <rider.version>1.41.0</rider.version>
         <jwt.version>0.12.6</jwt.version>
     </properties>
-
     <dependencies>
         <!-- security -->
         <dependency>
