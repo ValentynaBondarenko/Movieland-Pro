@@ -90,6 +90,7 @@ public class MovieServiceImpl implements MovieService {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
+        //todo
         movie.setPrice(correctMoviePrice);
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.

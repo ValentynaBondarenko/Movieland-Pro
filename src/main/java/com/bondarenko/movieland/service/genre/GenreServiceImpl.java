@@ -31,27 +31,28 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre getGenreById(Long genreId) {
-        return genreRepository.findById(genreId)
+    public GenreResponse getGenreById(Long genreId) {
+        Genre genre = genreRepository.findById(genreId)
                 .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId));
+        return genreMapper.toGenreResponse(genre);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Override
-    public Set<Genre> findByMovieId(Long movieId) {
+    public Set<GenreResponse> findByMovieId(Long movieId) {
         Set<Genre> genres = genreRepository.findByMovieId(movieId);
         if (genres == null || genres.isEmpty()) {
             throw new GenreNotFoundException("Can't find genres by movie id: " + movieId);
         }
-        return genres;
+        return genreMapper.toGenreResponse(genres);
     }
 
     @Override
-    public Set<Genre> findByIdIn(Set<Long> genreIds) {
+    public Set<GenreResponse> findByIdIn(Set<Long> genreIds) {
         List<Genre> genres = genreRepository.findAll();
         Set<Genre> collect = genres.stream()
                 .filter(genre -> genreIds.contains((genre.getId())))
                 .collect(Collectors.toSet());
-        return collect;
+        return genreMapper.toGenreResponse(new HashSet<>(collect));
     }
 }

@@ -9,9 +9,9 @@ public interface GenreService {
     Set<GenreResponse> findAll();
 
     //for cache
-    Genre getGenreById(Long genreId);
+    GenreResponse getGenreById(Long genreId);
 
-    Set<Genre> findByMovieId(Long movieId);
+    Set<GenreResponse> findByMovieId(Long movieId);
 
-    Set<Genre> findByIdIn(Set<Long> genreIds);
+    Set<GenreResponse> findByIdIn(Set<Long> genreIds);
 }

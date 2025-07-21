@@ -2,7 +2,6 @@ package com.bondarenko.movieland.service.genre;
 
 import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.entity.Genre;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.service.cache.GenreCacheProxy;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,21 +27,11 @@ class GenreServiceImplTest extends AbstractITest {
     @DisplayName("Should return genres from cache without additional DB queries")
     @Test
     void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
-        Set<GenreResponse> genres = genreService.findAll();
+        Set<GenreResponse> genresFromCache = genreCacheService.findAll();
 
-        assertNotNull(genres);
-        assertTrue(genres.stream().anyMatch(g -> {
-            assert g.getName() != null;
-            return g.getName().equals("Драма");
-        }));
-        assertEquals(16, genres.size());
-
-        DataSourceListener.assertSelectCount(0);
-
-        Set<GenreResponse> secondProbeOfGenres = genreCacheService.findAll();
-        assertNotNull(secondProbeOfGenres);
-        assertTrue(genres.stream().anyMatch(g -> g.getName() != null && g.getName().equals("Драма")));
-        assertEquals(16, secondProbeOfGenres.size());
+        assertNotNull(genresFromCache);
+        assertTrue(genresFromCache.stream().anyMatch(g -> "Драма".equals(g.getName())));
+        assertEquals(16, genresFromCache.size());
 
         DataSourceListener.assertSelectCount(0);
     }
@@ -54,7 +43,7 @@ class GenreServiceImplTest extends AbstractITest {
         Set<Long> idsToFind = Set.of(1L, 3L, 5L);
 
         // when
-        Set<Genre> result = genreService.findByIdIn(idsToFind);
+        Set<GenreResponse> result = genreService.findByIdIn(idsToFind);
 
         // then
         assertNotNull(result);
