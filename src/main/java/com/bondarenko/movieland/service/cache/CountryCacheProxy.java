@@ -1,12 +1,11 @@
 package com.bondarenko.movieland.service.cache;
 
-import com.bondarenko.movieland.entity.Country;
-import com.bondarenko.movieland.repository.CountryRepository;
+import com.bondarenko.movieland.api.model.CountryResponse;
 import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.country.CountryService;
-import com.bondarenko.movieland.service.country.CountryServiceImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CountryCacheProxy implements CountryService {
     private final CountryService countryService;
-    private Cache<Country> countryCache;
+    private Cache<CountryResponse> countryCache;
 
     @PostConstruct
     //A @PostConstruct method must not have any parameters, must not throw a checked exception, and must return void.
@@ -36,21 +35,21 @@ public class CountryCacheProxy implements CountryService {
     }
 
     @Override
-    public Set<Country> findByIdIn(Set<Long> countryIds) {
+    public Set<CountryResponse> findByIdIn(Set<Long> countryIds) {
         return countryCache.getAll().stream()
                 .filter(country -> countryIds.contains(country.getId()))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public Set<Country> findByMovieId(Long id) {
-        Set<Country> countries = countryService.findByMovieId(id);
-        countryCache.addIfNotPresent(new ArrayList<>(countries));
-        return countries;
+    public Set<CountryResponse> findByMovieId(Long id) {
+        Set<CountryResponse> countryResponses = countryService.findByMovieId(id);
+        countryCache.addIfNotPresent(new ArrayList<>(countryResponses));
+        return countryResponses;
     }
 
     @Override
-    public List<Country> findAll() {
+    public List<CountryResponse> findAll() {
         return countryCache.getAll();
     }
 
