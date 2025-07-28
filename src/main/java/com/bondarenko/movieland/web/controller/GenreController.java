@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -23,9 +23,9 @@ public class GenreController implements GenresApi {
 
     @GetMapping
     @Override
-    public ResponseEntity<Set<GenreResponse>> findAllGenres() {
+    public ResponseEntity<List<GenreResponse>> findAllGenres() {
         log.info("Received request to find all genres.");
-        Set<GenreResponse> response = genreService.findAll();
+        List<GenreResponse> response = genreService.findAll();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

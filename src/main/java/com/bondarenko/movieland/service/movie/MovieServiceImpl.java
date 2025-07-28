@@ -94,15 +94,18 @@ public class MovieServiceImpl implements MovieService {
         movie.setPrice(correctMoviePrice);
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.
-        enrichmentService.enrichMovie(movie);
+        MovieRequest fullMovie = movieMapper.toMovieRequest(movie);
+
+        enrichmentService.enrichMovie(fullMovie);
         return movieMapper.toFullMovie(movie);
     }
 
     @Override
     @Transactional
     public void saveMovie(MovieRequest movieRequest) {
+        enrichmentService.enrichMovie(movieRequest);
+
         Movie movie = movieMapper.toMovie(movieRequest);
-        enrichmentService.enrichMovie(movie, movieRequest);
 
         movieRepository.save(movie);
 
@@ -123,7 +126,7 @@ public class MovieServiceImpl implements MovieService {
                 .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getRating())))
                 .setPoster(movieRequest.getPicturePath());
 
-        enrichmentService.enrichMovie(movie, movieRequest);
+        enrichmentService.enrichMovie(movieRequest);
 
         movieRepository.save(movie);
 

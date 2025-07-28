@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Set;
+import java.util.List;
 
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, Long> {
@@ -17,6 +17,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
             INNER JOIN movies_genres mg ON g.id = mg.genre_id
             WHERE mg.movie_id = :movieId
             """, nativeQuery = true)
-    Set<Genre> findByMovieId(@Param("movieId") Long movieId);
+    List<Genre> findByMovieId(@Param("movieId") Long movieId);
 
 }

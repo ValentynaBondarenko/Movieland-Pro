@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Set;
+import java.util.List;
 
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
@@ -16,7 +16,7 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
             "FROM countries c \n" +
             "JOIN movies_countries mc ON c.id = mc.country_id \n" +
             "WHERE mc.movie_id = :movieId", nativeQuery = true)
-    Set<Country> findByMovieId(@Param("movieId") Long movieId);
+    List<Country> findByMovieId(@Param("movieId") Long movieId);
 
-    Set<Country> findByIdIn(Set<Long> countryIds);
+    List<Country> findByIdIn(List<Long> countryIds);
 }

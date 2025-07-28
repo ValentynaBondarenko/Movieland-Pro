@@ -17,9 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -172,7 +171,7 @@ class MovieControllerTest {
         movieRequest.setPrice(123.45);
         movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
 
-        Set<CountryResponse> countries = new HashSet<>();
+        List<CountryResponse> countries = new ArrayList<>();
         CountryResponse firstCountry = new CountryResponse();
         firstCountry.setId(1L);
         firstCountry.setName("США");
@@ -185,7 +184,7 @@ class MovieControllerTest {
 
         movieRequest.setCountries(countries);
 
-        Set<GenreResponse> genres = new HashSet<>();
+        List<GenreResponse> genres = new ArrayList<>();
 
         GenreResponse firstGenre = new GenreResponse();
         firstGenre.setId(1L);

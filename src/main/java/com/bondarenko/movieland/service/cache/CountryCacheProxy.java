@@ -5,13 +5,9 @@ import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.country.CountryService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @CacheService
 @RequiredArgsConstructor
@@ -35,17 +31,15 @@ public class CountryCacheProxy implements CountryService {
     }
 
     @Override
-    public Set<CountryResponse> findByIdIn(Set<Long> countryIds) {
+    public List<CountryResponse> findByIdIn(List<Long> countryIds) {
         return countryCache.getAll().stream()
                 .filter(country -> countryIds.contains(country.getId()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     @Override
-    public Set<CountryResponse> findByMovieId(Long id) {
-        Set<CountryResponse> countryResponses = countryService.findByMovieId(id);
-        countryCache.addIfNotPresent(new ArrayList<>(countryResponses));
-        return countryResponses;
+    public List<CountryResponse> findByMovieId(Long id) {
+      return countryService.findByMovieId(id);
     }
 
     @Override

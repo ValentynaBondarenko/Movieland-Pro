@@ -1,7 +1,6 @@
 package com.bondarenko.movieland.entity;
 
 import com.bondarenko.movieland.exception.CurrencyExchangeException;
-import lombok.AllArgsConstructor;
 
 //@AllArgsConstructor
 public enum CurrencyType {

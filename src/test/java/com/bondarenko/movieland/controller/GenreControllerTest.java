@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.verify;
@@ -48,7 +48,7 @@ class GenreControllerTest {
         verify(genreService).findAll();
     }
 
-    private Set<GenreResponse> getMockGenres() {
+    private List<GenreResponse> getMockGenres() {
         GenreResponse melodrama = new GenreResponse();
         melodrama.setId(1L);
         melodrama.setName("Мелодрама");
@@ -57,6 +57,6 @@ class GenreControllerTest {
         drama.setId(2L);
         drama.setName("Драма");
 
-        return Set.of(melodrama, drama);
+        return List.of(melodrama, drama);
     }
 }

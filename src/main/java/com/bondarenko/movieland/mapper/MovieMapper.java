@@ -5,7 +5,6 @@ import com.bondarenko.movieland.entity.*;
 import org.mapstruct.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MovieMapper {
@@ -24,8 +23,8 @@ public interface MovieMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "poster", source = "picturePath")
-    @Mapping(target = "genres", ignore = true)
-    @Mapping(target = "countries", ignore = true)
+    @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
+    @Mapping(target = "countries", qualifiedByName = "mapCountriesFromDto")
     @Mapping(target = "reviews", ignore = true)
     Movie toMovie(MovieRequest movieRequest);
 
@@ -35,16 +34,23 @@ public interface MovieMapper {
     @Mapping(target = "reviews", qualifiedByName = "mapReviews")
     FullMovieResponse toFullMovie(Movie movie);
 
+    @Mapping(target = "picturePath", source = "poster")
+    // @Mapping(target = "genres", qualifiedByName = "mapGenres")
+    @Mapping(target = "countries", qualifiedByName = "mapCountries")
+        //@Mapping(target = "reviews", qualifiedByName = "mapReviews")
+    MovieRequest toMovieRequest(Movie movie);
+
+
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
-    List<GenreResponse> mapGenres(Set<Genre> genres);
+    List<GenreResponse> mapGenres(List<Genre> genres);
 
     @Named("mapGenre")
     GenreResponse mapGenre(Genre genre);
 
     @Named("mapCountries")
     @IterableMapping(qualifiedByName = "mapCountry")
-    List<CountryResponse> mapCountries(Set<Country> countries);
+    List<CountryResponse> mapCountries(List<Country> countries);
 
     @Named("mapCountry")
     CountryResponse mapCountry(Country country);
@@ -62,4 +68,30 @@ public interface MovieMapper {
 
     @Named("mapReview")
     ReviewResponse mapReview(Review review);
+
+    @Named("mapGenresFromDto")
+    @IterableMapping(qualifiedByName = "mapGenreFromDto")
+    List<Genre> mapGenresFromDto(List<GenreResponse> genres);
+
+    @Named("mapGenreFromDto")
+    default Genre mapGenreFromDto(GenreResponse genreResponse) {
+        if (genreResponse == null) return null;
+        Genre genre = new Genre();
+        genre.setId(genreResponse.getId());
+        genre.setName(genreResponse.getName());
+        return genre;
+    }
+
+    @Named("mapCountriesFromDto")
+    @IterableMapping(qualifiedByName = "mapCountryFromDto")
+    List<Country> mapCountriesFromDto(List<CountryResponse> countries);
+
+    @Named("mapCountryFromDto")
+    default Country mapCountryFromDto(CountryResponse countryResponse) {
+        if (countryResponse == null) return null;
+        Country country = new Country();
+        country.setId(countryResponse.getId());
+        country.setName(countryResponse.getName());
+        return country;
+    }
 }

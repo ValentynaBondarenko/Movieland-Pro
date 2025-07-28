@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -17,6 +16,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "movies")
+/**
+ *  method chaining  for :
+ *  Movie movie = new Movie().setTitle("Dune").setYear(2021);
+ */
 @Accessors(chain = true)
 public class Movie {
     @Id
@@ -50,13 +53,13 @@ public class Movie {
     @JoinTable(name = "movies_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private Set<Genre> genres;
+    private List<Genre> genres;
 
     @ManyToMany
     @JoinTable(name = "movies_countries",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "country_id"))
-    private Set<Country> countries;
+    private List<Country> countries;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<Review> reviews;

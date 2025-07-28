@@ -6,13 +6,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface GenreMapper {
-    Set<GenreResponse> toGenreResponse(Set<Genre> genres);
+    List<GenreResponse> toGenreResponse(List<Genre> genres);
 
     GenreResponse toGenreResponse(Genre genre);
 
-    Set<Genre> toGenre(Set<GenreResponse> genreResponses);
+    List<Genre> toGenre(List<GenreResponse> genreResponses);
 }

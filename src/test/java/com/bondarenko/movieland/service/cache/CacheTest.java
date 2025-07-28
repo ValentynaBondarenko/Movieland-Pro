@@ -9,8 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -19,27 +18,29 @@ class CacheTest {
     @Mock
     private GenreRepository genreRepository;
 
-    private Cache<Genre> cache;
-
-
     @Test
-    void refresh_shouldNotAddDuplicates() {
+    void refresh_shouldReplaceCacheWithLatestData() {
         // prepare
         Genre drama = new Genre(1L, "Drama");
+        Genre action = new Genre(2L, "Action");
+
+        // first-invoke cache
         when(genreRepository.findAll()).thenReturn(List.of(drama));
-
-        cache = new Cache<>(genreRepository::findAll);
-        //when
+        Cache<Genre> cache = new Cache<>(genreRepository::findAll);
         cache.refresh();
 
-        when(genreRepository.findAll()).thenReturn(List.of(drama, drama));
-        //when
+        List<Genre> firstLoad = cache.getAll();
+        assertEquals(1, firstLoad.size());
+        assertTrue(firstLoad.contains(drama));
+
+        // second-invoke cache
+        when(genreRepository.findAll()).thenReturn(List.of(action));
         cache.refresh();
 
-        List<Genre> genres = cache.getAll();
-        //then
-        assertEquals(1, genres.size());
-        assertTrue(genres.contains(drama));
+        List<Genre> secondLoad = cache.getAll();
+        assertEquals(1, secondLoad.size());
+        assertTrue(secondLoad.contains(action));
+        assertFalse(secondLoad.contains(drama));
     }
 
 }
