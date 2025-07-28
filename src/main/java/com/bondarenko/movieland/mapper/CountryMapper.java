@@ -5,11 +5,11 @@ import com.bondarenko.movieland.entity.Country;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
-import java.util.Set;
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CountryMapper {
-    Set<Country> toCountries(Set<CountryResponse> countries);
+    List<Country> toCountries(List<CountryResponse> countries);
 
-    Set<CountryResponse> toCountriesResponse(Set<Country> countries);
+    List<CountryResponse> toCountriesResponse(List<Country> countries);
 }

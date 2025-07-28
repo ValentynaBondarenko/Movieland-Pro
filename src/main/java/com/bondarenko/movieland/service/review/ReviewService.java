@@ -1,9 +1,9 @@
 package com.bondarenko.movieland.service.review;
 
-import com.bondarenko.movieland.entity.Review;
+import com.bondarenko.movieland.api.model.ReviewResponse;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ReviewService {
-    Set<Review> findByMovieId(Long id);
+    List<ReviewResponse> findByMovieId(Long id);
 }

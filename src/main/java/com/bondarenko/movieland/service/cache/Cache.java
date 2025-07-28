@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 
@@ -38,18 +37,12 @@ public class Cache<T> {
         List<T> data = dataFetcher.get();
         long stamp = lock.writeLock();
         try {
-            addIfNotPresent(data);
+            dataCache.clear();
+            dataCache.addAll(data);
             log.info("Cache updated, new size: {}", dataCache.size());
         } finally {
             lock.unlockWrite(stamp);
             log.debug("Write lock released with stamp: {}", stamp);
         }
     }
-
-    protected void addIfNotPresent(List<T> data) {
-        data.stream()
-                .filter(element -> !dataCache.contains(element))
-                .forEach(dataCache::add);
-    }
-
 }

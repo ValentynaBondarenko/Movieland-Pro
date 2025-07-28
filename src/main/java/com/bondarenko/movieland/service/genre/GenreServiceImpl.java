@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,25 +19,18 @@ public class GenreServiceImpl implements GenreService {
     private final GenreMapper genreMapper;
 
     @Override
-    public Set<GenreResponse> findAll() {
+    public List<GenreResponse> findAll() {
         List<Genre> genres = genreRepository.findAll();
         if (genres.isEmpty()) {
             throw new GenreNotFoundException("Can't find genres");
         }
-        return genreMapper.toGenreResponse(new HashSet<>(genres));
-    }
-
-    @Override
-    public GenreResponse getGenreById(Long genreId) {
-        Genre genre = genreRepository.findById(genreId)
-                .orElseThrow(() -> new GenreNotFoundException("Can't find genre by id: " + genreId));
-        return genreMapper.toGenreResponse(genre);
+        return genreMapper.toGenreResponse(genres);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Override
-    public Set<GenreResponse> findByMovieId(Long movieId) {
-        Set<Genre> genres = genreRepository.findByMovieId(movieId);
+    public List<GenreResponse> findByMovieId(Long movieId) {
+        List<Genre> genres = genreRepository.findByMovieId(movieId);
         if (genres == null || genres.isEmpty()) {
             throw new GenreNotFoundException("Can't find genres by movie id: " + movieId);
         }
@@ -48,11 +38,11 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Set<GenreResponse> findByIdIn(Set<Long> genreIds) {
+    public List<GenreResponse> findByIdIn(List<Long> genreIds) {
         List<Genre> genres = genreRepository.findAll();
-        Set<Genre> collect = genres.stream()
+        List<Genre> collect = genres.stream()
                 .filter(genre -> genreIds.contains((genre.getId())))
-                .collect(Collectors.toSet());
-        return genreMapper.toGenreResponse(new HashSet<>(collect));
+                .toList();
+        return genreMapper.toGenreResponse(collect);
     }
 }

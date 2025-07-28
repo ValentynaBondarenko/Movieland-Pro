@@ -9,9 +9,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 class GenreServiceImplTest extends AbstractITest {
     @Autowired
     private GenreService genreService;
@@ -27,7 +28,7 @@ class GenreServiceImplTest extends AbstractITest {
     @DisplayName("Should return genres from cache without additional DB queries")
     @Test
     void shouldReturnGenresFromCacheWithoutDBQueryAfterAppStart() {
-        Set<GenreResponse> genresFromCache = genreCacheService.findAll();
+        List<GenreResponse> genresFromCache = genreCacheService.findAll();
 
         assertNotNull(genresFromCache);
         assertTrue(genresFromCache.stream().anyMatch(g -> "Драма".equals(g.getName())));
@@ -40,17 +41,17 @@ class GenreServiceImplTest extends AbstractITest {
     @Test
     void findByIdIn_shouldReturnGenresWithMatchingIds() {
         //prepare
-        Set<Long> idsToFind = Set.of(1L, 3L, 5L);
+        List<Long> idsToFind = List.of(1L, 3L, 5L);
 
         // when
-        Set<GenreResponse> result = genreService.findByIdIn(idsToFind);
+        List<GenreResponse> result = genreService.findByIdIn(idsToFind);
 
         // then
         assertNotNull(result);
         assertEquals(3, result.size());
         assertTrue(result.stream().allMatch(genre -> idsToFind.contains(genre.getId())));
 
-       DataSourceListener.assertSelectCount(0);
+        DataSourceListener.assertSelectCount(0);
     }
 
 }

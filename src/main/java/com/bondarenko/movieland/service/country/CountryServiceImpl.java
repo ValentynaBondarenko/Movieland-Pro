@@ -4,14 +4,13 @@ import com.bondarenko.movieland.api.model.CountryResponse;
 import com.bondarenko.movieland.entity.Country;
 import com.bondarenko.movieland.mapper.CountryMapper;
 import com.bondarenko.movieland.repository.CountryRepository;
-import com.bondarenko.movieland.service.cache.CountryCacheProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,22 +19,22 @@ public class CountryServiceImpl implements CountryService {
     private final CountryMapper countryMapper;
 
     @Override
-    public Set<CountryResponse> findByIdIn(Set<Long> countryIds) {
-        Set<Country> countries = countryRepository.findByIdIn(countryIds);
+    public List<CountryResponse> findByIdIn(List<Long> countryIds) {
+        List<Country> countries = countryRepository.findByIdIn(countryIds);
         return countryMapper.toCountriesResponse(countries);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Override
-    public Set<CountryResponse> findByMovieId(Long id) {
-        Set<Country> countries = countryRepository.findByMovieId(id);
+    public List<CountryResponse> findByMovieId(Long id) {
+        List<Country> countries = countryRepository.findByMovieId(id);
         return countryMapper.toCountriesResponse(countries);
 
     }
     @Override
     public List<CountryResponse> findAll() {
         List<Country> countries = countryRepository.findAll();
-        Set<CountryResponse> responseSet = countryMapper.toCountriesResponse(new HashSet<>(countries));
-        return new ArrayList<>(responseSet);
+        List<CountryResponse> response = countryMapper.toCountriesResponse(countries);
+        return new ArrayList<>(response);
     }
 }

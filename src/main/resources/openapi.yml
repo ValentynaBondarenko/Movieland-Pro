@@ -96,13 +96,11 @@ components:
           description: URL to the movie's picture
         countries:
           type: array
-          uniqueItems: true
           items:
             $ref: '#/components/schemas/CountryResponse'
           description: Set of countries (only genre names)
         genres:
           type: array
-          uniqueItems: true
           items:
             $ref: '#/components/schemas/GenreResponse'
           description: Set of genres (only genre names)
@@ -522,7 +520,6 @@ paths:
             application/json:
               schema:
                 type: array
-                uniqueItems: true
                 items:
                   $ref: '#/components/schemas/GenreResponse'
         '400':
