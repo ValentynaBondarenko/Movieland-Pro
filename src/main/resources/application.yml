@@ -12,6 +12,7 @@ spring:
     change-log: classpath:db/changelog/changelog.xml
   jpa:
     show-sql: false
+    #The session is closed early — I need to load everything manually.
     open-in-view: false
     hibernate:
       ddl-auto: none
