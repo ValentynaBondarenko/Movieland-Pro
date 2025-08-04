@@ -54,7 +54,7 @@ public class JwtTokenServiceImpl implements TokenService {
                 && !isTokenExpired(token);
     }
 
-    @Override
+
     public void validateToken(String token) {
         try {
             Jwts.parser()

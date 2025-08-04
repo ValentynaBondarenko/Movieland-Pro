@@ -7,7 +7,6 @@ import com.bondarenko.movieland.service.auth.AuthService;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.web.controller.AuthController;
 import com.bondarenko.movieland.web.exception.InvalidCredentialsException;
-import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,14 +94,12 @@ class AuthControllerTest {
         String validToken = "valid.jwt.token";
         String authHeader = "Bearer " + validToken;
 
-        doNothing().when(tokenService).validateToken(validToken);
         doNothing().when(authService).logout(validToken);
 
         mockMvc.perform(delete("/api/v1/logout")
                         .header("Authorization", authHeader))
                 .andExpect(status().isNoContent());
 
-        verify(tokenService).validateToken(validToken);
         verify(authService).logout(validToken);
     }
 
@@ -123,25 +120,9 @@ class AuthControllerTest {
 
         mockMvc.perform(delete("/api/v1/logout")
                         .header("Authorization", malformedHeader))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
 
         verifyNoInteractions(tokenService);
-        verifyNoInteractions(authService);
-    }
-
-    @Test
-    @WithMockUser(roles = "USER")
-    void shouldReturnBadRequestWhenTokenValidationFails() throws Exception {
-        String invalidToken = "invalid.jwt.token";
-        String authHeader = "Bearer " + invalidToken;
-
-        doThrow(new JwtException("Invalid token")).when(tokenService).validateToken(invalidToken);
-
-        mockMvc.perform(delete("/api/v1/logout")
-                        .header("Authorization", authHeader))
-                .andExpect(status().isBadRequest());
-
-        verify(tokenService).validateToken(invalidToken);
         verifyNoInteractions(authService);
     }
 

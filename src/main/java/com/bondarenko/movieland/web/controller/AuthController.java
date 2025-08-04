@@ -10,6 +10,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController implements LoginApi, LogoutApi {
     private final AuthService securityService;
-    private final TokenService tokenService;
 
     @PostMapping("/login")
     @Override
@@ -40,16 +40,17 @@ public class AuthController implements LoginApi, LogoutApi {
         log.info("Logout request: {}", authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String token = authHeader.substring(7);
         try {
-            tokenService.validateToken(token);
+            //bad code
+            //controller -> dispatcher and handler of business logic
             securityService.logout(token);
             return ResponseEntity.noContent().build();
         } catch (JwtException | IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
