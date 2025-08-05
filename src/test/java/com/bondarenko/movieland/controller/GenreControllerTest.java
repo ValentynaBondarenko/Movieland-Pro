@@ -3,6 +3,8 @@ package com.bondarenko.movieland.controller;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.service.genre.GenreService;
+import com.bondarenko.movieland.service.security.TokenService;
+import com.bondarenko.movieland.service.user.UserService;
 import com.bondarenko.movieland.web.controller.GenreController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,11 @@ class GenreControllerTest {
 
     @MockBean
     private GenreService genreService;
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserService userService;
 
     @Test
     @WithMockUser(roles = "USER")

@@ -2,7 +2,7 @@ package com.bondarenko.movieland.mapper;
 
 import com.bondarenko.movieland.api.model.UserJWTResponse;
 import com.bondarenko.movieland.entity.User;
-import com.bondarenko.movieland.service.auth.dto.UserDetails;
+import com.bondarenko.movieland.service.security.dto.AuthenticatedUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
@@ -10,6 +10,6 @@ import org.mapstruct.MappingConstants;
 public interface UserMapper {
     UserJWTResponse toUserResponse(String nickname, String token);
 
-    UserDetails toUserDetails(User user);
+    AuthenticatedUser toUserDetails(User user);
 
 }
