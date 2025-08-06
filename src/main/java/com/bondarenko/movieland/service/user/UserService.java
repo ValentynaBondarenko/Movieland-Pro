@@ -1,0 +1,7 @@
+package com.bondarenko.movieland.service.user;
+
+import org.springframework.security.core.userdetails.UserDetails;
+
+public interface UserService {
+    UserDetails loadUserByUsername(String username);
+}

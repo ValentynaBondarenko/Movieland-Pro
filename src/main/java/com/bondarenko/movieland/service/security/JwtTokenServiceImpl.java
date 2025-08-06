@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.service.security;
 
-import com.bondarenko.movieland.service.auth.dto.UserDetails;
+import com.bondarenko.movieland.service.security.dto.AuthenticatedUser;
+import com.bondarenko.movieland.service.security.dto.JwtTokens;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -8,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -31,49 +33,58 @@ public class JwtTokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .subject(userDetails.email())
-                .claim("nickname", userDetails.nickname())
-                .claim("role", userDetails.role().name())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + tokenExpiryMs))
+    public JwtTokens generateToken(UserDetails userDetails) {
+        AuthenticatedUser user = (AuthenticatedUser) userDetails;
+
+        Date now = new Date();
+        Date accessExp = new Date(now.getTime() + tokenExpiryMs);
+        Date refreshExp = new Date(now.getTime() + tokenExpiryMs * 10);
+
+        String accessToken = Jwts.builder()
+                .subject(user.email())
+                .claim("nickname", user.nickname())
+                .claim("role", user.role().name())
+                .issuedAt(now)
+                .expiration(accessExp)
                 .signWith(key)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .subject(user.email())
+                .claim("type", "refresh")
+                .issuedAt(now)
+                .expiration(refreshExp)
+                .signWith(key)
+                .compact();
+        return new JwtTokens(accessToken, refreshToken);
     }
 
+    //JwtTokens
     @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        AuthenticatedUser user = (AuthenticatedUser) userDetails;
+
         String email = extractEmailFromToken(token);
         String nickname = extractNicknameFromToken(token);
         String role = extractRoleFromToken(token);
 
-        return nickname.equals(userDetails.nickname())
-                && role.equals(userDetails.role().name())
-                && email.equals(userDetails.email())
+        return nickname.equals(user.nickname())
+                && role.equals(user.role().name())
+                && email.equals(user.email())
                 && !isTokenExpired(token);
-    }
-
-
-    public void validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token);
-            if (isTokenExpired(token)) {
-                throw new JwtException("Token expired");
-            }
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("Invalid JWT token: {}", e.getMessage());
-            throw e;
-        }
     }
 
     // Expired  time
     @Override
     public Long getExpirationMillis(String token) {
         return extractExpiration(token).getTime();
+    }
+
+    @Override
+    public boolean isRefreshToken(String token) {
+        return "refresh".equals(
+                extractClaim(token, claims -> claims.get("type", String.class))
+        );
     }
 
     private boolean isTokenExpired(String token) {
@@ -93,7 +104,8 @@ public class JwtTokenServiceImpl implements TokenService {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
-    private String extractEmailFromToken(String token) {
+    @Override
+    public String extractEmailFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
