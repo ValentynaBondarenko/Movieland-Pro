@@ -3,6 +3,7 @@ package com.bondarenko.movieland.controller;
 import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.configuration.SecurityConfig;
 import com.bondarenko.movieland.entity.CurrencyType;
+import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.user.UserService;
@@ -44,6 +45,8 @@ class MovieControllerTest {
     private TokenService tokenService;
     @MockBean
     private UserService userService;
+    @MockBean
+    private TokenBlacklist tokenBlacklist;
 
     @BeforeEach
     void setUp() {

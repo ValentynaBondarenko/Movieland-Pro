@@ -2,6 +2,7 @@ package com.bondarenko.movieland.web.filter;
 
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.user.UserService;
+import com.bondarenko.movieland.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+/**
+ * Catch Http-request->Read JWT -> check signature (exp)-> Ok->
+ * Spring create new Authentication object
+ * and add to Security Context  ( SecurityContextHolder.getContext().setAuthentication(authToken))
+ */
 @Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
@@ -28,15 +35,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-//JWT
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = authHeader.substring(7);
+        //JWT
+        final String token = JWTUtil.extractAccessToken(request);
 
         try {
 
