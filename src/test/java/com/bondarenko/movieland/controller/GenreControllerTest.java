@@ -2,6 +2,7 @@ package com.bondarenko.movieland.controller;
 
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.configuration.SecurityConfig;
+import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
 import com.bondarenko.movieland.service.genre.GenreService;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.user.UserService;
@@ -39,6 +40,8 @@ class GenreControllerTest {
 
     @MockBean
     private UserService userService;
+    @MockBean
+    private TokenBlacklist tokenBlacklist;
 
     @Test
     @WithMockUser(roles = "USER")
