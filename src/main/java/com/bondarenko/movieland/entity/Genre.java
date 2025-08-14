@@ -12,7 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "genres")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Genre {
     @Id
     @Column(name = "id")

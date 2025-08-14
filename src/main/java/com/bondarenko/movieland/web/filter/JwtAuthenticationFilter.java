@@ -4,6 +4,7 @@ import com.bondarenko.movieland.api.model.UserRequest;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.security.dto.JwtTokens;
 import com.bondarenko.movieland.service.security.dto.UserJWTResponse;
+import com.bondarenko.movieland.web.exception.LoginParsingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticationManager.authenticate(token);
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to parse login request", e);
+            throw new LoginParsingException("Failed to parse login request");
         }
     }
 

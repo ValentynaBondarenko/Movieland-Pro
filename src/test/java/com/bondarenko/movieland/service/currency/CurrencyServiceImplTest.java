@@ -13,8 +13,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
-class CurrencyConverterITest {
-
+class CurrencyServiceImplTest {
     @Mock
     private CurrencyServiceImpl currencyConverter;
 
@@ -29,7 +28,7 @@ class CurrencyConverterITest {
     @Test
     void testConvertCurrency_WhenCurrencyNotFound_ShouldThrowCurrencyExchangeException() {
         // prepare
-        CurrencyType currency =CurrencyType.USD;
+        CurrencyType currency = CurrencyType.USD;
         BigDecimal price = new BigDecimal("100");
 
         // when

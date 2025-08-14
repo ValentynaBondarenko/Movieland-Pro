@@ -21,7 +21,7 @@ public class Cache<T> {
         long stamp = lock.tryOptimisticRead();
 
         List<T> snapshot = new ArrayList<>(dataCache);
-        if (!lock.validate(stamp)) {
+        if (stamp==0 || !lock.validate(stamp)) {
             stamp = lock.readLock();
             try {
                 snapshot = new ArrayList<>(dataCache);

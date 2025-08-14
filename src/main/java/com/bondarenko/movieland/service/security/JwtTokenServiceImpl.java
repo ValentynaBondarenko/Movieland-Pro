@@ -128,6 +128,4 @@ public class JwtTokenServiceImpl implements TokenService {
             throw new AuthenticationCredentialsNotFoundException("JWT token compact of handler are invalid.");
         }
     }
-
-
 }

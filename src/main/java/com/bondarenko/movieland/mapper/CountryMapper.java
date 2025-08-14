@@ -9,7 +9,6 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CountryMapper {
-    List<Country> toCountries(List<CountryResponse> countries);
 
     List<CountryResponse> toCountriesResponse(List<Country> countries);
 }

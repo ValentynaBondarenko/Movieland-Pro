@@ -90,7 +90,7 @@ public class MovieServiceImpl implements MovieService {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
-        //todo
+
         movie.setPrice(correctMoviePrice);
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.
@@ -136,12 +136,10 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private Sort buildSort(MovieSortRequest movieSortRequest) {
-        //QueryBuilder???????
         Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortRequest.getRatingDirection()));
         Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortRequest.getPriceDirection()));
 
         if (ratingDirection.isPresent()) {
-            //not a string?
             return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
         } else if (priceDirection.isPresent()) {
             return Sort.by(new Sort.Order(priceDirection.get(), PRICE));
