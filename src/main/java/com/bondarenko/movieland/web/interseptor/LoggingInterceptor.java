@@ -19,8 +19,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        // String requestId = service.generateToken("email");
-        MDC.put(REQUEST_ID, "requestId");
+        MDC.put(REQUEST_ID, request.getHeader(REQUEST_ID));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = "guest";
 

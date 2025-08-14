@@ -29,19 +29,20 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public BigDecimal convertCurrency(BigDecimal price, CurrencyType currency) {
-        if (currency == null) {
+        if (currency == null || currency == CurrencyType.UAH) {
             log.info("Default currency is UAH");
             return price;
         }
 
-        BigDecimal exchangeRate = currencyCache.get(currency);
+        BigDecimal exchangeRate = currencyCache.get(currency.name());
         if (exchangeRate == null) {
             log.error("Currency not found: {}", currency);
             throw new CurrencyExchangeException("Currency not found: " + currency);
         }
 
-        log.info("Converted {} {} to {} UAH with exchange rate {}", price, currency, price.multiply(exchangeRate), exchangeRate);
-        return price.multiply(exchangeRate);
+        BigDecimal converted = price.multiply(exchangeRate);
+        log.info("Converted {} {} to {} UAH with exchange rate {}", price, currency, converted, exchangeRate);
+        return converted;
     }
 
     @Scheduled(cron = "${exchange.scheduled.cron}")
