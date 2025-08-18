@@ -18,6 +18,7 @@ jobs:
       ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
       ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      MOVIELAND_TOKEN_SECRET: ${{ secrets.MOVIELAND_TOKEN_SECRET }}
 
     steps:
       - name: Checkout code
