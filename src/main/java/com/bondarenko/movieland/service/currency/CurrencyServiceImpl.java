@@ -25,7 +25,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private String exchangeApiUrl;
     private final RestClient restClient;
 
-    private final Map<String, BigDecimal> currencyCache = new ConcurrentHashMap<>();
+    private final Map<CurrencyType, BigDecimal> currencyCache = new ConcurrentHashMap<>();
 
     @Override
     public BigDecimal convertCurrency(BigDecimal price, CurrencyType currency) {
@@ -34,7 +34,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             return price;
         }
 
-        BigDecimal exchangeRate = currencyCache.get(currency.name());
+        BigDecimal exchangeRate = currencyCache.get(currency);
         if (exchangeRate == null) {
             log.error("Currency not found: {}", currency);
             throw new CurrencyExchangeException("Currency not found: " + currency);
@@ -67,7 +67,15 @@ public class CurrencyServiceImpl implements CurrencyService {
                 });
 
         Arrays.stream(currencyExchanges)
-                .forEach(dto -> currencyCache.put(dto.getCode(), dto.getRate()));
+                .forEach(dto -> {
+                    try {
+                        CurrencyType type = CurrencyType.valueOf(dto.getCode());
+                        currencyCache.put(type, dto.getRate());
+                    } catch (IllegalArgumentException exception) {
+                        log.warn("Unknown currency code from API: {}", dto.getCode());
+
+                    }
+                });
         log.info("Currency cache updated successfully");
     }
 }
