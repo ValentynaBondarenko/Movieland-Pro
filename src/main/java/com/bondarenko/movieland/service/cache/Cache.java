@@ -3,46 +3,32 @@ package com.bondarenko.movieland.service.cache;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 
 @Slf4j
 public class Cache<T> {
-    private final List<T> dataCache = new ArrayList<>();
+    private List<T> dataCache = new ArrayList<>();
     private final Supplier<List<T>> dataFetcher;
-    private final StampedLock lock = new StampedLock();
 
     public Cache(Supplier<List<T>> dataFetcher) {
         this.dataFetcher = dataFetcher;
     }
 
     protected List<T> getAll() {
-        long stamp = lock.tryOptimisticRead();
-
-        List<T> snapshot = new ArrayList<>(dataCache);
-        if (stamp==0 || !lock.validate(stamp)) {
-            stamp = lock.readLock();
-            try {
-                snapshot = new ArrayList<>(dataCache);
-            } finally {
-                lock.unlockRead(stamp);
-                log.debug("Read lock released with stamp: {}", stamp);
-            }
-        }
-        return snapshot;
+        return new ArrayList<>(dataCache);
     }
 
     protected void refresh() {
         List<T> data = dataFetcher.get();
-        long stamp = lock.writeLock();
-        try {
-            dataCache.clear();
-            dataCache.addAll(data);
-            log.info("Cache updated, new size: {}", dataCache.size());
-        } finally {
-            lock.unlockWrite(stamp);
-            log.debug("Write lock released with stamp: {}", stamp);
+        if (data == null) {
+            data = Collections.emptyList();
+            log.warn("Cache returned empty list");
         }
+        dataCache = List.copyOf(data);
+        log.info("Cache updated, new size: {}", dataCache.size());
     }
 }
