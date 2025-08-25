@@ -7,8 +7,10 @@ import com.bondarenko.movieland.api.model.ReviewResponse;
 import com.bondarenko.movieland.service.country.CountryService;
 import com.bondarenko.movieland.service.genre.GenreService;
 import com.bondarenko.movieland.service.review.ReviewService;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,73 +24,63 @@ public class EnrichmentServiceImpl implements EnrichmentService {
     private final GenreService genreService;
     private final ReviewService reviewService;
 
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    @Value("${movieland.movie.enrichment.timeout}")
+    private int timeout;
 
-    @Override
     public MovieRequest enrichMovie(MovieRequest movieRequest) {
-        Callable<List<GenreResponse>> genresTask = () -> {
-            List<Long> genreIds = movieRequest.getGenres().stream()
-                    .map(GenreResponse::getId)
-                    .toList();
-            return genreService.findByIdIn(genreIds);
-        };
-        Callable<List<CountryResponse>> countiesTask = () -> {
-            List<Long> countryIds = movieRequest.getCountries().stream()
-                    .map(CountryResponse::getId)
-                    .toList();
+        Callable<List<GenreResponse>> genresTask = getGenresTask(movieRequest);
 
-            return countryService.findByIdIn(countryIds);
-        };
-        Callable<List<ReviewResponse>> reviewsTask = () -> {
-            List<Long> reviewIds = movieRequest.getReview().stream()
-                    .map(ReviewResponse::getId)
-                    .toList();
-            return reviewService.findByIdIn(reviewIds);
-        };
+        Callable<List<CountryResponse>> countriesTask = getCountriesTask(movieRequest);
 
-        //Run Thread pool:
-        Future<List<GenreResponse>> genresFuture = executor.submit(genresTask);
-        Future<List<CountryResponse>> countriesFuture = executor.submit(countiesTask);
-        Future<List<ReviewResponse>> reviewsFuture = executor.submit(reviewsTask);
+        Callable<List<ReviewResponse>> reviewsTask = getReviewsTask(movieRequest);
 
-        try {
-            movieRequest.setGenres(genresFuture.get(5, TimeUnit.SECONDS));
-        } catch (TimeoutException e) {
-            log.error("Genres enrichment timed out");
-            genresFuture.cancel(true);
-        } catch (InterruptedException e) {
-            log.warn("Thread was interrupted while fetching genres");
-            genresFuture.cancel(true);
-            Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            log.error("Error while fetching genres", e.getCause());
-        }
+        movieRequest.setGenres(fetchWithTimeout(genresTask, "genres"));
+        movieRequest.setCountries(fetchWithTimeout(countriesTask, "countries"));
+        movieRequest.setReview(fetchWithTimeout(reviewsTask, "reviews"));
 
-        try {
-            movieRequest.setCountries(countriesFuture.get(5, TimeUnit.SECONDS));
-        } catch (TimeoutException e) {
-            log.error("Countries enrichment timed out");
-            countriesFuture.cancel(true);
-        } catch (InterruptedException e) {
-            log.warn("Thread was interrupted while fetching countries");
-            countriesFuture.cancel(true);
-            Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            log.error("Error while fetching countries", e.getCause());
-        }
-
-        try {
-            movieRequest.setReview(reviewsFuture.get(5, TimeUnit.SECONDS));
-        } catch (TimeoutException e) {
-            log.error("Reviews enrichment timed out");
-            reviewsFuture.cancel(true);
-        } catch (InterruptedException e) {
-            log.warn("Thread was interrupted while fetching reviews");
-            reviewsFuture.cancel(true);
-            Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            log.error("Error while fetching reviews", e.getCause());
-        }
         return movieRequest;
     }
+
+    private Callable<List<ReviewResponse>> getReviewsTask(MovieRequest movieRequest) {
+        return () -> reviewService.findByIdIn(
+                movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
+        );
+    }
+
+    private Callable<List<CountryResponse>> getCountriesTask(MovieRequest movieRequest) {
+        return () -> countryService.findByIdIn(
+                movieRequest.getCountries().stream().map(CountryResponse::getId).toList()
+        );
+    }
+
+    private Callable<List<GenreResponse>> getGenresTask(MovieRequest movieRequest) {
+        return () -> genreService.findByIdIn(
+                movieRequest.getGenres().stream().map(GenreResponse::getId).toList()
+        );
+    }
+
+    private <T> List<T> fetchWithTimeout(Callable<List<T>> task, String name) {
+        Future<List<T>> future = executor.submit(task);
+
+        try {
+            return future.get(timeout, TimeUnit.SECONDS);
+        } catch (TimeoutException _) {
+            log.error("{} enrichment timed out", name);
+            future.cancel(true);
+        } catch (InterruptedException _) {
+            log.warn("Thread was interrupted while fetching {}", name);
+            future.cancel(true);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            log.error("Error while fetching {}", name, e.getCause());
+        }
+        return List.of();
+    }
+
+    @PreDestroy
+    public void shutdownExecutor() {
+        executor.shutdown();
+    }
+
 }
