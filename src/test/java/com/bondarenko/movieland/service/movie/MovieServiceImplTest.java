@@ -224,20 +224,20 @@ class MovieServiceImplTest extends AbstractITest {
         ReviewResponse review1 = reviews.get(0);
         assertEquals(1, review1.getId());
 
-        UserIdResponse user1 = review1.getUser();
-        assertNotNull(user1);
-        assertEquals(1, user1.getId());
-        assertEquals("Дарлін Едвардс", user1.getNickname());
+        UserIdResponse userFirst = review1.getUser();
+        assertNotNull(userFirst);
+        assertEquals(1, userFirst.getId());
+        assertEquals("Дарлін Едвардс", userFirst.getNickname());
         assertEquals("Геніальний фільм! Дивишся і думаєш «Так не буває!», але пізніше розумієш, що саме так і має бути. Починаєш знову осмислювати значення фрази, яку постійно використовуєш у своєму житті, «Надія помирає останньою». Адже якщо ти не надієшся, то все в твоєму житті гасне, не залишається сенсу. Фільм наповнений безліччю правильних афоризмів. Я впевнена, що буду переглядати його сотні разів.", review1.getText());
 
         ReviewResponse review2 = reviews.get(1);
         assertEquals(2, review2.getId());
-        UserIdResponse user2 = review2.getUser();
-        assertNotNull(user2);
-        assertEquals("Габріель Джексон", user2.getNickname());
+        UserIdResponse userSecond = review2.getUser();
+        assertNotNull(userSecond);
+        assertEquals("Габріель Джексон", userSecond.getNickname());
         assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
 
-        DataSourceListener.assertSelectCount(4);
+        DataSourceListener.assertSelectCount(10);
     }
 
     @Test
@@ -349,6 +349,48 @@ class MovieServiceImplTest extends AbstractITest {
         genres.add(thirdGenre);
 
         movieRequest.setGenres(genres);
+
+        // Reviews
+        List<ReviewResponse> reviews = new ArrayList<>();
+
+        UserIdResponse userFirst = new UserIdResponse();
+        userFirst.setId(1L);
+        userFirst.setNickname("Дарлін Едвардс");
+        ReviewResponse review1 = new ReviewResponse();
+        review1.setId(1L);
+        review1.setUser(userFirst);
+        review1.setText("Вважаю, цей фільм має бути в колекції кожного поважного кіномана.");
+        reviews.add(review1);
+
+        UserIdResponse userSecond = new UserIdResponse();
+        userSecond.setId(2L);
+        userSecond.setNickname("Габріель Джексон");
+        ReviewResponse review2 = new ReviewResponse();
+        review2.setId(2L);
+        review2.setUser(userSecond);
+        review2.setText("Вічний шедевр світового кінематографа, який можна переглядати десятки разів.");
+        reviews.add(review2);
+
+        UserIdResponse userThird = new UserIdResponse();
+        userThird.setId(3L);
+        userThird.setNickname("Деріл Брайант");
+        ReviewResponse review3 = new ReviewResponse();
+        review3.setId(3L);
+        review3.setUser(userThird);
+        review3.setText("Фільм лише виграє від частого перегляду і завжди піднімає настрій.");
+        reviews.add(review3);
+
+        UserIdResponse userFourth = new UserIdResponse();
+        userFourth.setId(4L);
+        userFourth.setNickname("Ніл Паркер");
+        ReviewResponse review4 = new ReviewResponse();
+        review4.setId(4L);
+        review4.setUser(userFourth);
+        review4.setText("Безперечно культовий фільм, нереалістичний, але захопливий.");
+        reviews.add(review4);
+
+        movieRequest.setReview(reviews);
+
         return movieRequest;
     }
 
