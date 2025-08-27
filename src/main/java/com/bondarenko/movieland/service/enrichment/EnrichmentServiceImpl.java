@@ -29,15 +29,18 @@ public class EnrichmentServiceImpl implements EnrichmentService {
     private int timeout;
 
     public MovieRequest enrichMovie(MovieRequest movieRequest) {
+
         Callable<List<GenreResponse>> genresTask = getGenresTask(movieRequest);
-
         Callable<List<CountryResponse>> countriesTask = getCountriesTask(movieRequest);
-
         Callable<List<ReviewResponse>> reviewsTask = getReviewsTask(movieRequest);
 
-        movieRequest.setGenres(fetchWithTimeout(genresTask, "genres"));
-        movieRequest.setCountries(fetchWithTimeout(countriesTask, "countries"));
-        movieRequest.setReview(fetchWithTimeout(reviewsTask, "reviews"));
+        List<GenreResponse> genres = fetchWithTimeout(genresTask, "genres");
+        List<CountryResponse> countries = fetchWithTimeout(countriesTask, "countries");
+        List<ReviewResponse> reviews = fetchWithTimeout(reviewsTask, "reviews");
+
+        movieRequest.setGenres(genres);
+        movieRequest.setCountries(countries);
+        movieRequest.setReview(reviews);
 
         return movieRequest;
     }
@@ -60,20 +63,21 @@ public class EnrichmentServiceImpl implements EnrichmentService {
         );
     }
 
-    private <T> List<T> fetchWithTimeout(Callable<List<T>> task, String name) {
+    private <T> List<T> fetchWithTimeout(Callable<List<T>> task, String taskName) {
         Future<List<T>> future = executor.submit(task);
 
         try {
             return future.get(timeout, TimeUnit.SECONDS);
         } catch (TimeoutException _) {
-            log.error("{} enrichment timed out", name);
+            log.error("{} enrichment timed out", taskName);
             future.cancel(true);
         } catch (InterruptedException _) {
-            log.warn("Thread was interrupted while fetching {}", name);
+            log.warn("Thread was interrupted while fetching {}", taskName);
             future.cancel(true);
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();//не вбиває потік, а лише встановлює йому «флаг переривання».
+            //чекає у wait()/join()/sleep() → він викине InterruptedException, а флаг переривання обнулиться.
         } catch (ExecutionException e) {
-            log.error("Error while fetching {}", name, e.getCause());
+            log.error("Error while fetching {}", taskName, e.getCause());
         }
         return List.of();
     }
