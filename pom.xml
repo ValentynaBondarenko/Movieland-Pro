@@ -19,7 +19,7 @@
         <compiler.version>3.13.0</compiler.version>
         <lombok-binding.version>0.2.0</lombok-binding.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <springdoc.version>2.4.0</springdoc.version>
+        <springdoc.version>2.8.12</springdoc.version>
         <datasource-listener.version>1.0.0</datasource-listener.version>
         <rider.version>1.41.0</rider.version>
         <jwt.version>0.12.6</jwt.version>
