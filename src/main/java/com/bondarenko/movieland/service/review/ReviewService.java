@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReviewService {
     List<ReviewResponse> findByMovieId(Long id);
+
+    List<ReviewResponse> findByIdIn(List<Long> reviewIds);
 }

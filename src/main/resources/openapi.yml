@@ -98,12 +98,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CountryResponse'
-          description: Set of countries (only genre names)
+          description: Set of countries
         genres:
           type: array
           items:
             $ref: '#/components/schemas/GenreResponse'
-          description: Set of genres (only genre names)
+          description: Set of genres
+        review :
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewResponse'
+          description: Set of review
 
     FullMovieResponse:
       type: object
