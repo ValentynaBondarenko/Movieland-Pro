@@ -23,4 +23,14 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviews = reviewRepository.findByMovieId(id);
         return reviewMapper.toReviewResponse(reviews);
     }
+
+
+    @Override
+    public List<ReviewResponse> findByIdIn(List<Long> reviewIds) {
+        List<Review> reviews = reviewRepository.findAll()
+                .stream()
+                .filter(review -> reviewIds.contains(review.getId()))
+                .toList();
+        return reviewMapper.toReviewResponse(reviews);
+    }
 }
