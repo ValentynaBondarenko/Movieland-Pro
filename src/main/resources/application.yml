@@ -31,6 +31,8 @@ movieland:
   movie:
     random:
       limit: 3
+    enrichment:
+      timeout: 5
   cache:
     update:
       interval: ${CACHE_UPDATE:14400000} # updated every 4 hours

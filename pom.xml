@@ -14,12 +14,12 @@
 
     <properties>
         <java.version>23</java.version>
-        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.36</lombok.version>
-        <compiler.version>3.12.1</compiler.version>
+        <compiler.version>3.13.0</compiler.version>
         <lombok-binding.version>0.2.0</lombok-binding.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <springdoc.version>2.3.0</springdoc.version>
+        <springdoc.version>2.4.0</springdoc.version>
         <datasource-listener.version>1.0.0</datasource-listener.version>
         <rider.version>1.41.0</rider.version>
         <jwt.version>0.13.0</jwt.version>

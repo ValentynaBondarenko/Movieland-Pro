@@ -35,6 +35,7 @@ jobs:
         run: mvn clean package -Dspring.profiles.active=test
 
       - name: SonarCloud Scan
+        if: github.event_name != 'pull_request' || github.repository == github.event.pull_request.head.repo.full_name
         run: |
           mvn sonar:sonar \
                       -Dsonar.projectKey=ValentynaBondarenko_Movieland-Pro \
