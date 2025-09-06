@@ -42,7 +42,7 @@ movieland:
       secret:  ${MOVIELAND_TOKEN_SECRET}
 exchange:
   api:
-    url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
+    url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchangenew?json
   scheduled:
     cron: 0 0 0  * * ? #update every day at 00:00
   zone: Europe/Kiev
