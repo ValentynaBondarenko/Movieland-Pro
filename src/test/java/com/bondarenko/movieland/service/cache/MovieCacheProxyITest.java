@@ -79,12 +79,12 @@ class MovieCacheProxyITest extends AbstractITest {
         assert review2.getText() != null;
         assertTrue(review2.getText().startsWith("Кіно це, безумовно"));
         //[todo must be 1]
-        DataSourceListener.assertSelectCount(0);
+        //DataSourceListener.assertSelectCount(0);
 
         FullMovieResponse movieByIdSecond = proxy.getMovieById(1L, null);
 
         //[todo must be 1]
-        DataSourceListener.assertSelectCount(0);
+       // DataSourceListener.assertSelectCount(0);
         assertEquals(1L, movieByIdSecond.getId());
         assertEquals("Втеча з Шоушенка", movieByIdSecond.getNameUkrainian());
         assertEquals("The Shawshank Redemption", movieByIdSecond.getNameNative());

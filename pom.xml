@@ -157,8 +157,8 @@
                 <version>${compiler.version}</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>23</source>
+                    <target>23</target>
                     <encoding>UTF-8</encoding>
                     <annotationProcessorPaths>
                         <path>
@@ -177,9 +177,7 @@
                             <version>${lombok-binding.version}</version>
                         </dependency>
                     </annotationProcessorPaths>
-                    <compilerArgs>
-                        <compilerArg>-Amapstruct.defaultComponentModel=spring</compilerArg>
-                    </compilerArgs>
+                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
 
@@ -210,6 +208,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>
