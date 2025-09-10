@@ -29,7 +29,6 @@ public class EnrichmentServiceImpl implements EnrichmentService {
     private int timeout;
 
     public MovieRequest enrichMovie(MovieRequest movieRequest) {
-
         Callable<List<GenreResponse>> genresTask = getGenresTask(movieRequest);
         Callable<List<CountryResponse>> countriesTask = getCountriesTask(movieRequest);
         Callable<List<ReviewResponse>> reviewsTask = getReviewsTask(movieRequest);
@@ -82,6 +81,12 @@ public class EnrichmentServiceImpl implements EnrichmentService {
         return List.of();
     }
 
+    //@PreDestroy will be triggered on:
+    // - Ctrl+C in the console, docker stop, kubectl delete pod, systemd stop,Kubernetes ->pod=SIGTERM
+    // --->Spring Boot run shutdown hook in JVM [Runtime.getRuntime().addShutdownHook(new Thread(context::close));]
+    //⚠️ It will NOT be invoked:
+    // - kill -9 (SIGKILL, no chance for cleanup)
+    //- fatal JVM crash (e.g. OutOfMemoryError, SIGSEGV)
     @PreDestroy
     public void shutdownExecutor() {
         executor.shutdown();
