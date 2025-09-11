@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EnrichmentServiceImpl implements EnrichmentService {
+public class ParallelEnrichmentService implements EnrichmentService {
     private final CountryService countryService;
     private final GenreService genreService;
     private final ReviewService reviewService;
@@ -44,26 +44,37 @@ public class EnrichmentServiceImpl implements EnrichmentService {
         return movieRequest;
     }
 
-    private Callable<List<ReviewResponse>> getReviewsTask(MovieRequest movieRequest) {
+    protected Callable<List<ReviewResponse>> getReviewsTask(MovieRequest movieRequest) {
         return () -> reviewService.findByIdIn(
                 movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
         );
     }
 
-    private Callable<List<CountryResponse>> getCountriesTask(MovieRequest movieRequest) {
+    protected Callable<List<CountryResponse>> getCountriesTask(MovieRequest movieRequest) {
         return () -> countryService.findByIdIn(
                 movieRequest.getCountries().stream().map(CountryResponse::getId).toList()
         );
     }
 
-    private Callable<List<GenreResponse>> getGenresTask(MovieRequest movieRequest) {
+    protected Callable<List<GenreResponse>> getGenresTask(MovieRequest movieRequest) {
         return () -> genreService.findByIdIn(
                 movieRequest.getGenres().stream().map(GenreResponse::getId).toList()
         );
     }
 
     private <T> List<T> fetchWithTimeout(Callable<List<T>> task, String taskName) {
-        Future<List<T>> future = executor.submit(task);
+        Future<List<T>> future = executor.submit(() -> {
+            long start = System.currentTimeMillis();
+            log.info("---->>>  [{}] started in thread {} at {}.", taskName, System.identityHashCode(Thread.currentThread()), start);
+
+            var result = task.call();
+
+            long end = System.currentTimeMillis();
+            log.info("<<<---- [{}] finished in thread {} at {}.", taskName, System.identityHashCode(Thread.currentThread()), end);
+            log.info("Total duration: {} ms ({} s)", (end - start), (end - start) / 1000.0);
+
+            return result;
+        });
 
         try {
             return future.get(timeout, TimeUnit.SECONDS);

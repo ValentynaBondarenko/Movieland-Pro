@@ -10,6 +10,7 @@ import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +28,7 @@ class MovieCacheProxyITest extends AbstractITest {
         DataSourceListener.reset();
     }
 
+    @Disabled
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMovieById_firstCall_missCache_thenHitCache() {

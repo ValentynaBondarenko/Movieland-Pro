@@ -1,7 +1,6 @@
 package com.bondarenko.movieland.service.enrichment;
 
 
-import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.CountryResponse;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.api.model.MovieRequest;
@@ -10,37 +9,70 @@ import com.bondarenko.movieland.repository.MovieRepository;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.AssertionsKt.assertTimeoutPreemptively;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+
 
 @DBRider
-class EnrichmentServiceImplTest extends AbstractITest {
-    @Autowired
-    private EnrichmentService enrichmentService;
+class ParallelEnrichmentServiceITest extends AbstractITest {
+    @SpyBean
+    private ParallelEnrichmentService enrichmentService;
 
     @Autowired
     private MovieRepository movieRepository;
-
-    @BeforeEach
-    void setUp() {
-        DataSourceListener.reset();
-    }
 
     @Test
     @DataSet("/datasets/movie/dataset_full_movies.yml")
     void testEnrichMovieTimeouts() {
         MovieRequest request = getMovieRequest();
+        doAnswer(invocation -> {
+            Callable<List<CountryResponse>> original =
+                    (Callable<List<CountryResponse>>) invocation.callRealMethod();
 
-        MovieRequest enriched = assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
+            return (Callable<List<CountryResponse>>) () -> {
+                Thread.sleep(3000);
+                return original.call();
+            };
+        }).when(enrichmentService).getGenresTask(any(MovieRequest.class));
+
+        doAnswer(invocation -> {
+            Callable<List<GenreResponse>> original =
+                    (Callable<List<GenreResponse>>) invocation.callRealMethod();
+
+            return (Callable<List<GenreResponse>>) () -> {
+                Thread.sleep(3000);
+                return original.call();
+            };
+        }).when(enrichmentService).getGenresTask(any(MovieRequest.class));
+
+        doAnswer(invocation -> {
+            Callable<List<ReviewResponse>> original =
+                    (Callable<List<ReviewResponse>>) invocation.callRealMethod();
+
+            return (Callable<List<ReviewResponse>>) () -> {
+                Thread.sleep(3000);
+                return original.call();
+            };
+        }).when(enrichmentService).getReviewsTask(any(MovieRequest.class));
+
+
+        long start = System.currentTimeMillis();
+        MovieRequest enriched = enrichmentService.enrichMovie(request);
+        long end = System.currentTimeMillis();
+        System.out.println("Total duration: " + (end - start) + " ms (" + ((end - start) / 1000.0) + " s)");
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
                 enrichmentService.enrichMovie(request)
         );
 
