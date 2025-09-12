@@ -33,14 +33,31 @@ public class ParallelEnrichmentService implements EnrichmentService {
         Callable<List<CountryResponse>> countriesTask = getCountriesTask(movieRequest);
         Callable<List<ReviewResponse>> reviewsTask = getReviewsTask(movieRequest);
 
-        List<GenreResponse> genres = fetchWithTimeout(genresTask, "genres");
-        List<CountryResponse> countries = fetchWithTimeout(countriesTask, "countries");
-        List<ReviewResponse> reviews = fetchWithTimeout(reviewsTask, "reviews");
+        List<Callable<List<?>>> parallelTasks = List.of(
+                () -> fetchWithLogging(genresTask, "genres"),
+                () -> fetchWithLogging(countriesTask, "countries"),
+                () -> fetchWithLogging(reviewsTask, "reviews")
+        );
+        try {
+            List<Future<List<?>>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
+            @SuppressWarnings("unchecked")
+            List<GenreResponse> genres = (List<GenreResponse>) futures.get(0).get();
+            @SuppressWarnings("unchecked")
+            List<CountryResponse> countries = (List<CountryResponse>) futures.get(1).get();
+            @SuppressWarnings("unchecked")
+            List<ReviewResponse> reviews = (List<ReviewResponse>) futures.get(2).get();
 
-        movieRequest.setGenres(genres);
-        movieRequest.setCountries(countries);
-        movieRequest.setReview(reviews);
+            movieRequest.setGenres(genres);
+            movieRequest.setCountries(countries);
+            movieRequest.setReview(reviews);
 
+        } catch (InterruptedException _) {
+            log.warn("Thread was interrupted while fetching ");
+            Thread.currentThread().interrupt();//не вбиває потік, а лише встановлює йому «флаг переривання».
+            //чекає у wait()/join()/sleep() → він викине InterruptedException, а флаг переривання обнулиться.
+        } catch (ExecutionException e) {
+            log.error("Error while fetching ", e.getCause());
+        }
         return movieRequest;
     }
 
@@ -62,34 +79,19 @@ public class ParallelEnrichmentService implements EnrichmentService {
         );
     }
 
-    private <T> List<T> fetchWithTimeout(Callable<List<T>> task, String taskName) {
-        Future<List<T>> future = executor.submit(() -> {
-            long start = System.currentTimeMillis();
-            log.info("---->>>  [{}] started in thread {} at {}.", taskName, System.identityHashCode(Thread.currentThread()), start);
-
-            var result = task.call();
-
-            long end = System.currentTimeMillis();
-            log.info("<<<---- [{}] finished in thread {} at {}.", taskName, System.identityHashCode(Thread.currentThread()), end);
-            log.info("Total duration: {} ms ({} s)", (end - start), (end - start) / 1000.0);
-
-            return result;
-        });
-
+    private <T> List<T> fetchWithLogging(Callable<List<T>> task, String taskName) {
+        long start = System.currentTimeMillis();
+        log.info("---->>> [{}] started in thread {} at {}", taskName, System.identityHashCode(Thread.currentThread()), start);
         try {
-            return future.get(timeout, TimeUnit.SECONDS);
-        } catch (TimeoutException _) {
-            log.error("{} enrichment timed out", taskName);
-            future.cancel(true);
-        } catch (InterruptedException _) {
-            log.warn("Thread was interrupted while fetching {}", taskName);
-            future.cancel(true);
-            Thread.currentThread().interrupt();//не вбиває потік, а лише встановлює йому «флаг переривання».
-            //чекає у wait()/join()/sleep() → він викине InterruptedException, а флаг переривання обнулиться.
-        } catch (ExecutionException e) {
-            log.error("Error while fetching {}", taskName, e.getCause());
+            List<T> result = task.call();
+            long end = System.currentTimeMillis();
+            log.info("<<<---- [{}] finished in thread {} at {}. Duration: {} ms ({} s)",
+                    taskName, System.identityHashCode(Thread.currentThread()), end, (end - start), (end - start) / 1000.0);
+            return result;
+        } catch (Exception e) {
+            log.error("Error in task {}", taskName, e);
+            return List.of();
         }
-        return List.of();
     }
 
     //@PreDestroy will be triggered on:
