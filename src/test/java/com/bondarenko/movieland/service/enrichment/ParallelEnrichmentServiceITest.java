@@ -1,56 +1,103 @@
 package com.bondarenko.movieland.service.enrichment;
 
 
-import com.bondarenko.listener.DataSourceListener;
 import com.bondarenko.movieland.api.model.CountryResponse;
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.ReviewResponse;
-import com.bondarenko.movieland.repository.MovieRepository;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.stubbing.Answer;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.AssertionsKt.assertTimeoutPreemptively;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
 @DBRider
-class EnrichmentServiceImplTest extends AbstractITest {
-    @Autowired
-    private EnrichmentService enrichmentService;
-
-    @Autowired
-    private MovieRepository movieRepository;
-
-    @BeforeEach
-    void setUp() {
-        DataSourceListener.reset();
-    }
+class ParallelEnrichmentServiceITest extends AbstractITest {
+    @SpyBean
+    private ParallelEnrichmentService enrichmentService;
 
     @Test
     @DataSet("/datasets/movie/dataset_full_movies.yml")
     void testEnrichMovieTimeouts() {
+        //prepare
         MovieRequest request = getMovieRequest();
+        doAnswer(delayedAnswer())
+                .when(enrichmentService).getCountriesTask(any(MovieRequest.class));
 
-        MovieRequest enriched = assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
+        doAnswer(delayedAnswer())
+                .when(enrichmentService).getGenresTask(any(MovieRequest.class));
+
+        doAnswer(delayedAnswer())
+                .when(enrichmentService).getReviewsTask(any(MovieRequest.class));
+
+
+        // when + timeout
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
                 enrichmentService.enrichMovie(request)
         );
 
-        assertNotNull(enriched.getGenres());
-        assertNotNull(enriched.getCountries());
-        assertNotNull(enriched.getReview());
+        //then
+        assertNotNull(request.getGenres());
+        assertNotNull(request.getCountries());
+        assertNotNull(request.getReview());
 
-        assertFalse(enriched.getGenres().isEmpty());
-        assertFalse(enriched.getCountries().isEmpty());
-        assertFalse(enriched.getReview().isEmpty());
+        assertFalse(request.getGenres().isEmpty());
+        assertFalse(request.getCountries().isEmpty());
+        assertFalse(request.getReview().isEmpty());
+
+        assertEquals("Втеча з Шоушенка", request.getNameUkrainian());
+        assertEquals("The Shawshank Redemption", request.getNameNative());
+        assertEquals(1994, request.getYearOfRelease());
+        assertEquals(123.45, request.getPrice());
+        assertEquals(9.5, request.getRating());
+
+        assertThat(request.getCountries())
+                .extracting(CountryResponse::getName)
+                .containsExactlyInAnyOrder("США", "Франція");
+
+        assertThat(request.getGenres())
+                .extracting(GenreResponse::getName)
+                .containsExactlyInAnyOrder("Драма", "Кримінал", "Фентезі");
+
+        assertThat(request.getReview())
+                .extracting(r -> {
+                    assert r.getUser() != null;
+                    return r.getUser().getNickname();
+                })
+                .containsExactlyInAnyOrder(
+                        "Дарлін Едвардс",
+                        "Габріель Джексон",
+                        "Рональд Рейнольдс"
+                );
+
+        assertThat(request.getReview()).allSatisfy(r -> {
+            assertNotNull(r.getText());
+            assertFalse(r.getText().isBlank());
+        });
+    }
+
+    private Answer<Runnable> delayedAnswer() {
+        return invocation -> {
+            Runnable original = (Runnable) invocation.callRealMethod();
+            return () -> {
+                try {
+                    Thread.sleep(4500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                original.run();
+            };
+        };
     }
 
     private MovieRequest getMovieRequest() {
