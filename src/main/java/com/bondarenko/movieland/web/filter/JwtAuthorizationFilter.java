@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.web.filter;
 
+import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.user.UserService;
 import com.bondarenko.movieland.util.JWTUtil;
@@ -25,10 +26,12 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final UserService userService;
+    private final TokenBlacklist tokenBlacklist;
 
-    public JwtAuthorizationFilter(TokenService tokenService, UserService userService) {
+    public JwtAuthorizationFilter(TokenService tokenService, UserService userService, TokenBlacklist tokenBlacklist) {
         this.tokenService = tokenService;
         this.userService = userService;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
 
@@ -39,7 +42,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         final String token = JWTUtil.extractAccessToken(request);
 
         try {
-
+            if (token != null && tokenBlacklist.isBlacklisted(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Token is blacklisted\"}");
+                return;
+            }
             if (tokenService.isRefreshToken(token)) {
                 filterChain.doFilter(request, response);
                 return;

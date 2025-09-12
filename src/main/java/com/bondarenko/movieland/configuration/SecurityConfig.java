@@ -57,7 +57,7 @@ public class SecurityConfig {
     //custom filter for authorization with JWT and real User
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(tokenService, userService);
+        return new JwtAuthorizationFilter(tokenService, userService, tokenBlacklist);
     }
 
     //use UserDetailsService +PasswordEncoder

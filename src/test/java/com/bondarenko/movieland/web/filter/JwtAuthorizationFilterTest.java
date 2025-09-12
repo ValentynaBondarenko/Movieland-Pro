@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.web.filter;
 
+import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.user.UserService;
 import jakarta.servlet.FilterChain;
@@ -22,6 +23,7 @@ class JwtAuthorizationFilterTest {
 
     private TokenService tokenService;
     private UserService userService;
+    private TokenBlacklist tokenBlacklist;
     private JwtAuthorizationFilter filter;
 
     private HttpServletRequest request;
@@ -32,7 +34,8 @@ class JwtAuthorizationFilterTest {
     void setUp() {
         tokenService = mock(TokenService.class);
         userService = mock(UserService.class);
-        filter = new JwtAuthorizationFilter(tokenService, userService);
+        tokenBlacklist = mock(TokenBlacklist.class);
+        filter = new JwtAuthorizationFilter(tokenService, userService, tokenBlacklist);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
