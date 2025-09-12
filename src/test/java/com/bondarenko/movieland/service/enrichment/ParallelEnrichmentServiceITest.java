@@ -19,10 +19,8 @@ import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.AssertionsKt.assertTimeoutPreemptively;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
-
 
 @DBRider
 class ParallelEnrichmentServiceITest extends AbstractITest {
@@ -43,35 +41,36 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         doAnswer(delayedAnswer())
                 .when(enrichmentService).getReviewsTask(any(MovieRequest.class));
 
-        //when
-        MovieRequest enriched = assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
+
+        // when + timeout
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
                 enrichmentService.enrichMovie(request)
         );
 
         //then
-        assertNotNull(enriched.getGenres());
-        assertNotNull(enriched.getCountries());
-        assertNotNull(enriched.getReview());
+        assertNotNull(request.getGenres());
+        assertNotNull(request.getCountries());
+        assertNotNull(request.getReview());
 
-        assertFalse(enriched.getGenres().isEmpty());
-        assertFalse(enriched.getCountries().isEmpty());
-        assertFalse(enriched.getReview().isEmpty());
+        assertFalse(request.getGenres().isEmpty());
+        assertFalse(request.getCountries().isEmpty());
+        assertFalse(request.getReview().isEmpty());
 
-        assertEquals("Втеча з Шоушенка", enriched.getNameUkrainian());
-        assertEquals("The Shawshank Redemption", enriched.getNameNative());
-        assertEquals(1994, enriched.getYearOfRelease());
-        assertEquals(123.45, enriched.getPrice());
-        assertEquals(9.5, enriched.getRating());
+        assertEquals("Втеча з Шоушенка", request.getNameUkrainian());
+        assertEquals("The Shawshank Redemption", request.getNameNative());
+        assertEquals(1994, request.getYearOfRelease());
+        assertEquals(123.45, request.getPrice());
+        assertEquals(9.5, request.getRating());
 
-        assertThat(enriched.getCountries())
+        assertThat(request.getCountries())
                 .extracting(CountryResponse::getName)
                 .containsExactlyInAnyOrder("США", "Франція");
 
-        assertThat(enriched.getGenres())
+        assertThat(request.getGenres())
                 .extracting(GenreResponse::getName)
                 .containsExactlyInAnyOrder("Драма", "Кримінал", "Фентезі");
 
-        assertThat(enriched.getReview())
+        assertThat(request.getReview())
                 .extracting(r -> {
                     assert r.getUser() != null;
                     return r.getUser().getNickname();
@@ -82,7 +81,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
                         "Рональд Рейнольдс"
                 );
 
-        assertThat(enriched.getReview()).allSatisfy(r -> {
+        assertThat(request.getReview()).allSatisfy(r -> {
             assertNotNull(r.getText());
             assertFalse(r.getText().isBlank());
         });

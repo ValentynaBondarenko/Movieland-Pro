@@ -28,7 +28,7 @@ public class ParallelEnrichmentService implements EnrichmentService {
     @Value("${movieland.movie.enrichment.timeout}")
     private int timeout;
 
-    public MovieRequest enrichMovie(MovieRequest movieRequest) {
+    public void enrichMovie(MovieRequest movieRequest) {
         Callable<List<GenreResponse>> genresTask = getGenresTask(movieRequest);
         Callable<List<CountryResponse>> countriesTask = getCountriesTask(movieRequest);
         Callable<List<ReviewResponse>> reviewsTask = getReviewsTask(movieRequest);
@@ -58,7 +58,7 @@ public class ParallelEnrichmentService implements EnrichmentService {
         } catch (ExecutionException e) {
             log.error("Error while fetching ", e.getCause());
         }
-        return movieRequest;
+
     }
 
     protected Callable<List<ReviewResponse>> getReviewsTask(MovieRequest movieRequest) {
