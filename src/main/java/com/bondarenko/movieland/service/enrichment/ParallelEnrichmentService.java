@@ -14,7 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Slf4j
 @Service
@@ -29,77 +34,75 @@ public class ParallelEnrichmentService implements EnrichmentService {
     private int timeout;
 
     public void enrichMovie(MovieRequest movieRequest) {
-        Callable<List<GenreResponse>> genresTask = getGenresTask(movieRequest);
-        Callable<List<CountryResponse>> countriesTask = getCountriesTask(movieRequest);
-        Callable<List<ReviewResponse>> reviewsTask = getReviewsTask(movieRequest);
-
-        List<Callable<List<?>>> parallelTasks = List.of(
-                () -> fetchWithLogging(genresTask, "genres"),
-                () -> fetchWithLogging(countriesTask, "countries"),
-                () -> fetchWithLogging(reviewsTask, "reviews")
+        List<Callable<Object>> parallelTasks = List.of(
+                Executors.callable(getGenresTask(movieRequest)),
+                Executors.callable(getCountriesTask(movieRequest)),
+                Executors.callable(getReviewsTask(movieRequest))
         );
+
         try {
-            List<Future<List<?>>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
-            @SuppressWarnings("unchecked")
-            List<GenreResponse> genres = (List<GenreResponse>) futures.get(0).get();
-            @SuppressWarnings("unchecked")
-            List<CountryResponse> countries = (List<CountryResponse>) futures.get(1).get();
-            @SuppressWarnings("unchecked")
-            List<ReviewResponse> reviews = (List<ReviewResponse>) futures.get(2).get();
-
-            movieRequest.setGenres(genres);
-            movieRequest.setCountries(countries);
-            movieRequest.setReview(reviews);
-
-        } catch (InterruptedException _) {
-            log.warn("Thread was interrupted while fetching ");
-            Thread.currentThread().interrupt();//не вбиває потік, а лише встановлює йому «флаг переривання».
-            //чекає у wait()/join()/sleep() → він викине InterruptedException, а флаг переривання обнулиться.
-        } catch (ExecutionException e) {
-            log.error("Error while fetching ", e.getCause());
+            executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.warn("Thread was interrupted while fetching");
+            Thread.currentThread().interrupt();
         }
-
     }
 
-    protected Callable<List<ReviewResponse>> getReviewsTask(MovieRequest movieRequest) {
-        return () -> reviewService.findByIdIn(
-                movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
+    private <T> Runnable handleEnrichment(Supplier<T> supplier, Consumer<T> consumer, String taskName) {
+        return () -> {
+            long start = System.currentTimeMillis();
+            log.info(">>> [{}] started in thread {} at {}", taskName,
+                    System.identityHashCode(Thread.currentThread()), start);
+            try {
+                T result = supplier.get();
+                consumer.accept(result);
+                long end = System.currentTimeMillis();
+                log.info("<<< [{}] finished in thread {} at {}. Duration: {} ms ({} s)",
+                        taskName, System.identityHashCode(Thread.currentThread()), end,
+                        (end - start), (end - start) / 1000.0);
+            } catch (Exception e) {
+                log.error("Error in task {}", taskName, e);
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    protected Runnable getGenresTask(MovieRequest movieRequest) {
+        return handleEnrichment(
+                () -> genreService.findByIdIn(
+                        movieRequest.getGenres().stream().map(GenreResponse::getId).toList()
+                ),
+                movieRequest::setGenres,
+                "genres"
         );
     }
 
-    protected Callable<List<CountryResponse>> getCountriesTask(MovieRequest movieRequest) {
-        return () -> countryService.findByIdIn(
-                movieRequest.getCountries().stream().map(CountryResponse::getId).toList()
+    protected Runnable getCountriesTask(MovieRequest movieRequest) {
+        return handleEnrichment(
+                () -> countryService.findByIdIn(
+                        movieRequest.getCountries().stream().map(CountryResponse::getId).toList()
+                ),
+                movieRequest::setCountries,
+                "countries"
         );
     }
 
-    protected Callable<List<GenreResponse>> getGenresTask(MovieRequest movieRequest) {
-        return () -> genreService.findByIdIn(
-                movieRequest.getGenres().stream().map(GenreResponse::getId).toList()
+    protected Runnable getReviewsTask(MovieRequest movieRequest) {
+        return handleEnrichment(
+                () -> reviewService.findByIdIn(
+                        movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
+                ),
+                movieRequest::setReview,
+                "reviews"
         );
-    }
-
-    private <T> List<T> fetchWithLogging(Callable<List<T>> task, String taskName) {
-        long start = System.currentTimeMillis();
-        log.info("---->>> [{}] started in thread {} at {}", taskName, System.identityHashCode(Thread.currentThread()), start);
-        try {
-            List<T> result = task.call();
-            long end = System.currentTimeMillis();
-            log.info("<<<---- [{}] finished in thread {} at {}. Duration: {} ms ({} s)",
-                    taskName, System.identityHashCode(Thread.currentThread()), end, (end - start), (end - start) / 1000.0);
-            return result;
-        } catch (Exception e) {
-            log.error("Error in task {}", taskName, e);
-            return List.of();
-        }
     }
 
     //@PreDestroy will be triggered on:
-    // - Ctrl+C in the console, docker stop, kubectl delete pod, systemd stop,Kubernetes ->pod=SIGTERM
-    // --->Spring Boot run shutdown hook in JVM [Runtime.getRuntime().addShutdownHook(new Thread(context::close));]
-    //⚠️ It will NOT be invoked:
-    // - kill -9 (SIGKILL, no chance for cleanup)
-    //- fatal JVM crash (e.g. OutOfMemoryError, SIGSEGV)
+// - Ctrl+C in the console, docker stop, kubectl delete pod, systemd stop,Kubernetes ->pod=SIGTERM
+// --->Spring Boot run shutdown hook in JVM [Runtime.getRuntime().addShutdownHook(new Thread(context::close));]
+//⚠️ It will NOT be invoked:
+// - kill -9 (SIGKILL, no chance for cleanup)
+//- fatal JVM crash (e.g. OutOfMemoryError, SIGSEGV)
     @PreDestroy
     public void shutdownExecutor() {
         executor.shutdown();

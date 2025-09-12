@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,14 +86,16 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         });
     }
 
-    private <T> Answer<Callable<List<T>>> delayedAnswer() {
+    private Answer<Runnable> delayedAnswer() {
         return invocation -> {
-            @SuppressWarnings("unchecked")
-            Callable<List<T>> original = (Callable<List<T>>) invocation.callRealMethod();
-
+            Runnable original = (Runnable) invocation.callRealMethod();
             return () -> {
-                Thread.sleep(4500);
-                return original.call();
+                try {
+                    Thread.sleep(4500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                original.run();
             };
         };
     }
