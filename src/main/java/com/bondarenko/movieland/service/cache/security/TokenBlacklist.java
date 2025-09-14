@@ -3,10 +3,9 @@ package com.bondarenko.movieland.service.cache.security;
 import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.security.TokenService;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TokenBlacklist — a service for managing a blacklist of JWT tokens.
@@ -19,21 +18,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @AllArgsConstructor
 public class TokenBlacklist {
     private TokenService tokenService;
-    private final Map<String, Long> blacklist = new ConcurrentHashMap<>();
+    private final StringRedisTemplate redis;
 
     public void addToken(String token) {
         long expiryTimeMillis = tokenService.getExpirationMillis(token);
-        blacklist.putIfAbsent(token, expiryTimeMillis);
-    }
+        long ttlMillis = expiryTimeMillis - System.currentTimeMillis();
 
-
-    @Scheduled(fixedDelayString = "${movieland.security.token.expiry-ms}")
-    private void cleanupExpiredTokens() {
-        long now = System.currentTimeMillis();
-        blacklist.entrySet().removeIf(token -> token.getValue() < now);
+        if (ttlMillis > 0) {
+            redis.opsForValue().set(token, "blacklisted", ttlMillis, TimeUnit.MILLISECONDS);
+        }
     }
 
     public boolean isBlacklisted(String token) {
-        return blacklist.containsKey(token);
+        return Boolean.TRUE.equals(redis.hasKey(token));
     }
 }

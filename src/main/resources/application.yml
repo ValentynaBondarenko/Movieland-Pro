@@ -16,6 +16,10 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 liquibase:
   change-log: classpath:changelog.xml
@@ -39,7 +43,7 @@ movieland:
   security:
     token:
       expiry-ms: 7200000 # expired after 2 hours
-      secret:  ${MOVIELAND_TOKEN_SECRET}
+      secret:  ${MOVIELAND_TOKEN_SECRET:Vu+L6+nRgPsWlCbPMV4vhOiLFZ+P7LOkgNs++tDnmWA=}
 exchange:
   api:
     url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchangenew?json

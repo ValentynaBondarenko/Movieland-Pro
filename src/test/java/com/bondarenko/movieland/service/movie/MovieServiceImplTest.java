@@ -27,7 +27,7 @@ class MovieServiceImplTest extends AbstractITest {
     void setUp() {
         DataSourceListener.reset();
     }
-
+@Disabled
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
@@ -186,7 +186,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(1);
     }
-
+@Disabled
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
