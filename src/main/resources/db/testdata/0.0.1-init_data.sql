@@ -10,6 +10,7 @@ VALUES ('Рональд Рейнольдс', 'ronald.reynolds66@example.com', '$
        ('Айда Девіс', 'ida.davis80@example.com', 'pepsi1', 'User'),
        ('Джессі Паттерсон', 'jessie.patterson68@example.com', 'tommy', 'User'),
        ('Денніс Крейг', 'dennis.craig82@example.com', 'coldbeer', 'User');
+ALTER SEQUENCE movies_id_seq RESTART WITH 1 INCREMENT BY 1;
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)
 VALUES ('Втеча з Шоушенка', 'The Shawshank Redemption', 1994,
@@ -99,3 +100,4 @@ VALUES (1, 1, 'Вважаю, цей фільм має бути в колекці
         'У підсумку ми маємо відмінного представника свого жанру, який пройшов перевірку часом і досі чудово виглядає, незважаючи на класичний сюжет.'),
        (5, 5, 'Скажу тільки одне — як шкодую, що не подивилася цей фільм раніше!');
 
+ALTER SEQUENCE movies_id_seq INCREMENT BY 50;
