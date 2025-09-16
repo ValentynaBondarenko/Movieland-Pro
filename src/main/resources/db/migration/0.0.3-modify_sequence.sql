@@ -1,1 +1,1 @@
-ALTER SEQUENCE movies_id_seq INCREMENT BY 50;
+-- ALTER SEQUENCE movies_id_seq INCREMENT BY 50;

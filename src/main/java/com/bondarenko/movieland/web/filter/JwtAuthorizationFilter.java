@@ -1,5 +1,6 @@
 package com.bondarenko.movieland.web.filter;
 
+import com.bondarenko.movieland.service.cache.security.TokenBlacklist;
 import com.bondarenko.movieland.service.security.TokenService;
 import com.bondarenko.movieland.service.user.UserService;
 import com.bondarenko.movieland.util.JWTUtil;
@@ -25,10 +26,12 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final UserService userService;
+    private final TokenBlacklist tokenBlacklist;
 
-    public JwtAuthorizationFilter(TokenService tokenService, UserService userService) {
+    public JwtAuthorizationFilter(TokenService tokenService, UserService userService, TokenBlacklist tokenBlacklist) {
         this.tokenService = tokenService;
         this.userService = userService;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
 
@@ -37,9 +40,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         //JWT
         final String token = JWTUtil.extractAccessToken(request);
+        if (request.getServletPath().equals("/api/v1/login") || request.getServletPath().equals("/api/v1/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
-
+            if (token != null && tokenBlacklist.isBlacklisted(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Token is blacklisted\"}");
+                return;
+            }
             if (tokenService.isRefreshToken(token)) {
                 filterChain.doFilter(request, response);
                 return;
@@ -59,7 +71,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Invalid or expired token\"}");
+            response.getWriter().write("{\"error\": \"UNAUTHORIZED User or expired token\"}");
             return;
         }
 

@@ -7,7 +7,7 @@ import com.bondarenko.movieland.web.filter.JwtAuthenticationFilter;
 import com.bondarenko.movieland.web.filter.JwtAuthorizationFilter;
 import com.bondarenko.movieland.web.filter.JwtLogoutFilter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Configuration; 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -57,7 +57,7 @@ public class SecurityConfig {
     //custom filter for authorization with JWT and real User
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(tokenService, userService);
+        return new JwtAuthorizationFilter(tokenService, userService, tokenBlacklist);
     }
 
     //use UserDetailsService +PasswordEncoder
