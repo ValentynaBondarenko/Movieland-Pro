@@ -40,6 +40,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         //JWT
         final String token = JWTUtil.extractAccessToken(request);
+        if (request.getServletPath().equals("/api/v1/login") || request.getServletPath().equals("/api/v1/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             if (token != null && tokenBlacklist.isBlacklisted(token)) {
@@ -67,7 +71,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Invalid or expired token\"}");
+            response.getWriter().write("{\"error\": \"UNAUTHORIZED User or expired token\"}");
             return;
         }
 

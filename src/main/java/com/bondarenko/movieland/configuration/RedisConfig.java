@@ -13,7 +13,7 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(); // автоматично бере host/port з application.yml
+        return new LettuceConnectionFactory(); // auto get host/port з application.yml
     }
 
     @Bean

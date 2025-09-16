@@ -51,6 +51,7 @@ class JwtAuthorizationFilterTest {
         String email = "user@example.com";
 
         UserDetails userDetails = mock(UserDetails.class);
+        when(request.getServletPath()).thenReturn("/api/v1/movies");
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
 
         mockStaticJwtUtilExtractAccessToken(token);
@@ -78,6 +79,7 @@ class JwtAuthorizationFilterTest {
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         mockStaticJwtUtilExtractAccessToken(token);
 
+        when(request.getServletPath()).thenReturn("/api/v1/movies");
         when(tokenService.isRefreshToken(token)).thenReturn(true);
 
         filter.doFilterInternal(request, response, filterChain);
@@ -94,7 +96,7 @@ class JwtAuthorizationFilterTest {
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         mockStaticJwtUtilExtractAccessToken(token);
-
+        when(request.getServletPath()).thenReturn("/api/v1/movies");
         when(tokenService.isRefreshToken(token)).thenReturn(false);
         when(tokenService.extractEmailFromToken(token)).thenThrow(new RuntimeException("Invalid token"));
 
@@ -105,7 +107,7 @@ class JwtAuthorizationFilterTest {
 
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response).setContentType("application/json");
-        assertTrue(responseWriter.toString().contains("Invalid or expired token"));
+        assertTrue(responseWriter.toString().contains("UNAUTHORIZED User or expired token"));
 
         verify(filterChain, never()).doFilter(request, response);
     }

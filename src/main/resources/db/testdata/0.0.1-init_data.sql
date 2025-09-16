@@ -1,15 +1,16 @@
 INSERT INTO users (name, email, password, role)
 VALUES
-    ('Рональд Рейнольдс', 'ronald.reynolds66@example.com', '$2a$10$vCE6KDVh96tO/5.ilMXaBuO3eXIaY9/Yj6WsUmA7KAYiarxv3Zu8u', 'User'),
-    ('Дарлін Едвардс', 'darlene.edwards15@example.com', 'bricks', 'User'),
-    ('Габріель Джексон', 'gabriel.jackson91@example.com', 'hjkl', 'User'),
-    ('Деріл Брайант', 'daryl.bryant94@example.com', 'exodus', 'User'),
-    ('Ніл Паркер', 'neil.parker43@example.com', '878787', 'User'),
-    ('Тревіс Райт', 'travis.wright36@example.com', 'smart', 'User'),
-    ('Амелія Кеннеді', 'amelia.kennedy58@example.com', 'beaker', 'User'),
-    ('Айда Девіс', 'ida.davis80@example.com', 'pepsi1', 'User'),
-    ('Джессі Паттерсон', 'jessie.patterson68@example.com', 'tommy', 'User'),
-    ('Денніс Крейг', 'dennis.craig82@example.com', 'coldbeer', 'User')
+    ('Рональд Рейнольдс', 'ronald.reynolds66@example.com', '$2a$10$DoD4pxn7JfHB2xyEukxzquyZXm1W6gJE24CEkX9H3nvow6oLPQ6vS', 'ADMIN'),
+    ('Дарлін Едвардс', 'darlene.edwards15@example.com', '$2a$10$plDTe25ciQ.s.aLcVkEWludU5MFozlg5Gw44z9ZtqzDRi1KPPqWay', 'User'),
+    ('Габріель Джексон', 'gabriel.jackson91@example.com', '$2a$10$LKiBXj5EgcMm3eebg3H9Uef6yKhw8blzY6adN4GuS3exMn1bd9fxu', 'User'),
+    ('Деріл Брайант', 'daryl.bryant94@example.com', '$2a$10$pNt2HB0yUFAMgT5.w5Ctd.wvDEMq9yVs.ynCqRX4CbzmpTvRkr/e2', 'User'),
+    ('Ніл Паркер', 'neil.parker43@example.com', '$2a$10$Ie/kNpm.qKdGqXHs.XUDvORwuNaGjjN0g7Ea5aTyyQnqiXeXf45QC', 'User'),
+    ('Тревіс Райт', 'travis.wright36@example.com', '$2a$10$wLvmlEN2XS2LA2Yq5j.xfu6cmI3TXHMu9Hfdg7dinSNEoFu.7zjLK', 'User'),
+    ('Амелія Кеннеді', 'amelia.kennedy58@example.com', '$2a$10$OByknBWbLBfdvZhHBiK.KeA5HKUDkc..WfiH1Sn/tTRsnw63sGvoK', 'User'),
+    ('Айда Девіс', 'ida.davis80@example.com', '$2a$10$MWqNG3gWIi8DAXHI9SkPEe7BrGyScHBMbYm76CekQpIzlo597d2LG', 'User'),
+    ('Джессі Паттерсон', 'jessie.patterson68@example.com', '$2a$10$BobdJmrbCs6VEKW6kBpbUu4pZI62kM2aNVkyVhzbpx2po2RzxzHli', 'User'),
+    ('Деніс Крейг', 'dennis.craig82@example.com', '$2a$10$ARHGC5oZD1TPr8UzcYeP9uG3P6QWTPTOWK4acpvOzxZP1I7MWoyK.', 'User')
+
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)
