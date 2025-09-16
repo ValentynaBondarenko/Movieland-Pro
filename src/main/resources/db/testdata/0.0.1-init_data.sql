@@ -1,16 +1,16 @@
 INSERT INTO users (name, email, password, role)
-VALUES ('Рональд Рейнольдс', 'ronald.reynolds66@example.com', '$2a$10$vCE6KDVh96tO/5.ilMXaBuO3eXIaY9/Yj6WsUmA7KAYiarxv3Zu8u
-', 'USER'),
-       ('Дарлін Едвардс', 'darlene.edwards15@example.com', 'bricks', 'User'),
-       ('Габріель Джексон', 'gabriel.jackson91@example.com', 'hjkl', 'User'),
-       ('Деріл Брайант', 'daryl.bryant94@example.com', 'exodus', 'User'),
-       ('Ніл Паркер', 'neil.parker43@example.com', '878787', 'User'),
-       ('Тревіс Райт', 'travis.wright36@example.com', 'smart', 'User'),
-       ('Амелія Кеннеді', 'amelia.kennedy58@example.com', 'beaker', 'User'),
-       ('Айда Девіс', 'ida.davis80@example.com', 'pepsi1', 'User'),
-       ('Джессі Паттерсон', 'jessie.patterson68@example.com', 'tommy', 'User'),
-       ('Денніс Крейг', 'dennis.craig82@example.com', 'coldbeer', 'User');
-ALTER SEQUENCE movies_id_seq RESTART WITH 1 INCREMENT BY 1;
+VALUES
+    ('Рональд Рейнольдс', 'ronald.reynolds66@example.com', '$2a$10$vCE6KDVh96tO/5.ilMXaBuO3eXIaY9/Yj6WsUmA7KAYiarxv3Zu8u', 'User'),
+    ('Дарлін Едвардс', 'darlene.edwards15@example.com', 'bricks', 'User'),
+    ('Габріель Джексон', 'gabriel.jackson91@example.com', 'hjkl', 'User'),
+    ('Деріл Брайант', 'daryl.bryant94@example.com', 'exodus', 'User'),
+    ('Ніл Паркер', 'neil.parker43@example.com', '878787', 'User'),
+    ('Тревіс Райт', 'travis.wright36@example.com', 'smart', 'User'),
+    ('Амелія Кеннеді', 'amelia.kennedy58@example.com', 'beaker', 'User'),
+    ('Айда Девіс', 'ida.davis80@example.com', 'pepsi1', 'User'),
+    ('Джессі Паттерсон', 'jessie.patterson68@example.com', 'tommy', 'User'),
+    ('Денніс Крейг', 'dennis.craig82@example.com', 'coldbeer', 'User')
+ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)
 VALUES ('Втеча з Шоушенка', 'The Shawshank Redemption', 1994,
@@ -99,5 +99,3 @@ VALUES (1, 1, 'Вважаю, цей фільм має бути в колекці
        (4, 4,
         'У підсумку ми маємо відмінного представника свого жанру, який пройшов перевірку часом і досі чудово виглядає, незважаючи на класичний сюжет.'),
        (5, 5, 'Скажу тільки одне — як шкодую, що не подивилася цей фільм раніше!');
-
-ALTER SEQUENCE movies_id_seq INCREMENT BY 50;
