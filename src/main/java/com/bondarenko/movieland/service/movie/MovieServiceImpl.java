@@ -9,7 +9,7 @@ import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
-import com.bondarenko.movieland.service.currency.CurrencyServiceImpl;
+import com.bondarenko.movieland.service.currency.CurrencyService;
 import com.bondarenko.movieland.service.enrichment.EnrichmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final EnrichmentService enrichmentService;
     private final MovieMapper movieMapper;
-    private final CurrencyServiceImpl converter;
+    private final CurrencyService converter;
     @Value("${movieland.movie.random.limit}")
     private int limit;
     private static final String RATING = "rating";
