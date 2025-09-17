@@ -6,37 +6,42 @@ import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
 import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.annotation.CacheService;
+import com.bondarenko.movieland.service.currency.CurrencyService;
 import com.bondarenko.movieland.service.movie.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.ref.SoftReference;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 @Slf4j
 @CacheService
 @RequiredArgsConstructor
 public class MovieCacheProxy implements MovieService {
     private final MovieService movieService;
+    private final CurrencyService currencyService;
     private final Map<Long, SoftReference<FullMovieResponse>> movieCache = new ConcurrentHashMap<>();
 
     @Override
     public FullMovieResponse getMovieById(Long movieId, CurrencyType currency) {
         SoftReference<FullMovieResponse> movieFromCache = movieCache.get(movieId);
-        FullMovieResponse response = (movieFromCache != null) ? movieFromCache.get() : null;
+        FullMovieResponse cachedMovie = (movieFromCache != null) ? movieFromCache.get() : null;
 
-        if (response != null) {
+        if (cachedMovie != null) {
             log.debug("Cache HIT for movie {}", movieId);
-            return response;
+            return applyCurrency(cachedMovie, currency);
         }
 
         log.debug("Cache MISS for movie {}", movieId);
-        response = movieService.getMovieById(movieId, currency);
-        movieCache.put(movieId, new SoftReference<>(response));
+        FullMovieResponse movie = movieService.getMovieById(movieId, null);
+        movieCache.put(movieId, new SoftReference<>(movie));
 
-        return response;
+        return applyCurrency(movie, currency);
     }
 
     @Override
@@ -69,5 +74,37 @@ public class MovieCacheProxy implements MovieService {
         return updateMovie;
     }
 
+    private FullMovieResponse applyCurrency(FullMovieResponse movie, CurrencyType currency) {
+        if (currency == null || currency == CurrencyType.UAH) {
+            return movie;
+        }
+        FullMovieResponse converted = deepCopy(movie);
+        Double moviePrice = movie.getPrice();
+
+        if (moviePrice != null) {
+            BigDecimal price = currencyService.convertCurrency(BigDecimal.valueOf(moviePrice), currency);
+            converted.setPrice(price.doubleValue());
+        } else {
+            converted.setPrice(null);
+        }
+
+        return converted;
+    }
+
+    private FullMovieResponse deepCopy(FullMovieResponse original) {
+        FullMovieResponse copy = new FullMovieResponse();
+        copy.setId(original.getId());
+        copy.setNameUkrainian(original.getNameUkrainian());
+        copy.setNameNative(original.getNameNative());
+        copy.setYearOfRelease(original.getYearOfRelease());
+        copy.setDescription(original.getDescription());
+        copy.setRating(original.getRating());
+        copy.setPrice(original.getPrice());
+        copy.setPicturePath(original.getPicturePath());
+        copy.setGenres(new ArrayList<>(original.getGenres()));
+        copy.setCountries(new ArrayList<>(original.getCountries()));
+        copy.setReviews(new ArrayList<>(original.getReviews()));
+        return copy;
+    }
 
 }
