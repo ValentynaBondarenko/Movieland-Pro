@@ -29,6 +29,12 @@ public class ParallelEnrichmentService implements EnrichmentService {
 
     @Override
     public void enrichMovie(MovieRequest movieRequest) {
+        //main thread
+        //   |
+        //   +-- fork task1 -> virtual thread 1: doSomething1()
+        //   +-- fork task2 -> virtual thread 2: doSomething2()
+        //   |
+        //   +-- scope.join() -> чекаємо, поки task1 і task2 завершаться
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 
             // запускаємо паралельні таски
@@ -43,12 +49,15 @@ public class ParallelEnrichmentService implements EnrichmentService {
             var reviewsFuture = scope.fork(() -> reviewService.findByIdIn(
                     movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
             ));
-
-            // чекаємо завершення (з таймаутом!)
+            //час →
+            //|-------- timeout --------|
+            //task1: ─────────────── done
+            //task2: ─────────────── done
+            //task3: ────────── still running → TimeoutException
             scope.joinUntil(Instant.now().plusSeconds(timeout));
+
             scope.throwIfFailed(); // якщо хоч одна таска впала → кине виняток
 
-            // якщо всі завершились успішно → зберігаємо результат
             movieRequest.setGenres(genresFuture.get());
             movieRequest.setCountries(countriesFuture.get());
             movieRequest.setReview(reviewsFuture.get());
@@ -60,6 +69,5 @@ public class ParallelEnrichmentService implements EnrichmentService {
             throw new RuntimeException(e);
         }
     }
-
 
 }
