@@ -10,7 +10,6 @@ import com.bondarenko.movieland.service.user.UserService;
 import com.bondarenko.movieland.web.controller.MovieController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -80,7 +79,6 @@ class MovieControllerTest {
 
     }
 
-    @Disabled
     @Test
     void shouldRejectUnauthorizedUser() throws Exception {
         // when + then

@@ -1,9 +1,6 @@
 package com.bondarenko.movieland.service.cache;
 
-import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.MovieResponse;
-import com.bondarenko.movieland.api.model.MovieSortRequest;
+import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.currency.CurrencyService;
@@ -17,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -101,10 +99,35 @@ public class MovieCacheProxy implements MovieService {
         copy.setRating(original.getRating());
         copy.setPrice(original.getPrice());
         copy.setPicturePath(original.getPicturePath());
-        copy.setGenres(new ArrayList<>(original.getGenres()));
-        copy.setCountries(new ArrayList<>(original.getCountries()));
-        copy.setReviews(new ArrayList<>(original.getReviews()));
+
+        copy.setGenres(original.getGenres().stream().map(g -> {
+            GenreResponse gr = new GenreResponse();
+            gr.setId(g.getId());
+            gr.setName(g.getName());
+            return gr;
+        }).toList());
+
+        copy.setCountries(original.getCountries().stream().map(c -> {
+            CountryResponse cr = new CountryResponse();
+            cr.setId(c.getId());
+            cr.setName(c.getName());
+            return cr;
+        }).toList());
+
+        copy.setReviews(original.getReviews().stream().map(r -> {
+            ReviewResponse rr = new ReviewResponse();
+            rr.setId(r.getId());
+            rr.setText(r.getText());
+
+            UserIdResponse userCopy = new UserIdResponse();
+            if (r.getUser() != null) {
+                userCopy.setId(r.getUser().getId());
+                userCopy.setNickname(r.getUser().getNickname());
+            }
+            rr.setUser(userCopy);
+            return rr;
+        }).toList());
+
         return copy;
     }
-
 }

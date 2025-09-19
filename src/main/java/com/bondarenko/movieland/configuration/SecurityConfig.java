@@ -6,6 +6,7 @@ import com.bondarenko.movieland.service.user.UserService;
 import com.bondarenko.movieland.web.filter.JwtAuthenticationFilter;
 import com.bondarenko.movieland.web.filter.JwtAuthorizationFilter;
 import com.bondarenko.movieland.web.filter.JwtLogoutFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration; 
 import org.springframework.http.HttpMethod;
@@ -47,6 +48,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/movies/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/login", "/api/v1/logout", "/api/v1/refresh").permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                        )
                 )
                 .addFilter(jwtAuthenticationFilter)
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DBRider
@@ -27,7 +28,7 @@ class MovieServiceImplTest extends AbstractITest {
     void setUp() {
         DataSourceListener.reset();
     }
-@Disabled
+
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
@@ -186,7 +187,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(1);
     }
-@Disabled
+
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
@@ -298,7 +299,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         assertEquals("кримінал", fullMovieResponse.getGenres().get(0).getName());
         assertEquals("драма", fullMovieResponse.getGenres().get(1).getName());
-        assertEquals("трилер", fullMovieResponse.getGenres().get(2).getName());
+        assertEquals("трилер", fullMovieResponse.getGenres().get(2).getName());//фентезі
         assertEquals(3, fullMovieResponse.getGenres().size());
 
         assertEquals("США", fullMovieResponse.getCountries().getFirst().getName());
