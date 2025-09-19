@@ -1,9 +1,6 @@
 package com.bondarenko.movieland.service.enrichment;
 
-import com.bondarenko.movieland.api.model.CountryResponse;
-import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.ReviewResponse;
+import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.service.country.CountryService;
 import com.bondarenko.movieland.service.genre.GenreService;
 import com.bondarenko.movieland.service.review.ReviewService;
@@ -33,7 +30,7 @@ public class ParallelEnrichmentService implements EnrichmentService {
     @Value("${movieland.movie.enrichment.timeout}")
     private int timeout;
 
-    public void enrichMovie(MovieRequest movieRequest) {
+    public void enrichMovie(FullMovieResponse movieRequest) {
         List<Callable<Object>> parallelTasks = List.of(
                 Executors.callable(getGenresTask(movieRequest)),
                 Executors.callable(getCountriesTask(movieRequest)),
@@ -67,7 +64,7 @@ public class ParallelEnrichmentService implements EnrichmentService {
         };
     }
 
-    protected Runnable getGenresTask(MovieRequest movieRequest) {
+    protected Runnable getGenresTask(FullMovieResponse movieRequest) {
         return handleEnrichment(
                 () -> genreService.findByIdIn(
                         movieRequest.getGenres().stream().map(GenreResponse::getId).toList()
@@ -77,7 +74,7 @@ public class ParallelEnrichmentService implements EnrichmentService {
         );
     }
 
-    protected Runnable getCountriesTask(MovieRequest movieRequest) {
+    protected Runnable getCountriesTask(FullMovieResponse movieRequest) {
         return handleEnrichment(
                 () -> countryService.findByIdIn(
                         movieRequest.getCountries().stream().map(CountryResponse::getId).toList()
@@ -87,14 +84,15 @@ public class ParallelEnrichmentService implements EnrichmentService {
         );
     }
 
-    protected Runnable getReviewsTask(MovieRequest movieRequest) {
-        return handleEnrichment(
-                () -> reviewService.findByIdIn(
-                        movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
-                ),
-                movieRequest::setReview,
-                "reviews"
-        );
+    protected Runnable getReviewsTask(FullMovieResponse movieRequest) {
+        return null;
+//        return handleEnrichment(
+//                () -> reviewService.findByIdIn(
+//                        movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
+//                ),
+//                movieRequest::setReview,
+//                "reviews"
+//        );
     }
 
     //@PreDestroy will be triggered on:

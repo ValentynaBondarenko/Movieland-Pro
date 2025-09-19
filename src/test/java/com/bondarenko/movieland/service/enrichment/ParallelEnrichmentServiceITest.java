@@ -1,10 +1,7 @@
 package com.bondarenko.movieland.service.enrichment;
 
 
-import com.bondarenko.movieland.api.model.CountryResponse;
-import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
-import com.bondarenko.movieland.api.model.ReviewResponse;
+import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
@@ -32,18 +29,18 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         //prepare
         MovieRequest request = getMovieRequest();
         doAnswer(delayedAnswer())
-                .when(enrichmentService).getCountriesTask(any(MovieRequest.class));
+                .when(enrichmentService).getCountriesTask(any(FullMovieResponse.class));
 
         doAnswer(delayedAnswer())
-                .when(enrichmentService).getGenresTask(any(MovieRequest.class));
+                .when(enrichmentService).getGenresTask(any(FullMovieResponse.class));
 
         doAnswer(delayedAnswer())
-                .when(enrichmentService).getReviewsTask(any(MovieRequest.class));
+                .when(enrichmentService).getReviewsTask(any(FullMovieResponse.class));
 
 
         // when + timeout
         assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
-                enrichmentService.enrichMovie(request)
+                enrichmentService.enrichMovie(any())
         );
 
         //then

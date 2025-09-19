@@ -125,12 +125,12 @@ public class MovieServiceImpl implements MovieService {
                 .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getPrice())))
                 .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getRating())))
                 .setPoster(movieRequest.getPicturePath());
+        FullMovieResponse response = movieMapper.toMovieResponse(movie);
 
-        enrichmentService.enrichMovie(movieRequest);
+        enrichmentService.enrichMovie(response);
 
         movieRepository.save(movie);
 
-        FullMovieResponse response = movieMapper.toMovieResponse(movie);
         log.info("Successfully updated movie id {} to the database", movie.getId());
         return response;
     }
