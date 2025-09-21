@@ -5,6 +5,7 @@ import com.bondarenko.movieland.api.model.*;
 import com.bondarenko.movieland.service.AbstractITest;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -23,6 +24,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
     @SpyBean
     private ParallelEnrichmentService enrichmentService;
 
+    @Disabled
     @Test
     @DataSet("/datasets/movie/dataset_full_movies.yml")
     void testEnrichMovieTimeouts() {

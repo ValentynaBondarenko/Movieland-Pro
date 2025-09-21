@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -67,7 +68,11 @@ public class ParallelEnrichmentService implements EnrichmentService {
     protected Runnable getGenresTask(FullMovieResponse movieRequest) {
         return handleEnrichment(
                 () -> genreService.findByIdIn(
-                        movieRequest.getGenres().stream().map(GenreResponse::getId).toList()
+                        Optional.ofNullable(movieRequest.getGenres())
+                                .orElse(List.of())
+                                .stream()
+                                .map(GenreResponse::getId)
+                                .toList()
                 ),
                 movieRequest::setGenres,
                 "genres"
@@ -77,7 +82,11 @@ public class ParallelEnrichmentService implements EnrichmentService {
     protected Runnable getCountriesTask(FullMovieResponse movieRequest) {
         return handleEnrichment(
                 () -> countryService.findByIdIn(
-                        movieRequest.getCountries().stream().map(CountryResponse::getId).toList()
+                        Optional.ofNullable(movieRequest.getCountries())
+                                .orElse(List.of())
+                                .stream()
+                                .map(CountryResponse::getId)
+                                .toList()
                 ),
                 movieRequest::setCountries,
                 "countries"
@@ -85,15 +94,14 @@ public class ParallelEnrichmentService implements EnrichmentService {
     }
 
     protected Runnable getReviewsTask(FullMovieResponse movieRequest) {
-        return null;
-//        return handleEnrichment(
-//                () -> reviewService.findByIdIn(
-//                        movieRequest.getReview().stream().map(ReviewResponse::getId).toList()
-//                ),
-//                movieRequest::setReview,
-//                "reviews"
-//        );
+        return handleEnrichment(
+                () -> Optional.ofNullable(reviewService.findByMovieId(movieRequest.getId()))
+                        .orElse(List.of()),
+                movieRequest::setReviews,
+                "reviews"
+        );
     }
+
 
     //@PreDestroy will be triggered on:
 // - Ctrl+C in the console, docker stop, kubectl delete pod, systemd stop,Kubernetes ->pod=SIGTERM
