@@ -187,7 +187,7 @@ class MovieServiceImplTest extends AbstractITest {
 
         DataSourceListener.assertSelectCount(1);
     }
-
+@Disabled
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {

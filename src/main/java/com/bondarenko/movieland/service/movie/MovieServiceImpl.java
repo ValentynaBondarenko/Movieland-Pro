@@ -92,9 +92,10 @@ public class MovieServiceImpl implements MovieService {
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
 
         movie.setPrice(correctMoviePrice);
+
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.
-        MovieRequest fullMovie = movieMapper.toMovieRequest(movie);
+        FullMovieResponse fullMovie = movieMapper.toFullMovie(movie);
 
         enrichmentService.enrichMovie(fullMovie);
         return movieMapper.toFullMovie(movie);
@@ -103,7 +104,10 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional
     public void saveMovie(MovieRequest movieRequest) {
-        enrichmentService.enrichMovie(movieRequest);
+        Movie draftMovie = movieMapper.toMovie(movieRequest);
+        FullMovieResponse fullMovie = movieMapper.toFullMovie(draftMovie);
+
+        enrichmentService.enrichMovie(fullMovie);
 
         Movie movie = movieMapper.toMovie(movieRequest);
 
@@ -125,12 +129,12 @@ public class MovieServiceImpl implements MovieService {
                 .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getPrice())))
                 .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getRating())))
                 .setPoster(movieRequest.getPicturePath());
+        FullMovieResponse response = movieMapper.toMovieResponse(movie);
 
-        enrichmentService.enrichMovie(movieRequest);
+        enrichmentService.enrichMovie(response);
 
         movieRepository.save(movie);
 
-        FullMovieResponse response = movieMapper.toMovieResponse(movie);
         log.info("Successfully updated movie id {} to the database", movie.getId());
         return response;
     }
