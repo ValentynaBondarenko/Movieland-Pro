@@ -104,12 +104,12 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional
     public void saveMovie(MovieRequest movieRequest) {
-        Movie draftMovie = movieMapper.toMovie(movieRequest);
-        FullMovieResponse fullMovie = movieMapper.toFullMovie(draftMovie);
+        Movie movieEntity = movieMapper.toMovie(movieRequest);
+        FullMovieResponse fullMovie = movieMapper.toFullMovie(movieEntity);
 
         enrichmentService.enrichMovie(fullMovie);
 
-        Movie movie = movieMapper.toMovie(movieRequest);
+        Movie movie = movieMapper.toMovie(fullMovie);
 
         movieRepository.save(movie);
 

@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.configuration;
 
 import com.bondarenko.proxydatasource.ProxyDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
