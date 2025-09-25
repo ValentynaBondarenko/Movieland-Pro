@@ -26,6 +26,13 @@ public interface MovieMapper {
     @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
     @Mapping(target = "countries", qualifiedByName = "mapCountriesFromDto")
     @Mapping(target = "reviews", ignore = true)
+    Movie toMovie(FullMovieResponse fullMovieResponse);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "poster", source = "picturePath")
+    @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
+    @Mapping(target = "countries", qualifiedByName = "mapCountriesFromDto")
+    @Mapping(target = "reviews", ignore = true)
     Movie toMovie(MovieRequest movieRequest);
 
     @Mapping(target = "picturePath", source = "poster")
