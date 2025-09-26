@@ -45,7 +45,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         //then
         assertNotNull(dto.getGenres());
         assertNotNull(dto.getCountries());
-        assertNotNull(dto.getReview());
+        assertNotNull(dto.getReviews());
 //
 //        assertFalse(request.getGenres().isEmpty());
 //        assertFalse(request.getCountries().isEmpty());
@@ -151,7 +151,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         review3.setText("Перестав дивуватися тому, що цей фільм займає постійно перше місце у всіляких кіно рейтингах...");
 
         List<ReviewResponse> reviews = new ArrayList<>(List.of(review1, review2, review3));
-        dto.setReview(reviews);
+        dto.setReviews(reviews);
 
         return dto;
     }

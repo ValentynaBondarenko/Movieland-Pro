@@ -389,7 +389,7 @@ class MovieServiceImplTest extends AbstractITest {
         review4.setText("Безперечно культовий фільм, нереалістичний, але захопливий.");
         reviews.add(review4);
 
-        MovieDto.setReview(reviews);
+        MovieDto.setReviews(reviews);
 
         return MovieDto;
     }

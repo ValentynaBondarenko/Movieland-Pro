@@ -42,11 +42,10 @@ public interface MovieMapper {
     FullMovieResponse toFullMovie(Movie movie);
 
     @Mapping(target = "picturePath", source = "poster")
-    // @Mapping(target = "genres", qualifiedByName = "mapGenres")
+    @Mapping(target = "genres", qualifiedByName = "mapGenres")
     @Mapping(target = "countries", qualifiedByName = "mapCountries")
-        //@Mapping(target = "reviews", qualifiedByName = "mapReviews")
+//    @Mapping(target = "review", qualifiedByName = "mapReviews")
     MovieDto toMovieDto(Movie movie);
-
 
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
@@ -101,4 +100,6 @@ public interface MovieMapper {
         country.setName(countryResponse.getName());
         return country;
     }
+
+
 }

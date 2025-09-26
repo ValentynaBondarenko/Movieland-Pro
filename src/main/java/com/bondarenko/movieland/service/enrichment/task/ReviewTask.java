@@ -22,14 +22,14 @@ public class ReviewTask implements Runnable {
 
     @Override
     public void run() {
-        List<Long> reviewIds = Optional.of(movieDto.getReview())
+        List<Long> reviewIds = Optional.of(movieDto.getReviews())
                 .orElse(List.of())
                 .stream()
                 .map(ReviewResponse::getId)
                 .toList();
 
         List<ReviewResponse> reviews = reviewService.findByIdIn(reviewIds);
-        movieDto.setReview(reviews);
+        movieDto.setReviews(reviews);
     }
 
 }
