@@ -245,10 +245,10 @@ class MovieServiceImplTest extends AbstractITest {
     @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml")
     void saveNewMovieToTheDatabase() {
         //prepare
-        MovieRequest movieRequest = getMovieRequest();
+        MovieDto MovieDto = getMovieDto();
 
         //when
-        movieService.saveMovie(movieRequest);
+        movieService.saveMovie(MovieDto);
         FullMovieResponse created = movieService.getMovieById(2L, null);
         assertNotNull(created);
 
@@ -279,10 +279,10 @@ class MovieServiceImplTest extends AbstractITest {
     @ExpectedDataSet(value = "datasets/movie/dataset_expected_update_movie.yml")
     void updateMovieInTheDatabase() {
         //prepare
-        MovieRequest movieRequest = getMovieRequest();
+        MovieDto MovieDto = getMovieDto();
 
         //when
-        FullMovieResponse fullMovieResponse = movieService.updateMovie(1L, movieRequest);
+        FullMovieResponse fullMovieResponse = movieService.updateMovie(1L, MovieDto);
 
         // then
         assertNotNull(fullMovieResponse);
@@ -308,15 +308,15 @@ class MovieServiceImplTest extends AbstractITest {
 
     }
 
-    private MovieRequest getMovieRequest() {
-        MovieRequest movieRequest = new MovieRequest();
-        movieRequest.setNameUkrainian("Втеча з Шоушенка");
-        movieRequest.setNameNative("The Shawshank Redemption");
-        movieRequest.setYearOfRelease(1994);
-        movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
-        movieRequest.setPrice(123.45);
-        movieRequest.setRating(9.5);
-        movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
+    private MovieDto getMovieDto() {
+        MovieDto MovieDto = new MovieDto();
+        MovieDto.setNameUkrainian("Втеча з Шоушенка");
+        MovieDto.setNameNative("The Shawshank Redemption");
+        MovieDto.setYearOfRelease(1994);
+        MovieDto.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
+        MovieDto.setPrice(123.45);
+        MovieDto.setRating(9.5);
+        MovieDto.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
 
         List<CountryResponse> countries = new ArrayList<>();
         CountryResponse firstCountry = new CountryResponse();
@@ -329,7 +329,7 @@ class MovieServiceImplTest extends AbstractITest {
         secondCountry.setName("Франція");
         countries.add(secondCountry);
 
-        movieRequest.setCountries(countries);
+        MovieDto.setCountries(countries);
 
         List<GenreResponse> genres = new ArrayList<>();
 
@@ -348,7 +348,7 @@ class MovieServiceImplTest extends AbstractITest {
         thirdGenre.setName("Фентезі");
         genres.add(thirdGenre);
 
-        movieRequest.setGenres(genres);
+        MovieDto.setGenres(genres);
 
         // Reviews
         List<ReviewResponse> reviews = new ArrayList<>();
@@ -389,9 +389,9 @@ class MovieServiceImplTest extends AbstractITest {
         review4.setText("Безперечно культовий фільм, нереалістичний, але захопливий.");
         reviews.add(review4);
 
-        movieRequest.setReview(reviews);
+        MovieDto.setReview(reviews);
 
-        return movieRequest;
+        return MovieDto;
     }
 
     private MovieResponse testDTO() {

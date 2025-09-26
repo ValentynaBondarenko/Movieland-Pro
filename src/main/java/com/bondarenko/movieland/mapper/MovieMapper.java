@@ -33,7 +33,7 @@ public interface MovieMapper {
     @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
     @Mapping(target = "countries", qualifiedByName = "mapCountriesFromDto")
     @Mapping(target = "reviews", ignore = true)
-    Movie toMovie(MovieRequest movieRequest);
+    Movie toMovie(MovieDto MovieDto);
 
     @Mapping(target = "picturePath", source = "poster")
     @Mapping(target = "genres", qualifiedByName = "mapGenres")
@@ -45,7 +45,7 @@ public interface MovieMapper {
     // @Mapping(target = "genres", qualifiedByName = "mapGenres")
     @Mapping(target = "countries", qualifiedByName = "mapCountries")
         //@Mapping(target = "reviews", qualifiedByName = "mapReviews")
-    MovieRequest toMovieRequest(Movie movie);
+    MovieDto toMovieDto(Movie movie);
 
 
     @Named("mapGenres")

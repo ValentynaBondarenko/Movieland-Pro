@@ -1,10 +1,11 @@
 package com.bondarenko.movieland.service.enrichment;
 
 
-import com.bondarenko.movieland.api.model.*;
+import com.bondarenko.movieland.api.model.CountryResponse;
+import com.bondarenko.movieland.api.model.GenreResponse;
+import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.api.model.ReviewResponse;
 import com.bondarenko.movieland.service.AbstractITest;
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -13,9 +14,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.mockito.Mockito.doAnswer;
 
 //@DBRider
@@ -27,7 +27,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         // @DataSet("/datasets/movie/dataset_full_movies.yml")
     void testEnrichMovieTimeouts() {
         //prepare
-        FullMovieResponse dto = getMovieResponse();
+        MovieDto dto = getMovieResponse();
         doAnswer(delayedAnswer())
                 .when(enrichmentService).getCountriesTask(dto);
 
@@ -45,7 +45,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         //then
         assertNotNull(dto.getGenres());
         assertNotNull(dto.getCountries());
-        assertNotNull(dto.getReviews());
+        assertNotNull(dto.getReview());
 //
 //        assertFalse(request.getGenres().isEmpty());
 //        assertFalse(request.getCountries().isEmpty());
@@ -96,8 +96,8 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         };
     }
 
-    private FullMovieResponse getMovieResponse() {
-        FullMovieResponse dto = new FullMovieResponse();
+    private MovieDto getMovieResponse() {
+        MovieDto dto = new MovieDto();
         dto.setNameUkrainian("Втеча з Шоушенка");
         dto.setNameNative("The Shawshank Redemption");
         dto.setYearOfRelease(1994);
@@ -151,7 +151,7 @@ class ParallelEnrichmentServiceITest extends AbstractITest {
         review3.setText("Перестав дивуватися тому, що цей фільм займає постійно перше місце у всіляких кіно рейтингах...");
 
         List<ReviewResponse> reviews = new ArrayList<>(List.of(review1, review2, review3));
-        dto.setReviews(reviews);
+        dto.setReview(reviews);
 
         return dto;
     }

@@ -1,7 +1,6 @@
 package com.bondarenko.movieland.service.enrichment.task;
 
-import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieDto;
 import com.bondarenko.movieland.api.model.ReviewResponse;
 import com.bondarenko.movieland.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -19,19 +18,18 @@ import java.util.Optional;
 public class ReviewTask implements Runnable {
     private final ReviewService reviewService;
     @Setter
-    private FullMovieResponse fullMovieResponse;
-    private MovieRequest movieRequest;
+    private MovieDto movieDto;
 
     @Override
     public void run() {
-        List<Long> reviewIds = Optional.of(movieRequest.getReview())
+        List<Long> reviewIds = Optional.of(movieDto.getReview())
                 .orElse(List.of())
                 .stream()
                 .map(ReviewResponse::getId)
                 .toList();
 
         List<ReviewResponse> reviews = reviewService.findByIdIn(reviewIds);
-        fullMovieResponse.setReviews(reviews);
+        movieDto.setReview(reviews);
     }
 
 }

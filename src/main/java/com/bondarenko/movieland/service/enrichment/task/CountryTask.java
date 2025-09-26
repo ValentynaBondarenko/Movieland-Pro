@@ -2,7 +2,7 @@ package com.bondarenko.movieland.service.enrichment.task;
 
 import com.bondarenko.movieland.api.model.CountryResponse;
 import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieDto;
 import com.bondarenko.movieland.service.country.CountryService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,11 +19,11 @@ import java.util.Optional;
 public class CountryTask implements Runnable {
     private final CountryService countryService;
     @Setter
-    private FullMovieResponse fullMovieResponse;
+    private MovieDto movieDto;
 
     @Override
     public void run() {
-        List<Long> countriesIds = Optional.ofNullable(fullMovieResponse.getCountries())
+        List<Long> countriesIds = Optional.ofNullable(movieDto.getCountries())
                 .orElse(List.of())
                 .stream()
                 .map(CountryResponse::getId)
@@ -31,6 +31,6 @@ public class CountryTask implements Runnable {
         System.out.println("Country IDs: " + countriesIds);
 
         List<CountryResponse> countries = countryService.findByIdIn(countriesIds);
-        fullMovieResponse.setCountries(countries);
+        movieDto.setCountries(countries);
     }
 }

@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieDto;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
 import com.bondarenko.movieland.entity.CurrencyType;
@@ -95,21 +95,19 @@ public class MovieServiceImpl implements MovieService {
 
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.
-        FullMovieResponse fullMovie = movieMapper.toFullMovie(movie);
+        MovieDto movieDto = movieMapper.toMovieDto(movie);
 
-        enrichmentService.enrichMovie(fullMovie);
+        enrichmentService.enrichMovie(movieDto);
         return movieMapper.toFullMovie(movie);
     }
 
     @Override
     @Transactional
-    public void saveMovie(MovieRequest movieRequest) {
-        Movie movieEntity = movieMapper.toMovie(movieRequest);
-        FullMovieResponse fullMovie = movieMapper.toFullMovie(movieEntity);
+    public void saveMovie(MovieDto movieDto) {
 
-        enrichmentService.enrichMovie(fullMovie);
+        enrichmentService.enrichMovie(movieDto);
 
-        Movie movie = movieMapper.toMovie(fullMovie);
+        Movie movie = movieMapper.toMovie(movieDto);
 
         movieRepository.save(movie);
 
@@ -118,25 +116,25 @@ public class MovieServiceImpl implements MovieService {
 
     @Transactional
     @Override
-    public FullMovieResponse updateMovie(Long id, MovieRequest movieRequest) {
+    public FullMovieResponse updateMovie(Long id, MovieDto movieDto) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", id)));
 
-        movie.setNameUkrainian(movieRequest.getNameUkrainian())
-                .setNameNative(movieRequest.getNameNative())
-                .setYearOfRelease(movieRequest.getYearOfRelease())
-                .setDescription(movieRequest.getDescription())
-                .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getPrice())))
-                .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieRequest.getRating())))
-                .setPoster(movieRequest.getPicturePath());
-        FullMovieResponse response = movieMapper.toMovieResponse(movie);
+        movie.setNameUkrainian(movieDto.getNameUkrainian())
+                .setNameNative(movieDto.getNameNative())
+                .setYearOfRelease(movieDto.getYearOfRelease())
+                .setDescription(movieDto.getDescription())
+                .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieDto.getPrice())))
+                .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieDto.getRating())))
+                .setPoster(movieDto.getPicturePath());
+        MovieDto response = movieMapper.toMovieDto(movie);
 
         enrichmentService.enrichMovie(response);
 
         movieRepository.save(movie);
 
         log.info("Successfully updated movie id {} to the database", movie.getId());
-        return response;
+        return movieMapper.toFullMovie(movie);
     }
 
     private Sort buildSort(MovieSortRequest movieSortRequest) {

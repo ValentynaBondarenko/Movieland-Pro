@@ -1,8 +1,7 @@
 package com.bondarenko.movieland.service.enrichment.task;
 
-import com.bondarenko.movieland.api.model.FullMovieResponse;
 import com.bondarenko.movieland.api.model.GenreResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieDto;
 import com.bondarenko.movieland.service.genre.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -18,21 +17,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GenreTask implements Runnable {
     private final GenreService genreService;
-    private MovieRequest movieRequest;
     @Setter
-    private FullMovieResponse fullMovieResponse;
+    private MovieDto movieDto;
 
 
     @Override
     public void run() {
-        List<Long> genresIds = Optional.of(movieRequest.getGenres())
+        List<Long> genresIds = Optional.of(movieDto.getGenres())
                 .orElse(List.of())
                 .stream()
                 .map(GenreResponse::getId)
                 .toList();
 
         List<GenreResponse> genres = genreService.findByIdIn(genresIds);
-        fullMovieResponse.setGenres(genres);
+        movieDto.setGenres(genres);
     }
 
 

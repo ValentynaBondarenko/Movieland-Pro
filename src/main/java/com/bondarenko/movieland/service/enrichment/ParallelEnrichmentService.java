@@ -1,7 +1,6 @@
 package com.bondarenko.movieland.service.enrichment;
 
-import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieRequest;
+import com.bondarenko.movieland.api.model.MovieDto;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
 import com.bondarenko.movieland.service.enrichment.task.ReviewTask;
@@ -28,19 +27,19 @@ public class ParallelEnrichmentService implements EnrichmentService {
     @Value("${movieland.movie.enrichment.timeout}")
     private int timeout;
 
-    public void enrichMovie(FullMovieResponse movieResponse) {
-        System.out.println("Enriching movie " + movieResponse);
+    public void enrichMovie(MovieDto movieDto) {
+        System.out.println("Enriching movie " + movieDto);
         List<Callable<Object>> parallelTasks = List.of(
-                Executors.callable(getGenresTask(movieResponse)),
-                Executors.callable(getCountriesTask(movieResponse)),
-                Executors.callable(getReviewsTask(movieResponse))
+                Executors.callable(getGenresTask(movieDto)),
+                Executors.callable(getCountriesTask(movieDto)),
+                Executors.callable(getReviewsTask(movieDto))
         );
         try {
             log.info(">>> invokeAll starting...");
             List<Future<Object>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
             log.info(">>> invokeAll returned {} futures", futures.size());
             cancelUnfinishedTasks(futures);
-            System.out.println("Enriching movie 2 " + movieResponse);
+            System.out.println("Enriching movie 2 " + movieDto);
 
         } catch (InterruptedException e) {
             log.warn("Thread was interrupted while fetching");
@@ -66,21 +65,21 @@ public class ParallelEnrichmentService implements EnrichmentService {
         }
     }
 
-    protected Runnable getGenresTask(FullMovieResponse movieResponse) {
+    protected Runnable getGenresTask(MovieDto movieDto) {
         GenreTask task = genreTaskProvider.getObject();
-        task.setFullMovieResponse(movieResponse);
+        task.setMovieDto(movieDto);
         return task;
     }
 
-    protected Runnable getCountriesTask(FullMovieResponse movieResponse) {
+    protected Runnable getCountriesTask(MovieDto movieDto) {
         CountryTask task = countryTaskProvider.getObject();
-        task.setFullMovieResponse(movieResponse);
+        task.setMovieDto(movieDto);
         return task;
     }
 
-    protected Runnable getReviewsTask(FullMovieResponse movieResponse) {
+    protected Runnable getReviewsTask(MovieDto movieDto) {
         ReviewTask task = reviewTaskProvider.getObject();
-        task.setFullMovieResponse(movieResponse);
+        task.setMovieDto(movieDto);
         return task;
     }
 
