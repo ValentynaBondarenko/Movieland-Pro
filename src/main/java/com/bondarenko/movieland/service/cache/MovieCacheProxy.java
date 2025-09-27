@@ -58,13 +58,13 @@ public class MovieCacheProxy implements MovieService {
     }
 
     @Override
-    public void saveMovie(MovieRequest movieRequest) {
-        movieService.saveMovie(movieRequest);
+    public void saveMovie(MovieDto MovieDto) {
+        movieService.saveMovie(MovieDto);
     }
 
     @Override
-    public FullMovieResponse updateMovie(Long id, MovieRequest movieRequest) {
-        FullMovieResponse updateMovie = movieService.updateMovie(id, movieRequest);
+    public FullMovieResponse updateMovie(Long id, MovieDto MovieDto) {
+        FullMovieResponse updateMovie = movieService.updateMovie(id, MovieDto);
         movieCache.put(id, new SoftReference<>(updateMovie));
 
         log.debug("Cache UPDATED for movie {}", id);
