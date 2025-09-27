@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.service.enrichment;
 
 import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.exception.TimeoutEnrichMovieException;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
 import com.bondarenko.movieland.service.enrichment.task.ReviewTask;
@@ -28,7 +29,6 @@ public class ParallelEnrichmentService implements EnrichmentService {
     private int timeout;
 
     public void enrichMovie(MovieDto movieDto) {
-        System.out.println("Enriching movie " + movieDto);
         List<Callable<Object>> parallelTasks = List.of(
                 Executors.callable(getGenresTask(movieDto)),
                 Executors.callable(getCountriesTask(movieDto)),
@@ -39,18 +39,14 @@ public class ParallelEnrichmentService implements EnrichmentService {
             List<Future<Object>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
             log.info(">>> invokeAll returned {} futures", futures.size());
             cancelUnfinishedTasks(futures);
-            System.out.println("Enriching movie 2 " + movieDto);
 
         } catch (InterruptedException e) {
             log.warn("Thread was interrupted while fetching");
             Thread.currentThread().interrupt();
-        } catch (TimeoutException e) {
-            log.error("Timeout occurred during movie enrichment", e);
-
         }
     }
 
-    private void cancelUnfinishedTasks(List<Future<Object>> futures) throws TimeoutException {
+    private void cancelUnfinishedTasks(List<Future<Object>> futures) {
         List<Integer> unfinishedIndexes = new ArrayList<>();
         for (int i = 0; i < futures.size(); i++) {
             Future<Object> future = futures.get(i);
@@ -61,7 +57,7 @@ public class ParallelEnrichmentService implements EnrichmentService {
             }
         }
         if (!unfinishedIndexes.isEmpty()) {
-            throw new TimeoutException("Tasks not completed within " + timeout + " seconds: " + unfinishedIndexes);
+            throw new TimeoutEnrichMovieException("Tasks not completed within " + timeout + " seconds: " + unfinishedIndexes);
         }
     }
 
@@ -94,23 +90,4 @@ public class ParallelEnrichmentService implements EnrichmentService {
     public void shutdownExecutor() {
         executor.shutdown();
     }
-
 }
-//private <T> Runnable logWrapper() {
-//    return () -> {
-//        long start = System.currentTimeMillis();
-//        log.info(">>> [{}] started in thread {} at {}", taskName,
-//                System.identityHashCode(Thread.currentThread()), start);
-//        try {
-//            T result = supplier.get();
-//            consumer.accept(result);
-//            long end = System.currentTimeMillis();
-//            log.info("<<< [{}] finished in thread {} at {}. Duration: {} ms ({} s)",
-//                    taskName, System.identityHashCode(Thread.currentThread()), end,
-//                    (end - start), (end - start) / 1000.0);
-//        } catch (Exception e) {
-//            log.error("Error in task {}", taskName, e);
-//            throw new RuntimeException(e);
-//        }
-//    };
-//}
