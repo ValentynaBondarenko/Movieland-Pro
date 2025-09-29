@@ -39,7 +39,7 @@ class MovieControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private MovieService movieService;
-    private MovieRequest movieRequest;
+    private MovieDto MovieDto;
     @MockBean
     private TokenService tokenService;
     @MockBean
@@ -49,7 +49,7 @@ class MovieControllerTest {
 
     @BeforeEach
     void setUp() {
-        movieRequest = getMovieRequest();
+        MovieDto = getMovieDto();
     }
 
     @Test
@@ -58,10 +58,10 @@ class MovieControllerTest {
         // when + then
         mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(movieRequest)))
+                        .content(objectMapper.writeValueAsString(MovieDto)))
                 .andExpect(status().isCreated());
 
-        verify(movieService).saveMovie(any(MovieRequest.class));
+        verify(movieService).saveMovie(any(MovieDto.class));
 
     }
 
@@ -72,10 +72,10 @@ class MovieControllerTest {
         // when + then
         mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(movieRequest)))
+                        .content(objectMapper.writeValueAsString(MovieDto)))
                 .andExpect(status().isForbidden());
 
-        verify(movieService, never()).saveMovie(any(MovieRequest.class));
+        verify(movieService, never()).saveMovie(any(MovieDto.class));
 
     }
 
@@ -84,10 +84,10 @@ class MovieControllerTest {
         // when + then
         mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(movieRequest)))
+                        .content(objectMapper.writeValueAsString(MovieDto)))
                 .andExpect(status().isUnauthorized());
 
-        verify(movieService, never()).saveMovie(any(MovieRequest.class));
+        verify(movieService, never()).saveMovie(any(MovieDto.class));
     }
 
     @Test
@@ -96,10 +96,10 @@ class MovieControllerTest {
         // when + then
         mockMvc.perform(put("/api/v1/movies/{id}", 100)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(movieRequest)))
+                        .content(objectMapper.writeValueAsString(MovieDto)))
                 .andExpect(status().isOk());
 
-        verify(movieService).updateMovie(any(Long.class), any(MovieRequest.class));
+        verify(movieService).updateMovie(any(Long.class), any(MovieDto.class));
     }
 
     @Test
@@ -108,10 +108,10 @@ class MovieControllerTest {
         // when + then
         mockMvc.perform(put("/api/v1/movies/{id}", 100)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(movieRequest)))
+                        .content(objectMapper.writeValueAsString(MovieDto)))
                 .andExpect(status().isForbidden());
 
-        verify(movieService, never()).updateMovie(any(Long.class), any(MovieRequest.class));
+        verify(movieService, never()).updateMovie(any(Long.class), any(MovieDto.class));
     }
 
     @Test
@@ -171,14 +171,14 @@ class MovieControllerTest {
         verify(movieService).getRandomMovies();
     }
 
-    private MovieRequest getMovieRequest() {
-        MovieRequest movieRequest = new MovieRequest();
-        movieRequest.setNameUkrainian("Втеча з Шоушенка");
-        movieRequest.setNameNative("The Shawshank Redemption");
-        movieRequest.setYearOfRelease(1994);
-        movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
-        movieRequest.setPrice(123.45);
-        movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
+    private MovieDto getMovieDto() {
+        MovieDto MovieDto = new MovieDto();
+        MovieDto.setNameUkrainian("Втеча з Шоушенка");
+        MovieDto.setNameNative("The Shawshank Redemption");
+        MovieDto.setYearOfRelease(1994);
+        MovieDto.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
+        MovieDto.setPrice(123.45);
+        MovieDto.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
 
         List<CountryResponse> countries = new ArrayList<>();
         CountryResponse firstCountry = new CountryResponse();
@@ -191,7 +191,7 @@ class MovieControllerTest {
         secondCountry.setName("Франція");
         countries.add(secondCountry);
 
-        movieRequest.setCountries(countries);
+        MovieDto.setCountries(countries);
 
         List<GenreResponse> genres = new ArrayList<>();
 
@@ -210,8 +210,8 @@ class MovieControllerTest {
         thirdGenre.setName("Фентезі");
         genres.add(thirdGenre);
 
-        movieRequest.setGenres(genres);
-        return movieRequest;
+        MovieDto.setGenres(genres);
+        return MovieDto;
     }
 
 }

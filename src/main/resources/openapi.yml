@@ -68,7 +68,7 @@ components:
           description: Sort direction for price (optional).
           enum: [ "ASC", "DESC" ]
 
-    MovieRequest:
+    MovieDto:
       type: object
       properties:
         nameUkrainian:
@@ -104,7 +104,7 @@ components:
           items:
             $ref: '#/components/schemas/GenreResponse'
           description: Set of genres
-        review :
+        reviews :
           type: array
           items:
             $ref: '#/components/schemas/ReviewResponse'
@@ -372,7 +372,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieRequest'
+              $ref: '#/components/schemas/MovieDto'
       responses:
         '201':
           description: Movie successfully created
@@ -500,7 +500,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieRequest'
+              $ref: '#/components/schemas/MovieDto'
       responses:
         '200':
           description: Movie successfully updated

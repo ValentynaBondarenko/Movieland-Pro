@@ -1,8 +1,8 @@
 package com.bondarenko.movieland.service.enrichment;
 
-import com.bondarenko.movieland.api.model.FullMovieResponse;
+import com.bondarenko.movieland.api.model.MovieDto;
 
 public interface EnrichmentService {
-    void enrichMovie(FullMovieResponse movieDto);
+    void enrichMovie(MovieDto movieDto);
 
 }
