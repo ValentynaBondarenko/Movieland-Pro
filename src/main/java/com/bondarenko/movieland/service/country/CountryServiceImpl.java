@@ -23,17 +23,20 @@ public class CountryServiceImpl implements CountryService {
         return countryRepository.findByIdIn(countryIds)
                 .map(countryMapper::toCountriesResponse)
                 .orElseThrow(() -> new CountryNotFoundException("No countries found for ids: " + countryIds));
+    }
 
-
-
+    @Override
+    public List<Country> findById(List<Long> countryIds) {
+        return countryRepository.findByIdIn(countryIds)
+                .orElseThrow(() -> new CountryNotFoundException("No countries found for ids: " + countryIds));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Override
     public List<CountryResponse> findByMovieId(Long id) {
-       return countryRepository.findByMovieId(id)
-               .map(countryMapper::toCountriesResponse)
-               .orElseThrow(() -> new CountryNotFoundException("No countries found for movie id: " + id));
+        return countryRepository.findByMovieId(id)
+                .map(countryMapper::toCountriesResponse)
+                .orElseThrow(() -> new CountryNotFoundException("No countries found for movie id: " + id));
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.bondarenko.movieland.service.cache;
 
 import com.bondarenko.movieland.api.model.CountryResponse;
+import com.bondarenko.movieland.entity.Country;
+import com.bondarenko.movieland.mapper.CountryMapper;
+import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.country.CountryService;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +17,7 @@ import java.util.List;
 public class CountryCacheProxy implements CountryService {
     private final CountryService countryService;
     private Cache<CountryResponse> countryCache;
+    private CountryMapper countryMapper;
 
     @PostConstruct
     //A @PostConstruct method must not have any parameters, must not throw a checked exception, and must return void.
@@ -38,8 +42,16 @@ public class CountryCacheProxy implements CountryService {
     }
 
     @Override
+    public List<Country> findById(List<Long> countryIds) {
+        List<CountryResponse> responseList = countryCache.getAll().stream()
+                .filter(country -> countryIds.contains(country.getId()))
+                .toList();
+        return countryMapper.toCountry(responseList);
+    }
+
+    @Override
     public List<CountryResponse> findByMovieId(Long id) {
-      return countryService.findByMovieId(id);
+        return countryService.findByMovieId(id);
     }
 
     @Override
