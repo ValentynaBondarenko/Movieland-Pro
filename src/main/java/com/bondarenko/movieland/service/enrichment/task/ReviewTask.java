@@ -2,6 +2,8 @@ package com.bondarenko.movieland.service.enrichment.task;
 
 import com.bondarenko.movieland.api.model.MovieDto;
 import com.bondarenko.movieland.api.model.ReviewResponse;
+import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.entity.Review;
 import com.bondarenko.movieland.service.review.ReviewService;
 import com.bondarenko.movieland.util.TimeLoggerUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,20 +23,20 @@ import java.util.Optional;
 public class ReviewTask implements Runnable {
     private final ReviewService reviewService;
     @Setter
-    private MovieDto movieDto;
+    private Movie movie;
 
     @Override
     public void run() {
         long start = TimeLoggerUtil.start("Review");
 
-        List<Long> reviewIds = Optional.of(movieDto.getReviews())
+        List<Long> reviewIds = Optional.of(movie.getReviews())
                 .orElse(List.of())
                 .stream()
-                .map(ReviewResponse::getId)
+                .map(Review::getId)
                 .toList();
 
-        List<ReviewResponse> reviews = reviewService.findByIdIn(reviewIds);
-        movieDto.setReviews(reviews);
+        List<Review> reviews = reviewService.findById(reviewIds);
+        movie.setReviews(reviews);
 
         TimeLoggerUtil.end("Review", start);
         log.info("Review task finished with reviews: {}", reviews);

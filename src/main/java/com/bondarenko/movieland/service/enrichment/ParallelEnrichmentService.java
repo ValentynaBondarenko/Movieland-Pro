@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.service.enrichment;
 
 import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.TimeoutEnrichMovieException;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
@@ -27,11 +28,11 @@ public class ParallelEnrichmentService implements EnrichmentService {
     @Value("${movieland.movie.enrichment.timeout}")
     private int timeout;
 
-    public void enrichMovie(MovieDto movieDto) {
+    public void enrichMovie(Movie movie) {
         List<Callable<Object>> parallelTasks = List.of(
-                Executors.callable(getGenresTask(movieDto)),
-                Executors.callable(getCountriesTask(movieDto)),
-                Executors.callable(getReviewsTask(movieDto))
+                Executors.callable(getGenresTask(movie)),
+                Executors.callable(getCountriesTask(movie)),
+                Executors.callable(getReviewsTask(movie))
         );
         try {
             log.info(">>> invokeAll starting...");
@@ -45,21 +46,21 @@ public class ParallelEnrichmentService implements EnrichmentService {
         }
     }
 
-    protected Runnable getGenresTask(MovieDto movieDto) {
+    protected Runnable getGenresTask(Movie movie) {
         GenreTask task = genreTaskProvider.getObject();
-        task.setMovieDto(movieDto);
+        task.setMovie(movie);
         return task;
     }
 
-    protected Runnable getCountriesTask(MovieDto movieDto) {
+    protected Runnable getCountriesTask(Movie movie) {
         CountryTask task = countryTaskProvider.getObject();
-        task.setMovieDto(movieDto);
+        task.setMovie(movie);
         return task;
     }
 
-    protected Runnable getReviewsTask(MovieDto movieDto) {
+    protected Runnable getReviewsTask(Movie movie) {
         ReviewTask task = reviewTaskProvider.getObject();
-        task.setMovieDto(movieDto);
+        task.setMovie(movie);
         return task;
     }
 

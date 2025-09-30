@@ -2,6 +2,8 @@ package com.bondarenko.movieland.service.enrichment.task;
 
 import com.bondarenko.movieland.api.model.CountryResponse;
 import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.entity.Country;
+import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.service.country.CountryService;
 import com.bondarenko.movieland.util.TimeLoggerUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -20,27 +23,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CountryTask implements Runnable {
     private final CountryService countryService;
-    private final String taskName = "COUNTRY";
 
     @Setter
-    private MovieDto movieDto;
+    private Movie movie;
 
     @Override
     public void run() {
         long start = TimeLoggerUtil.start("Country");
-        List<Long> countriesIds = Optional.ofNullable(movieDto.getCountries())
+
+        List<Long> countriesIds = Optional.ofNullable(movie.getCountries())
                 .orElse(List.of())
                 .stream()
-                .map(CountryResponse::getId)
+                .map(Country::getId)
                 .toList();
+        List<Country> countries = countryService.findById(countriesIds);
+        movie.setCountries(countries);
 
-        List<CountryResponse> countries = countryService.findByIdIn(countriesIds);
-        movieDto.setCountries(countries);
         TimeLoggerUtil.end("Country", start);
         log.info("Country task finished with countries: {}", countries);
     }
 
-    public String getTaskName() {
-        return taskName;
-    }
 }

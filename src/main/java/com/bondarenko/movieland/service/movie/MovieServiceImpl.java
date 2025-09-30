@@ -95,19 +95,17 @@ public class MovieServiceImpl implements MovieService {
 
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.
-        MovieDto movieDto = movieMapper.toMovieDto(movie);
+        enrichmentService.enrichMovie(movie);
 
-        enrichmentService.enrichMovie(movieDto);
         return movieMapper.toFullMovie(movie);
     }
 
     @Override
     @Transactional
     public void saveMovie(MovieDto movieDto) {
-
-        enrichmentService.enrichMovie(movieDto);
-
         Movie movie = movieMapper.toMovie(movieDto);
+
+        enrichmentService.enrichMovie(movie);
 
         movieRepository.save(movie);
 
@@ -119,6 +117,7 @@ public class MovieServiceImpl implements MovieService {
     public FullMovieResponse updateMovie(Long id, MovieDto movieDto) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", id)));
+        enrichmentService.enrichMovie(movie);
 
         movie.setNameUkrainian(movieDto.getNameUkrainian())
                 .setNameNative(movieDto.getNameNative())
@@ -127,9 +126,6 @@ public class MovieServiceImpl implements MovieService {
                 .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieDto.getPrice())))
                 .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieDto.getRating())))
                 .setPoster(movieDto.getPicturePath());
-        MovieDto response = movieMapper.toMovieDto(movie);
-
-        enrichmentService.enrichMovie(response);
 
         movieRepository.save(movie);
 

@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.service.enrichment;
 
 import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.TimeoutEnrichMovieException;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
@@ -55,7 +56,7 @@ class ParallelEnrichmentTest {
 
         TimeoutEnrichMovieException ex = assertThrows(
                 TimeoutEnrichMovieException.class,
-                () -> spyService.enrichMovie(new MovieDto())
+                () -> spyService.enrichMovie(new Movie())
         );
 
         assertTrue(ex.getMessage().contains("cancelled by timeout"));

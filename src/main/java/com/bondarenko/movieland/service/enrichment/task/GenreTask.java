@@ -2,6 +2,8 @@ package com.bondarenko.movieland.service.enrichment.task;
 
 import com.bondarenko.movieland.api.model.GenreResponse;
 import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.entity.Genre;
+import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.service.genre.GenreService;
 import com.bondarenko.movieland.util.TimeLoggerUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,21 +23,20 @@ import java.util.Optional;
 public class GenreTask implements Runnable {
     private final GenreService genreService;
     @Setter
-    private MovieDto movieDto;
-
+    private Movie movie;
 
     @Override
     public void run() {
         long start = TimeLoggerUtil.start("Genre");
 
-        List<Long> genresIds = Optional.of(movieDto.getGenres())
+        List<Long> genresIds = Optional.of(movie.getGenres())
                 .orElse(List.of())
                 .stream()
-                .map(GenreResponse::getId)
+                .map(Genre::getId)
                 .toList();
 
-        List<GenreResponse> genres = genreService.findByIdIn(genresIds);
-        movieDto.setGenres(genres);
+        List<Genre> genres = genreService.findById(genresIds);
+        movie.setGenres(genres);
 
         TimeLoggerUtil.end("Genre", start);
         log.info("Genre task finished with genres: {}", genres);
