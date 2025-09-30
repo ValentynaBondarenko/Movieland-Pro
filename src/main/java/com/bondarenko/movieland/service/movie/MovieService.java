@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
 import com.bondarenko.movieland.entity.CurrencyType;
@@ -15,9 +15,9 @@ public interface MovieService {
 
     List<MovieResponse> getMoviesByGenre(Long genreId);
 
-    void saveMovie(MovieDto MovieDto);
+    void saveMovie(MovieRequest movieRequest);
 
-    FullMovieResponse updateMovie(Long id, MovieDto MovieDto);
+    FullMovieResponse updateMovie(Long id, MovieRequest movieRequest);
 
     FullMovieResponse getMovieById(Long movieId, CurrencyType currency);
 }

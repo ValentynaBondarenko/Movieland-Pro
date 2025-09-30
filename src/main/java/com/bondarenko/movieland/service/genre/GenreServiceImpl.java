@@ -39,10 +39,18 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public List<GenreResponse> findByIdIn(List<Long> genreIds) {
-        List<Genre> genres = genreRepository.findAll();
+        List<Genre> genres = genreRepository.findAllById(genreIds);
         List<Genre> collect = genres.stream()
                 .filter(genre -> genreIds.contains((genre.getId())))
                 .toList();
         return genreMapper.toGenreResponse(collect);
+    }
+
+    @Override
+    public List<Genre> findById(List<Long> genreIds) {
+        List<Genre> genres = genreRepository.findAllById(genreIds);
+        return genres.stream()
+                .filter(genre -> genreIds.contains((genre.getId())))
+                .toList();
     }
 }

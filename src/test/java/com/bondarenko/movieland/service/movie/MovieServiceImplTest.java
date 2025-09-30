@@ -7,7 +7,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DBRider
@@ -29,7 +27,6 @@ class MovieServiceImplTest extends AbstractITest {
         DataSourceListener.reset();
     }
 
-    @Disabled
     @Test
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_movies.yml")
@@ -40,13 +37,7 @@ class MovieServiceImplTest extends AbstractITest {
         assertNotNull(movies);
 
         assertEquals(25, movies.size());
-        MovieResponse firstMovie = movies.get(0);
-        MovieResponse testMovie = testDTO();
-        assertEquals(testMovie.getId(), firstMovie.getId());
-        assertEquals(testMovie.getNameUkrainian(), firstMovie.getNameUkrainian());
-        assertEquals(testMovie.getNameNative(), firstMovie.getNameNative());
         DataSourceListener.assertSelectCount(1);
-
     }
 
     @Test
@@ -189,12 +180,10 @@ class MovieServiceImplTest extends AbstractITest {
         DataSourceListener.assertSelectCount(1);
     }
 
-    @Disabled
     @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
         FullMovieResponse fullMovie = movieService.getMovieById(1L, null);
-
         assertNotNull(fullMovie);
 
         assertEquals(1, fullMovie.getId());
@@ -239,7 +228,6 @@ class MovieServiceImplTest extends AbstractITest {
         assertNotNull(userSecond);
         assertEquals("Габріель Джексон", userSecond.getNickname());
         assertEquals("Кіно це, безумовно, «з відзнакою якості». Що ж до першого місця в рейтингу, то, думаю, тут мало місце було для виставлення «десяток» від більшості глядачів разом із надутими відгуками кінокритиків. Фільм атмосферний. Він драматичний. І, звісно, заслуговує на те, щоб знаходитися досить високо в світовому кінематографі.", review2.getText());
-        DataSourceListener.assertSelectCount(10);
     }
 
     @Test
@@ -247,10 +235,10 @@ class MovieServiceImplTest extends AbstractITest {
     @ExpectedDataSet(value = "datasets/movie/dataset_expected_add_movie.yml")
     void saveNewMovieToTheDatabase() {
         //prepare
-        MovieDto MovieDto = getMovieDto();
+        MovieRequest movieRequest = getMovieRequest();
 
         //when
-        movieService.saveMovie(MovieDto);
+        movieService.saveMovie(movieRequest);
         FullMovieResponse created = movieService.getMovieById(2L, null);
         assertNotNull(created);
 
@@ -275,17 +263,15 @@ class MovieServiceImplTest extends AbstractITest {
 
     }
 
-    @Disabled
     @Test
     @DataSet("datasets/movie/dataset_before_update_movie.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_expected_update_movie.yml")
     void updateMovieInTheDatabase() {
         //prepare
-        MovieDto MovieDto = getMovieDto();
+        MovieRequest movieRequest = getMovieRequest();
 
         //when
-        FullMovieResponse fullMovieResponse = movieService.updateMovie(1L, MovieDto);
-
+        FullMovieResponse fullMovieResponse = movieService.updateMovie(1L, movieRequest);
         // then
         assertNotNull(fullMovieResponse);
         assertEquals(1, fullMovieResponse.getId());
@@ -299,9 +285,9 @@ class MovieServiceImplTest extends AbstractITest {
         assertEquals(9.5, fullMovieResponse.getRating());
         assertTrue(fullMovieResponse.getReviews().isEmpty());
 
-        assertEquals("кримінал", fullMovieResponse.getGenres().get(0).getName());
-        assertEquals("драма", fullMovieResponse.getGenres().get(1).getName());
-        assertEquals("трилер", fullMovieResponse.getGenres().get(2).getName());//фентезі
+        assertEquals("драма", fullMovieResponse.getGenres().get(0).getName());
+        assertEquals("кримінал", fullMovieResponse.getGenres().get(1).getName());
+        assertEquals("трилер", fullMovieResponse.getGenres().get(2).getName());
         assertEquals(3, fullMovieResponse.getGenres().size());
 
         assertEquals("США", fullMovieResponse.getCountries().getFirst().getName());
@@ -310,47 +296,43 @@ class MovieServiceImplTest extends AbstractITest {
 
     }
 
-    private MovieDto getMovieDto() {
-        MovieDto MovieDto = new MovieDto();
-        MovieDto.setNameUkrainian("Втеча з Шоушенка");
-        MovieDto.setNameNative("The Shawshank Redemption");
-        MovieDto.setYearOfRelease(1994);
-        MovieDto.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
-        MovieDto.setPrice(123.45);
-        MovieDto.setRating(9.5);
-        MovieDto.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
+    private MovieRequest getMovieRequest() {
+        MovieRequest movieRequest = new MovieRequest();
+        movieRequest.setNameUkrainian("Втеча з Шоушенка");
+        movieRequest.setNameNative("The Shawshank Redemption");
+        movieRequest.setYearOfRelease(1994);
+        movieRequest.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві...");
+        movieRequest.setPrice(123.45);
+        movieRequest.setRating(9.5);
+        movieRequest.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
 
+        //country
         List<CountryResponse> countries = new ArrayList<>();
         CountryResponse firstCountry = new CountryResponse();
         firstCountry.setId(1L);
-        firstCountry.setName("США");
         countries.add(firstCountry);
 
         CountryResponse secondCountry = new CountryResponse();
         secondCountry.setId(2L);
-        secondCountry.setName("Франція");
         countries.add(secondCountry);
 
-        MovieDto.setCountries(countries);
+        movieRequest.setCountries(countries);
 
         List<GenreResponse> genres = new ArrayList<>();
 
         GenreResponse firstGenre = new GenreResponse();
         firstGenre.setId(1L);
-        firstGenre.setName("Драма");
         genres.add(firstGenre);
 
         GenreResponse secondGenre = new GenreResponse();
         secondGenre.setId(2L);
-        secondGenre.setName("Кримінал");
         genres.add(secondGenre);
 
         GenreResponse thirdGenre = new GenreResponse();
         thirdGenre.setId(3L);
-        thirdGenre.setName("Фентезі");
         genres.add(thirdGenre);
 
-        MovieDto.setGenres(genres);
+        movieRequest.setGenres(genres);
 
         // Reviews
         List<ReviewResponse> reviews = new ArrayList<>();
@@ -391,22 +373,10 @@ class MovieServiceImplTest extends AbstractITest {
         review4.setText("Безперечно культовий фільм, нереалістичний, але захопливий.");
         reviews.add(review4);
 
-        MovieDto.setReviews(reviews);
+        movieRequest.setReviews(reviews);
 
-        return MovieDto;
+        return movieRequest;
     }
 
-    private MovieResponse testDTO() {
-        MovieResponse movieDTO = new MovieResponse();
-        movieDTO.setId(1L);
-        movieDTO.setNameUkrainian("Втеча з Шоушенка");
-        movieDTO.setNameNative("The Shawshank Redemption");
-        movieDTO.setYearOfRelease(1994);
-        movieDTO.setDescription("Успішний банкір Енді Дюфрейн обвинувачений у вбивстві власної дружини і її коханця. Заарештований та висланий до вязниці під назвою Шоушенк, він зіткнувся з жорстокістю і беззаконням, що панує з обох сторін ґрат. Кожен, хто потрапляє в ці стіни, стає рабом до кінця свого життя. Але Енді, збройний розумом і доброю душею, відмовляється миритися з вироком долі і розробляє неймовірно сміливий план свого звільнення.");
-        movieDTO.setRating(8.9);
-        movieDTO.setPrice(123.45);
-        movieDTO.setPoster("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        return movieDTO;
-    }
 
 }

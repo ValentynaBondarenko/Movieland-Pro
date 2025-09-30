@@ -1,10 +1,13 @@
 package com.bondarenko.movieland.service.enrichment;
 
-import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.TimeoutEnrichMovieException;
+import com.bondarenko.movieland.service.country.CountryService;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
 import com.bondarenko.movieland.service.enrichment.task.ReviewTask;
+import com.bondarenko.movieland.service.genre.GenreService;
+import com.bondarenko.movieland.service.review.ReviewService;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,39 +30,38 @@ public class ParallelEnrichmentService implements EnrichmentService {
     @Value("${movieland.movie.enrichment.timeout}")
     private int timeout;
 
-    public void enrichMovie(MovieDto movieDto) {
+    public void enrichMovie(Movie movie) {
         List<Callable<Object>> parallelTasks = List.of(
-                Executors.callable(getGenresTask(movieDto)),
-                Executors.callable(getCountriesTask(movieDto)),
-                Executors.callable(getReviewsTask(movieDto))
+                Executors.callable(getGenresTask(movie)),
+                Executors.callable(getCountriesTask(movie)),
+                Executors.callable(getReviewsTask(movie))
         );
         try {
             log.info(">>> invokeAll starting...");
             List<Future<Object>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
             log.info(">>> invokeAll returned {} futures", futures.size());
             cancelUnfinishedTasks(futures);
-
         } catch (InterruptedException e) {
             log.warn("Thread was interrupted while fetching");
             Thread.currentThread().interrupt();
         }
     }
 
-    protected Runnable getGenresTask(MovieDto movieDto) {
+    protected Runnable getGenresTask(Movie movie) {
         GenreTask task = genreTaskProvider.getObject();
-        task.setMovieDto(movieDto);
+        task.setMovie(movie);
         return task;
     }
 
-    protected Runnable getCountriesTask(MovieDto movieDto) {
+    protected Runnable getCountriesTask(Movie movie) {
         CountryTask task = countryTaskProvider.getObject();
-        task.setMovieDto(movieDto);
+        task.setMovie(movie);
         return task;
     }
 
-    protected Runnable getReviewsTask(MovieDto movieDto) {
+    protected Runnable getReviewsTask(Movie movie) {
         ReviewTask task = reviewTaskProvider.getObject();
-        task.setMovieDto(movieDto);
+        task.setMovie(movie);
         return task;
     }
 
@@ -79,10 +81,10 @@ public class ParallelEnrichmentService implements EnrichmentService {
         for (int i = 0; i < futures.size(); i++) {
             Future<Object> future = futures.get(i);
             if (future.isCancelled()) {
-                log.warn("Task {} was cancelled by timeout", i);
+                log.info("Task {} was cancelled by timeout", i);
                 throw new TimeoutEnrichMovieException("Task " + i + " was cancelled by timeout");
             } else if (!future.isDone()) {
-                log.warn("Task {} still running, cancelling now", i);
+                log.info("Task {} still running, cancelling now", i);
                 future.cancel(true);
             } else {
                 log.info("Task {} completed normally", i);
