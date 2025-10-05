@@ -28,7 +28,7 @@ VALUES ('Форрест Гамп', 'Forrest Gump', 1994, 'Життєвий шл�
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)
 VALUES ('Список Шиндлера', 'Schindler''s List', 1993,
-        'Драматична історія німецького промисловця, який врятував понад тисячу євреїв.', 8.9, 18.99,
+        'драматична історія німецького промисловця, який врятував понад тисячу євреїв.', 8.9, 18.99,
         'https://images-na.ssl-images-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1._SX140_CR0,0,140,209_.jpg');
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)
@@ -82,7 +82,7 @@ VALUES ('Гладіатор', 'Gladiator', 2000, 'Римський генера�
         'https://images-na.ssl-images-amazon.com/images/M/MV5BMDliMmNhNDEtODUyOS00MjNlLTgxODEtN2U3NzIxMGVkZTA1L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1._SY209_CR0,0,140,209_.jpg');
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)
-VALUES ('Великий куш', 'Snatch', 2000, 'Кримінальна комедія про крадіжку діамантів.', 8.3, 14.50,
+VALUES ('Великий куш', 'Snatch', 2000, 'кримінальна комедія про крадіжку діамантів.', 8.3, 14.50,
         'https://images-na.ssl-images-amazon.com/images/M/MV5BMTA2NDYxOGYtYjU1Mi00Y2QzLTgxMTQtMWI1MGI0ZGQ5MmU4XkEyXkFqcGdeQXVyNDk3NzU2MTQ@._V1._SY209_CR1,0,140,209_.jpg');
 
 INSERT INTO movies (name_ukrainian, name_native, year_of_release, description, rating, price, poster)

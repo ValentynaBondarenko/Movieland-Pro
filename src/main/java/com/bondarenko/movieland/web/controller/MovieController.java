@@ -2,7 +2,7 @@ package com.bondarenko.movieland.web.controller;
 
 import com.bondarenko.movieland.api.MoviesApi;
 import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
 import com.bondarenko.movieland.entity.CurrencyType;
@@ -26,7 +26,7 @@ public class MovieController implements MoviesApi {
 
     @PostMapping
     @Override
-    public ResponseEntity<Void> addMovie(@Valid @RequestBody MovieDto movieRequest) {
+    public ResponseEntity<Void> addMovie(@Valid @RequestBody MovieRequest movieRequest) {
         log.info("Received request to add new movie {}.", movieRequest);
         movieService.saveMovie(movieRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -34,7 +34,7 @@ public class MovieController implements MoviesApi {
 
     @PutMapping("/{movieId}")
     @Override
-    public ResponseEntity<Void> editMovie(@PathVariable("movieId") Long movieId, @Valid @RequestBody MovieDto movieRequest) {
+    public ResponseEntity<Void> editMovie(@PathVariable("movieId") Long movieId, @Valid @RequestBody MovieRequest movieRequest) {
         log.info("Received request to edit by id={} movie name {} .", movieId, movieRequest.getNameNative());
         movieService.updateMovie(movieId, movieRequest);
         return new ResponseEntity<>(HttpStatus.OK);

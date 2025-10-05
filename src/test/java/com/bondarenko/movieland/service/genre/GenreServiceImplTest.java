@@ -31,7 +31,7 @@ class GenreServiceImplTest extends AbstractITest {
         List<GenreResponse> genresFromCache = genreCacheService.findAll();
 
         assertNotNull(genresFromCache);
-        assertTrue(genresFromCache.stream().anyMatch(g -> "Драма".equals(g.getName())));
+        assertTrue(genresFromCache.stream().anyMatch(g -> "драма".equals(g.getName())));
         assertEquals(16, genresFromCache.size());
 
         DataSourceListener.assertSelectCount(0);

@@ -11,4 +11,6 @@ import java.util.List;
 public interface CountryMapper {
 
     List<CountryResponse> toCountriesResponse(List<Country> countries);
+
+    List<Country> toCountry(List<CountryResponse> responseList);
 }
