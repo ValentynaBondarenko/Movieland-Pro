@@ -5,6 +5,7 @@ import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.currency.CurrencyService;
 import com.bondarenko.movieland.service.movie.MovieService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,22 +24,16 @@ import java.util.stream.Collectors;
 public class MovieCacheProxy implements MovieService {
     private final MovieService movieService;
     private final CurrencyService currencyService;
-    private final Map<Long, SoftReference<FullMovieResponse>> movieCache = new ConcurrentHashMap<>();
+    private SoftReferenceCache<Long, FullMovieResponse> movieCache;
+
+    @PostConstruct
+    private void initCache() {
+        movieCache = new SoftReferenceCache<>(movieId -> movieService.getMovieById(movieId, null));
+    }
 
     @Override
     public FullMovieResponse getMovieById(Long movieId, CurrencyType currency) {
-        SoftReference<FullMovieResponse> movieFromCache = movieCache.get(movieId);
-        FullMovieResponse cachedMovie = (movieFromCache != null) ? movieFromCache.get() : null;
-
-        if (cachedMovie != null) {
-            log.debug("Cache HIT for movie {}", movieId);
-            return applyCurrency(cachedMovie, currency);
-        }
-
-        log.debug("Cache MISS for movie {}", movieId);
-        FullMovieResponse movie = movieService.getMovieById(movieId, null);
-        movieCache.put(movieId, new SoftReference<>(movie));
-
+        FullMovieResponse movie = movieCache.get(movieId);
         return applyCurrency(movie, currency);
     }
 
@@ -58,18 +53,15 @@ public class MovieCacheProxy implements MovieService {
     }
 
     @Override
-    public void saveMovie(MovieDto MovieDto) {
-        movieService.saveMovie(MovieDto);
+    public void saveMovie(MovieRequest movieRequest) {
+        movieService.saveMovie(movieRequest);
     }
 
     @Override
-    public FullMovieResponse updateMovie(Long id, MovieDto MovieDto) {
-        FullMovieResponse updateMovie = movieService.updateMovie(id, MovieDto);
-        movieCache.put(id, new SoftReference<>(updateMovie));
-
-        log.debug("Cache UPDATED for movie {}", id);
-
-        return updateMovie;
+    public FullMovieResponse updateMovie(Long id, MovieRequest movieRequest) {
+        FullMovieResponse updated = movieService.updateMovie(id, movieRequest);
+        movieCache.put(id, updated);
+        return updated;
     }
 
     private FullMovieResponse applyCurrency(FullMovieResponse movie, CurrencyType currency) {

@@ -24,7 +24,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toReviewResponse(reviews);
     }
 
-
     @Override
     public List<ReviewResponse> findByIdIn(List<Long> reviewIds) {
         List<Review> reviews = reviewRepository.findAll()
@@ -32,5 +31,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .filter(review -> reviewIds.contains(review.getId()))
                 .toList();
         return reviewMapper.toReviewResponse(reviews);
+    }
+
+    @Override
+    public List<Review> findById(List<Long> reviewIds) {
+        return reviewRepository.findAll()
+                .stream()
+                .filter(review -> reviewIds.contains(review.getId()))
+                .toList();
     }
 }

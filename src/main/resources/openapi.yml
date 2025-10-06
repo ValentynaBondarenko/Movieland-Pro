@@ -68,7 +68,7 @@ components:
           description: Sort direction for price (optional).
           enum: [ "ASC", "DESC" ]
 
-    MovieDto:
+    MovieRequest:
       type: object
       properties:
         nameUkrainian:
@@ -372,7 +372,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieDto'
+              $ref: '#/components/schemas/MovieRequest'
       responses:
         '201':
           description: Movie successfully created
@@ -500,7 +500,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieDto'
+              $ref: '#/components/schemas/MovieRequest'
       responses:
         '200':
           description: Movie successfully updated

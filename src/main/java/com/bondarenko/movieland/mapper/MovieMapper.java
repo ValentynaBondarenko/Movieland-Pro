@@ -33,7 +33,7 @@ public interface MovieMapper {
     @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
     @Mapping(target = "countries", qualifiedByName = "mapCountriesFromDto")
     @Mapping(target = "reviews", ignore = true)
-    Movie toMovie(MovieDto MovieDto);
+    Movie toMovie(MovieRequest MovieRequest);
 
     @Mapping(target = "picturePath", source = "poster")
     @Mapping(target = "genres", qualifiedByName = "mapGenres")
@@ -41,11 +41,11 @@ public interface MovieMapper {
     @Mapping(target = "reviews", qualifiedByName = "mapReviews")
     FullMovieResponse toFullMovie(Movie movie);
 
-    @Mapping(target = "picturePath", source = "poster")
-    @Mapping(target = "genres", qualifiedByName = "mapGenres")
-    @Mapping(target = "countries", qualifiedByName = "mapCountries")
-//    @Mapping(target = "review", qualifiedByName = "mapReviews")
-    MovieDto toMovieDto(Movie movie);
+    @Mapping(target = "poster", source = "picturePath")
+    @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
+    @Mapping(target = "countries", qualifiedByName = "mapCountriesFromDto")
+    @Mapping(target = "reviews", qualifiedByName = "mapReviewsFromDto")
+    Movie update(@MappingTarget Movie movie, MovieRequest movieRequest);
 
     @Named("mapGenres")
     @IterableMapping(qualifiedByName = "mapGenre")
@@ -99,6 +99,19 @@ public interface MovieMapper {
         country.setId(countryResponse.getId());
         country.setName(countryResponse.getName());
         return country;
+    }
+
+    @Named("mapReviewsFromDto")
+    @IterableMapping(qualifiedByName = "mapReviewFromDto")
+    List<Review> mapReviewsFromDto(List<ReviewResponse> reviews);
+
+    @Named("mapReviewFromDto")
+    default Review mapReviewFromDto(ReviewResponse reviewResponse) {
+        if (reviewResponse == null) return null;
+        Review review = new Review();
+        review.setId(reviewResponse.getId());
+        review.setText(reviewResponse.getText());
+        return review;
     }
 
 

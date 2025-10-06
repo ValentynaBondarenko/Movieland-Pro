@@ -53,7 +53,7 @@ class GenreControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[*].id", hasItems(1, 2)))
-                .andExpect(jsonPath("$[*].name", hasItems("Мелодрама", "Драма")));
+                .andExpect(jsonPath("$[*].name", hasItems("Мелодрама", "драма")));
 
         verify(genreService).findAll();
     }
@@ -65,7 +65,7 @@ class GenreControllerTest {
 
         GenreResponse drama = new GenreResponse();
         drama.setId(2L);
-        drama.setName("Драма");
+        drama.setName("драма");
 
         return List.of(melodrama, drama);
     }

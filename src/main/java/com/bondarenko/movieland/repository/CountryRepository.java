@@ -17,7 +17,7 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
             JOIN movies_countries mc ON c.id = mc.country_id
             WHERE mc.movie_id = :movieId
             """, nativeQuery = true)
-    Optional<List<Country>> findByMovieId(@Param("movieId") Long movieId);
+    List<Country> findByMovieId(@Param("movieId") Long movieId);
 
-    Optional<List<Country>> findByIdIn(List<Long> countryIds);
+    List<Country> findByIdIn(List<Long> countryIds);
 }

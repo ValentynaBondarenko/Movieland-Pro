@@ -1,7 +1,7 @@
 package com.bondarenko.movieland.service.movie;
 
 import com.bondarenko.movieland.api.model.FullMovieResponse;
-import com.bondarenko.movieland.api.model.MovieDto;
+import com.bondarenko.movieland.api.model.MovieRequest;
 import com.bondarenko.movieland.api.model.MovieResponse;
 import com.bondarenko.movieland.api.model.MovieSortRequest;
 import com.bondarenko.movieland.entity.CurrencyType;
@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
+
     private final MovieRepository movieRepository;
     private final EnrichmentService enrichmentService;
     private final MovieMapper movieMapper;
@@ -90,51 +90,38 @@ public class MovieServiceImpl implements MovieService {
         Movie movie = movieRepository.getMovieById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", movieId)));
         BigDecimal correctMoviePrice = converter.convertCurrency(movie.getPrice(), currency);
-
         movie.setPrice(correctMoviePrice);
 
         // For example, not all data is stored in a single database,
         // and it may not be possible to fetch everything within one transaction.
-        MovieDto movieDto = movieMapper.toMovieDto(movie);
+        enrichmentService.enrichMovie(movie);
 
-        enrichmentService.enrichMovie(movieDto);
         return movieMapper.toFullMovie(movie);
     }
 
     @Override
     @Transactional
-    public void saveMovie(MovieDto movieDto) {
-
-        enrichmentService.enrichMovie(movieDto);
-
-        Movie movie = movieMapper.toMovie(movieDto);
+    public void saveMovie(MovieRequest movieRequest) {
+        Movie movie = movieMapper.toMovie(movieRequest);
+        enrichmentService.enrichMovie(movie);
 
         movieRepository.save(movie);
-
         log.info("Successfully saved movie {} to the database", movie);
     }
 
     @Transactional
     @Override
-    public FullMovieResponse updateMovie(Long id, MovieDto movieDto) {
+    public FullMovieResponse updateMovie(Long id, MovieRequest movieRequest) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(String.format("Movie not found with ID: %d", id)));
-
-        movie.setNameUkrainian(movieDto.getNameUkrainian())
-                .setNameNative(movieDto.getNameNative())
-                .setYearOfRelease(movieDto.getYearOfRelease())
-                .setDescription(movieDto.getDescription())
-                .setPrice(BigDecimal.valueOf(Objects.requireNonNull(movieDto.getPrice())))
-                .setRating(BigDecimal.valueOf(Objects.requireNonNull(movieDto.getRating())))
-                .setPoster(movieDto.getPicturePath());
-        MovieDto response = movieMapper.toMovieDto(movie);
-
-        enrichmentService.enrichMovie(response);
+        movieMapper.update(movie, movieRequest);
+        enrichmentService.enrichMovie(movie);
 
         movieRepository.save(movie);
 
         log.info("Successfully updated movie id {} to the database", movie.getId());
         return movieMapper.toFullMovie(movie);
+
     }
 
     private Sort buildSort(MovieSortRequest movieSortRequest) {
