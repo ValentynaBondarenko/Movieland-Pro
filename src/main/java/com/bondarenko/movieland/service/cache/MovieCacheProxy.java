@@ -62,6 +62,7 @@ public class MovieCacheProxy implements MovieService {
         FullMovieResponse updated = movieService.updateMovie(id, movieRequest);
         movieCache.put(id, updated);
         return updated;
+
     }
 
     private FullMovieResponse applyCurrency(FullMovieResponse movie, CurrencyType currency) {
