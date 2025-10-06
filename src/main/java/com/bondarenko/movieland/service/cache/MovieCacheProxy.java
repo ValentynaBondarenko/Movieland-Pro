@@ -9,13 +9,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -26,17 +21,19 @@ public class MovieCacheProxy implements MovieService {
     private final CurrencyService currencyService;
     private SoftReferenceCache<Long, FullMovieResponse> movieCache;
 
-    @PostConstruct
-    private void initCache() {
-        movieCache = new SoftReferenceCache<>(movieId -> movieService.getMovieById(movieId, null));
-    }
-
     @Override
     public FullMovieResponse getMovieById(Long movieId, CurrencyType currency) {
+        ensureCacheInitialized();
+
         FullMovieResponse movie = movieCache.get(movieId);
         return applyCurrency(movie, currency);
     }
-
+    private synchronized void ensureCacheInitialized() {
+        if (movieCache == null) {
+            log.info("Initializing movie cache...");
+            movieCache = new SoftReferenceCache<>(id -> movieService.getMovieById(id, null));
+        }
+    }
     @Override
     public List<MovieResponse> findAll(MovieSortRequest movieSortRequest) {
         return movieService.findAll(movieSortRequest);

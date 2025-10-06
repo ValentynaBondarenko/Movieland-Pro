@@ -118,7 +118,7 @@ public class SoftReferenceCache<K, V> {
         } catch (Exception e) {
             futureValue.completeExceptionally(e);
         } finally {
-            inProgress.remove(cacheKey);
+            futureValue.whenComplete((r, ex) -> inProgress.remove(cacheKey));
         }
     }
 
