@@ -24,10 +24,10 @@ public class GenreTask implements Runnable {
     @Setter
     private Movie movie;
 
+
     @Override
     public void run() {
         long start = TimeLoggerUtil.start("Genre");
-
         List<Long> genresIds = Optional.of(movie.getGenres())
                 .orElse(List.of())
                 .stream()

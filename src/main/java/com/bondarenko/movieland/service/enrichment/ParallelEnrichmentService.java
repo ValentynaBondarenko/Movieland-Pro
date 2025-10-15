@@ -1,6 +1,7 @@
 package com.bondarenko.movieland.service.enrichment;
 
 import com.bondarenko.movieland.entity.Movie;
+import com.bondarenko.movieland.exception.TimeoutEnrichMovieException;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
 import com.bondarenko.movieland.service.enrichment.task.ReviewTask;
@@ -27,22 +28,28 @@ public class ParallelEnrichmentService implements EnrichmentService {
     private int timeout;
 
     public void enrichMovie(Movie movie) {
-        List<Callable<Object>> parallelTasks = prepareTasks(movie);
-        try {
-            List<Future<Object>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
+        log.info("Starting enrichment for movie {}", movie.getId());
 
-            handleTimedOutTasks(futures);
-        } catch (InterruptedException e) {
-            log.warn("Request Movie Thread was interrupted while fetching");
-            Thread.currentThread().interrupt();
-        }
+        CompletableFuture<Void> genreFuture = runTaskWithTimeout("GenreTask", getGenresTask(movie));
+        CompletableFuture<Void> countryFuture = runTaskWithTimeout("CountryTask", getCountriesTask(movie));
+        CompletableFuture<Void> reviewFuture = runTaskWithTimeout("ReviewTask", getReviewsTask(movie));
+
+        CompletableFuture.allOf(genreFuture, countryFuture, reviewFuture)
+                .whenComplete((r, ex) -> {
+                    if (ex != null) log.error("Enrichment failed", ex);
+                    else log.info("Enrichment finished successfully for movie {}", movie.getId());
+                })
+                .join();
+
     }
 
-    private List<Callable<Object>> prepareTasks(Movie movie) {
-        return List.of(Executors.callable(getGenresTask(movie)),
-                Executors.callable(getCountriesTask(movie)),
-                Executors.callable(getReviewsTask(movie))
-        );
+    private CompletableFuture<Void> runTaskWithTimeout(String taskName, Runnable task) {
+        return CompletableFuture.runAsync(task, executor)
+                .orTimeout(timeout, TimeUnit.SECONDS)
+                .exceptionally(ex -> {
+                    log.warn("{} did not complete in {} s and was skipped", taskName, timeout);
+                    return null;
+                });
     }
 
     protected Runnable getGenresTask(Movie movie) {
@@ -64,7 +71,6 @@ public class ParallelEnrichmentService implements EnrichmentService {
         return task;
     }
 
-
     //@PreDestroy will be triggered on:
 // - Ctrl+C in the console, docker stop, kubectl delete pod, systemd stop,Kubernetes ->pod=SIGTERM
 // --->Spring Boot run shutdown hook in JVM [Runtime.getRuntime().addShutdownHook(new Thread(context::close));]
@@ -78,17 +84,4 @@ public class ParallelEnrichmentService implements EnrichmentService {
         executor.shutdown();
     }
 
-    private void handleTimedOutTasks(List<Future<Object>> futures) throws InterruptedException {
-        for (int i = 0; i < futures.size(); i++) {
-            Future<Object> future = futures.get(i);
-            try {
-                future.get(0, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException e) {
-                log.warn("Task {} did not complete in time, setting result as null", i);
-                future.cancel(true);
-            } catch (ExecutionException e) {
-                log.error("Task {} failed", i, e.getCause());
-            }
-        }
-    }
 }
