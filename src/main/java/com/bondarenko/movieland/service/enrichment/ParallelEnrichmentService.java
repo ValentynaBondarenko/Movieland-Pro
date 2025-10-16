@@ -2,12 +2,9 @@ package com.bondarenko.movieland.service.enrichment;
 
 import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.TimeoutEnrichMovieException;
-import com.bondarenko.movieland.service.country.CountryService;
 import com.bondarenko.movieland.service.enrichment.task.CountryTask;
 import com.bondarenko.movieland.service.enrichment.task.GenreTask;
 import com.bondarenko.movieland.service.enrichment.task.ReviewTask;
-import com.bondarenko.movieland.service.genre.GenreService;
-import com.bondarenko.movieland.service.review.ReviewService;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,23 +28,32 @@ public class ParallelEnrichmentService implements EnrichmentService {
     private int timeout;
 
     public void enrichMovie(Movie movie) {
-        List<Callable<Object>> parallelTasks = List.of(
-                Executors.callable(getGenresTask(movie)),
-                Executors.callable(getCountriesTask(movie)),
-                Executors.callable(getReviewsTask(movie))
-        );
-        try {
-            log.info(">>> invokeAll starting...");
-            List<Future<Object>> futures = executor.invokeAll(parallelTasks, timeout, TimeUnit.SECONDS);
-            log.info(">>> invokeAll returned {} futures", futures.size());
-            cancelUnfinishedTasks(futures);
-        } catch (InterruptedException e) {
-            log.warn("Thread was interrupted while fetching");
-            Thread.currentThread().interrupt();
-        }
+        log.info("Starting enrichment for movie {}", movie.getId());
+
+        CompletableFuture<Void> genreFuture = runTaskWithTimeout("GenreTask", getGenresTask(movie));
+        CompletableFuture<Void> countryFuture = runTaskWithTimeout("CountryTask", getCountriesTask(movie));
+        CompletableFuture<Void> reviewFuture = runTaskWithTimeout("ReviewTask", getReviewsTask(movie));
+
+        CompletableFuture.allOf(genreFuture, countryFuture, reviewFuture)
+                .whenComplete((r, ex) -> {
+                    if (ex != null) log.error("Enrichment failed", ex);
+                    else log.info("Enrichment finished successfully for movie {}", movie.getId());
+                })
+                .join();
+
+    }
+
+    private CompletableFuture<Void> runTaskWithTimeout(String taskName, Runnable task) {
+        return CompletableFuture.runAsync(task, executor)
+                .orTimeout(timeout, TimeUnit.SECONDS)
+                .exceptionally(ex -> {
+                    log.warn("{} did not complete in {} s and was skipped", taskName, timeout);
+                    return null;
+                });
     }
 
     protected Runnable getGenresTask(Movie movie) {
+        // Use a fresh prototype instance to prevent race conditions between threads
         GenreTask task = genreTaskProvider.getObject();
         task.setMovie(movie);
         return task;
@@ -65,30 +71,17 @@ public class ParallelEnrichmentService implements EnrichmentService {
         return task;
     }
 
-
     //@PreDestroy will be triggered on:
 // - Ctrl+C in the console, docker stop, kubectl delete pod, systemd stop,Kubernetes ->pod=SIGTERM
 // --->Spring Boot run shutdown hook in JVM [Runtime.getRuntime().addShutdownHook(new Thread(context::close));]
 //⚠️ It will NOT be invoked:
 // - kill -9 (SIGKILL, no chance for cleanup)
 //- fatal JVM crash (e.g. OutOfMemoryError, SIGSEGV)
+    //⚠️️ Note:
+// - Prototype beans are not managed by the container after creation, so their destroy methods are not called automatically.
     @PreDestroy
     public void shutdownExecutor() {
         executor.shutdown();
     }
 
-    private void cancelUnfinishedTasks(List<Future<Object>> futures) throws InterruptedException {
-        for (int i = 0; i < futures.size(); i++) {
-            Future<Object> future = futures.get(i);
-            if (future.isCancelled()) {
-                log.info("Task {} was cancelled by timeout", i);
-                throw new TimeoutEnrichMovieException("Task " + i + " was cancelled by timeout");
-            } else if (!future.isDone()) {
-                log.info("Task {} still running, cancelling now", i);
-                future.cancel(true);
-            } else {
-                log.info("Task {} completed normally", i);
-            }
-        }
-    }
 }

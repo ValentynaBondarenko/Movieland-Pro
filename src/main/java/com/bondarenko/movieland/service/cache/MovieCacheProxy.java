@@ -31,7 +31,10 @@ public class MovieCacheProxy implements MovieService {
     private synchronized void ensureCacheInitialized() {
         if (movieCache == null) {
             log.info("Initializing movie cache...");
-            movieCache = new SoftReferenceCache<>(id -> movieService.getMovieById(id, null));
+            movieCache = new SoftReferenceCache<>(id -> {
+                log.info("Loading movie {} into cache", id);
+                return   movieService.getMovieById(id, null);
+            });
         }
     }
     @Override
