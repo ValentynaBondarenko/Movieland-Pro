@@ -5,13 +5,11 @@ import com.bondarenko.movieland.entity.CurrencyType;
 import com.bondarenko.movieland.service.annotation.CacheService;
 import com.bondarenko.movieland.service.currency.CurrencyService;
 import com.bondarenko.movieland.service.movie.MovieService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 
 @Slf4j
 @CacheService
@@ -28,15 +26,17 @@ public class MovieCacheProxy implements MovieService {
         FullMovieResponse movie = movieCache.get(movieId);
         return applyCurrency(movie, currency);
     }
+
     private synchronized void ensureCacheInitialized() {
         if (movieCache == null) {
-            log.info("Initializing movie cache...");
+            log.info("Initializing SoftReference movie cache...");
             movieCache = new SoftReferenceCache<>(id -> {
                 log.info("Loading movie {} into cache", id);
-                return   movieService.getMovieById(id, null);
+                return movieService.getMovieById(id, null);
             });
         }
     }
+
     @Override
     public List<MovieResponse> findAll(MovieSortRequest movieSortRequest) {
         return movieService.findAll(movieSortRequest);
@@ -59,24 +59,22 @@ public class MovieCacheProxy implements MovieService {
 
     @Override
     public FullMovieResponse updateMovie(Long id, MovieRequest movieRequest) {
-        FullMovieResponse updated = movieService.updateMovie(id, movieRequest);
-        movieCache.put(id, updated);
-        return updated;
-
+        return movieService.updateMovie(id, movieRequest);
     }
 
     private FullMovieResponse applyCurrency(FullMovieResponse movie, CurrencyType currency) {
         if (currency == null || currency == CurrencyType.UAH) {
             return movie;
         }
+
         FullMovieResponse converted = deepCopy(movie);
         Double moviePrice = movie.getPrice();
 
         if (moviePrice != null) {
-            BigDecimal price = currencyService.convertCurrency(BigDecimal.valueOf(moviePrice), currency);
-            converted.setPrice(price.doubleValue());
-        } else {
-            converted.setPrice(null);
+            BigDecimal convertedPrice = currencyService.convertCurrency(
+                    BigDecimal.valueOf(moviePrice), currency
+            );
+            converted.setPrice(convertedPrice.doubleValue());
         }
 
         return converted;
@@ -93,34 +91,40 @@ public class MovieCacheProxy implements MovieService {
         copy.setPrice(original.getPrice());
         copy.setPicturePath(original.getPicturePath());
 
-        copy.setGenres(original.getGenres().stream().map(g -> {
-            GenreResponse gr = new GenreResponse();
-            gr.setId(g.getId());
-            gr.setName(g.getName());
-            return gr;
+        copy.setGenres(original.getGenres().stream().map(genre -> {
+            GenreResponse genreResponse = new GenreResponse();
+            genreResponse.setId(genre.getId());
+            genreResponse.setName(genre.getName());
+            return genreResponse;
         }).toList());
 
-        copy.setCountries(original.getCountries().stream().map(c -> {
-            CountryResponse cr = new CountryResponse();
-            cr.setId(c.getId());
-            cr.setName(c.getName());
-            return cr;
+        copy.setCountries(original.getCountries().stream().map(country -> {
+            CountryResponse countryResponse = new CountryResponse();
+            countryResponse.setId(country.getId());
+            countryResponse.setName(country.getName());
+            return countryResponse;
         }).toList());
 
-        copy.setReviews(original.getReviews().stream().map(r -> {
-            ReviewResponse rr = new ReviewResponse();
-            rr.setId(r.getId());
-            rr.setText(r.getText());
+        copy.setReviews(original.getReviews().stream().map(review -> {
+            ReviewResponse reviewResponse = new ReviewResponse();
+            reviewResponse.setId(review.getId());
+            reviewResponse.setText(review.getText());
 
             UserIdResponse userCopy = new UserIdResponse();
-            if (r.getUser() != null) {
-                userCopy.setId(r.getUser().getId());
-                userCopy.setNickname(r.getUser().getNickname());
+            if (review.getUser() != null) {
+                userCopy.setId(review.getUser().getId());
+                userCopy.setNickname(review.getUser().getNickname());
             }
-            rr.setUser(userCopy);
-            return rr;
+            reviewResponse.setUser(userCopy);
+            return reviewResponse;
         }).toList());
 
         return copy;
+    }
+
+    public void clearCacheForTests() {
+        if (movieCache != null) {
+            movieCache.clear();
+        }
     }
 }

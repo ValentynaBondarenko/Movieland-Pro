@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DBRider
@@ -25,6 +27,7 @@ class MovieCacheProxyITest extends AbstractITest {
     @BeforeEach
     void setUp() {
         DataSourceListener.reset();
+        proxy.clearCacheForTests();
     }
 
     @Test
@@ -89,4 +92,25 @@ class MovieCacheProxyITest extends AbstractITest {
         assertEquals("Втеча з Шоушенка", movieByIdSecond.getNameUkrainian());
         assertEquals("The Shawshank Redemption", movieByIdSecond.getNameNative());
     }
+
+    @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
+    void testSoftReferenceCacheEviction() {
+        FullMovieResponse first = proxy.getMovieById(1L, null);
+        assertNotNull(first);
+        assertEquals(1L, first.getId());
+
+        assertTrue(DataSourceListener.getSelectCount() > 0);
+        first = null;
+        System.gc();
+
+        await().atMost(5, SECONDS).until(() -> proxy.getMovieById(1L, null) != null);
+
+        DataSourceListener.reset();
+        FullMovieResponse second = proxy.getMovieById(1L, null);
+
+        assertNotNull(second);
+        assertEquals(1L, second.getId(), "SQL queries after GC: " + DataSourceListener.getSelectCount());
+    }
+
 }
