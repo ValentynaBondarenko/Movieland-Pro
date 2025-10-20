@@ -33,13 +33,20 @@ public class SoftReferenceCache<K, V> {
 
     private V getFromCache(K key) {
         SoftReference<V> ref = cache.get(key);
-        V value = (ref != null) ? ref.get() : null;
+        if (ref == null) {
+            log.debug("Cache MISS for key {} (no reference)", key);
+            return null;
+        }
+
+        V value = ref.get();
         if (value != null) {
             log.debug("Cache HIT for key {}", key);
-        } else {
-            log.debug("Cache MISS for key {}", key);
+            return value;
         }
-        return value;
+
+        log.debug("Cache MISS for key {} (reference cleared by GC)", key);
+        cache.remove(key);
+        return null;
     }
 
     private CompletableFuture<V> getOrLoadFuture(K key) {
@@ -77,5 +84,15 @@ public class SoftReferenceCache<K, V> {
 
     public void clear() {
         cache.clear();
+    }
+
+    public int liveReferencesCount() {
+        int count = 0;
+        for (SoftReference<V> softReference : cache.values()) {
+            if (softReference.get() != null) {
+                count++;
+            }
+        }
+        return count;
     }
 }
