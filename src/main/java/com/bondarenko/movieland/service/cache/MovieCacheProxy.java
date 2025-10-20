@@ -79,7 +79,10 @@ public class MovieCacheProxy implements MovieService {
 
         return converted;
     }
-
+    public int liveMovieReferences() {
+        if (movieCache == null) return 0;
+        return movieCache.liveReferencesCount();
+    }
     private FullMovieResponse deepCopy(FullMovieResponse original) {
         FullMovieResponse copy = new FullMovieResponse();
         copy.setId(original.getId());

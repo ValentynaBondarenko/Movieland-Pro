@@ -9,16 +9,21 @@ import com.bondarenko.movieland.service.AbstractITest;
 import com.bondarenko.movieland.service.movie.MovieService;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @DBRider
-class MovieCacheProxyITest extends AbstractITest {
+class MovieCacheProxyGcITest extends AbstractITest {
     @Autowired
     private MovieService movieService;
     @Autowired
@@ -31,6 +36,7 @@ class MovieCacheProxyITest extends AbstractITest {
     }
 
     @Test
+    @Tag("gc-test")
     @DataSet(value = "datasets/movie/dataset_movies.yml")
     void testGetMovieById_firstCall_missCache_thenHitCache() {
 
@@ -94,23 +100,46 @@ class MovieCacheProxyITest extends AbstractITest {
     }
 
     @Test
+    @Tag("gc-test")
     @DataSet(value = "datasets/movie/dataset_movies.yml")
-    void testSoftReferenceCacheEviction() {
-        FullMovieResponse first = proxy.getMovieById(1L, null);
-        assertNotNull(first);
-        assertEquals(1L, first.getId());
+    void shouldEvictSoftReferencesUnderMemoryPressure() {
+        heapSize();
+        //prepare
+        for (long i = 1; i < 25; i++) {
+            proxy.getMovieById(i, null);
+        }
+        assertEquals(24, proxy.liveMovieReferences(), "Movies loaded into cache");
+        //when
+        fillMemoryToTrigerGC();
 
-        assertTrue(DataSourceListener.getSelectCount() > 0);
-        first = null;
-        System.gc();
-
-        await().atMost(5, SECONDS).until(() -> proxy.getMovieById(1L, null) != null);
-
-        DataSourceListener.reset();
-        FullMovieResponse second = proxy.getMovieById(1L, null);
-
-        assertNotNull(second);
-        assertEquals(1L, second.getId(), "SQL queries after GC: " + DataSourceListener.getSelectCount());
+        int liveAfter = proxy.liveMovieReferences();
+        assertTrue(liveAfter < 24, "Some refs should be cleared");
     }
 
+    private void heapSize() {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        long totalMemory = Runtime.getRuntime().totalMemory();
+        long freeMemory = Runtime.getRuntime().freeMemory();
+
+        log.info("Max heap: {} MB", maxMemory / 1024 / 1024);//Max heap: 64 MB
+        log.info("Total heap: {} MB", totalMemory / 1024 / 1024);// Total heap: 64 MB
+        log.info("Free heap: {} MB", freeMemory / 1024 / 1024);//Free heap: 7 MB
+    }
+
+    private void fillMemoryToTrigerGC() {
+        List<byte[]> memory = new ArrayList<>();
+        try {
+            for (int i = 0; i < 58; i++) {  // 58MB
+                memory.add(new byte[1024 * 1024]);
+            }
+        } catch (OutOfMemoryError e) {
+            log.info("OOM caught - SoftReferences should be cleared");
+        }
+        System.gc();
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }
