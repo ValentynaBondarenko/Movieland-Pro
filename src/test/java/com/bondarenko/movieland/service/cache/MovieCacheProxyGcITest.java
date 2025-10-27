@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -32,7 +31,6 @@ class MovieCacheProxyGcITest extends AbstractITest {
     @BeforeEach
     void setUp() {
         DataSourceListener.reset();
-        proxy.clearCacheForTests();
     }
 
     @Test
@@ -110,9 +108,10 @@ class MovieCacheProxyGcITest extends AbstractITest {
         }
         assertEquals(24, proxy.liveMovieReferences(), "Movies loaded into cache");
         //when
-        fillMemoryToTrigerGC();
+        fillMemoryToTriggerGC();
 
         int liveAfter = proxy.liveMovieReferences();
+        System.out.println("liveAfter: " + liveAfter);
         assertTrue(liveAfter < 24, "Some refs should be cleared");
     }
 
@@ -126,20 +125,27 @@ class MovieCacheProxyGcITest extends AbstractITest {
         log.info("Free heap: {} MB", freeMemory / 1024 / 1024);//Free heap: 7 MB
     }
 
-    private void fillMemoryToTrigerGC() {
+    private void fillMemoryToTriggerGC() {
         List<byte[]> memory = new ArrayList<>();
         try {
-            for (int i = 0; i < 58; i++) {  // 58MB
-                memory.add(new byte[1024 * 1024]);
+            while (true) {
+                memory.add(new byte[1_000_000]); // ~1 MB
             }
         } catch (OutOfMemoryError e) {
-            log.info("OOM caught - SoftReferences should be cleared");
+            log.info("OOM caught - created memory pressure");
+
+        } finally {
+            memory = null;
         }
-        System.gc();
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+
+        for (int i = 0; i < 10; i++) {
+            System.gc();
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
     }
 }

@@ -125,9 +125,9 @@ public class MovieCacheProxy implements MovieService {
         return copy;
     }
 
-    public void clearCacheForTests() {
-        if (movieCache != null) {
-            movieCache.clear();
-        }
-    }
+//    public void clearCacheForTests() {
+//        if (movieCache != null) {
+//            movieCache.clear();
+//        }
+//    }
 }
