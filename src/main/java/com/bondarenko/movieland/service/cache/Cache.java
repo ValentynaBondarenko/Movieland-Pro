@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 @Slf4j
 public class Cache<T> {
-    private List<T> dataCache = new ArrayList<>();
+    private volatile List<T> dataCache = new ArrayList<>();
     private final Supplier<List<T>> dataFetcher;
 
     public Cache(Supplier<List<T>> dataFetcher) {
