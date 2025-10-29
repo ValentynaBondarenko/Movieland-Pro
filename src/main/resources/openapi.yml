@@ -67,6 +67,18 @@ components:
           type: string
           description: Sort direction for price (optional).
           enum: [ "ASC", "DESC" ]
+        page:
+          type: integer
+          description: Current page number (optional).
+          example: 1
+        count:
+          type: integer
+          description: Number of items per page (optional).
+          example: 10
+        searchText:
+          type: string
+          description: Search text for filtering movies (optional).
+          example: "Inception"
 
     MovieRequest:
       type: object
