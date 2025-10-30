@@ -162,8 +162,12 @@ class MovieServiceImplTest extends AbstractITest {
         //prepare
         MovieSortRequest movieSortRequest = new MovieSortRequest()
                 .priceDirection(MovieSortRequest.PriceDirectionEnum.ASC)
+                .page(null)
+                .count(null)
+                .searchText(null)
                 .ratingDirection(null);
 
+        System.out.println(movieSortRequest);
         //when
         List<MovieResponse> allMoviesWithSorting = movieService.findAll(movieSortRequest);
 

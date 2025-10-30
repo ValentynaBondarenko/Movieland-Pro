@@ -21,6 +21,8 @@ public interface MovieMapper {
     @Mapping(source = "poster", target = "picturePath")
     FullMovieResponse toMovieResponse(Movie movies);
 
+    MovieResponse toSimpleMovieResponse(Movie movie);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "poster", source = "picturePath")
     @Mapping(target = "genres", qualifiedByName = "mapGenresFromDto")
