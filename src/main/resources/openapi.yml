@@ -8,6 +8,7 @@ info:
 servers:
   - url: /api/v1
 
+
 components:
   schemas:
     MovieResponse:
@@ -67,6 +68,19 @@ components:
           type: string
           description: Sort direction for price (optional).
           enum: [ "ASC", "DESC" ]
+        page:
+          type: integer
+          description: Current page number (optional).
+          minimum: 0
+        count:
+          type: integer
+          description: Number of movies per page (optional).
+          minimum: 1
+          maximum: 100
+        searchText:
+          type: string
+          description: Search text for filtering movies (optional).
+          example: "Inception"
 
     MovieRequest:
       type: object

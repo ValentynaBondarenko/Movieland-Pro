@@ -9,12 +9,17 @@ import com.bondarenko.movieland.entity.Movie;
 import com.bondarenko.movieland.exception.MovieNotFoundException;
 import com.bondarenko.movieland.mapper.MovieMapper;
 import com.bondarenko.movieland.repository.MovieRepository;
+import com.bondarenko.movieland.repository.MovieSpecifications;
 import com.bondarenko.movieland.service.currency.CurrencyService;
 import com.bondarenko.movieland.service.enrichment.EnrichmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,15 +44,33 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     @Override
     public List<MovieResponse> findAll(MovieSortRequest movieSortRequest) {
-        List<Movie> movies;
-        if (movieSortRequest != null) {
-            Sort sort = buildSort(movieSortRequest);
-            movies = movieRepository.findAll(sort);
+        if (movieSortRequest == null) {
+            List<Movie> movies = movieRepository.findAll();
+            return movieMapper.toMovieResponse(movies);
+        }
+
+        Sort sort = buildSort(movieSortRequest);
+
+        if (isPaginationRequested(movieSortRequest)) {
+            return findAllWithPagination(movieSortRequest, sort);
         } else {
-            movies = movieRepository.findAll();
+            return findAllWithoutPagination(movieSortRequest, sort);
+        }
+    }
+
+
+    private List<MovieResponse> findAllWithoutPagination(MovieSortRequest movieSortRequest, Sort sort) {
+        List<Movie> movies;
+
+        if (movieSortRequest != null && movieSortRequest.getSearchText() != null) {
+            Specification<Movie> spec = MovieSpecifications.containsTextInFields(movieSortRequest.getSearchText());
+            movies = movieRepository.findAll(spec, sort);
+        } else {
+            movies = movieRepository.findAll(sort);
         }
         return movieMapper.toMovieResponse(movies);
     }
+
 
     @Transactional
     @Override
@@ -125,15 +148,20 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private Sort buildSort(MovieSortRequest movieSortRequest) {
-        Optional<Sort.Direction> ratingDirection = Optional.ofNullable(convertRatingDirection(movieSortRequest.getRatingDirection()));
-        Optional<Sort.Direction> priceDirection = Optional.ofNullable(convertPriceDirection(movieSortRequest.getPriceDirection()));
-
-        if (ratingDirection.isPresent()) {
-            return Sort.by(new Sort.Order(ratingDirection.get(), RATING));
-        } else if (priceDirection.isPresent()) {
-            return Sort.by(new Sort.Order(priceDirection.get(), PRICE));
+        if (movieSortRequest == null) {
+            return Sort.unsorted();
         }
-        return Sort.unsorted();
+
+        Sort.Direction ratingDir = convertRatingDirection(movieSortRequest.getRatingDirection());
+        Sort.Direction priceDir = convertPriceDirection(movieSortRequest.getPriceDirection());
+
+        if (ratingDir != null) {
+            return Sort.by(ratingDir, RATING);
+        } else if (priceDir != null) {
+            return Sort.by(priceDir, PRICE);
+        } else {
+            return Sort.unsorted();
+        }
     }
 
     private Sort.Direction convertRatingDirection(MovieSortRequest.RatingDirectionEnum ratingDirection) {
@@ -143,5 +171,23 @@ public class MovieServiceImpl implements MovieService {
     private Sort.Direction convertPriceDirection(MovieSortRequest.PriceDirectionEnum priceDirection) {
         return (priceDirection == null) ? null : Sort.Direction.valueOf(priceDirection.getValue());
     }
+
+    private boolean isPaginationRequested(MovieSortRequest movieSortRequest) {
+        return movieSortRequest != null
+                && movieSortRequest.getPage() != null
+                && movieSortRequest.getCount() != null;
+    }
+
+    private List<MovieResponse> findAllWithPagination(MovieSortRequest movieSortRequest, Sort sort) {
+        PageRequest pageable = PageRequest.of(
+                Math.max(movieSortRequest.getPage(), 0),
+                Math.max(movieSortRequest.getCount(), 1),
+                sort
+        );
+        Specification<Movie> spec = MovieSpecifications.containsTextInFields(movieSortRequest.getSearchText());
+        Page<Movie> moviePage = movieRepository.findAll(spec, pageable);
+        return moviePage.map(movieMapper::toSimpleMovieResponse).getContent();
+    }
+
 
 }
