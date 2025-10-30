@@ -13,22 +13,20 @@ public class SoftReferenceCache<K, V> {
         this.valueLoader = valueLoader;
     }
 
-
     public V get(K key) {
-        // Атомарне обчислення нового SoftReference для ключа
+        // compute-атомарна операція оновлення ключа в ConcurrentHashM
         SoftReference<V> softRef = cache.compute(key, (k, oldRef) -> {
             V value = (oldRef != null) ? oldRef.get() : null;
             if (value == null) {
-                value = valueLoader.apply(k); // створюємо нове значення
-                return new SoftReference<>(value); // без referenceQueue
+                value = valueLoader.apply(k); // fetch from database
+                return new SoftReference<>(value);
             } else {
-                return oldRef; // залишаємо існуючий SoftReference
+                return oldRef;
             }
         });
 
-        return softRef.get(); // повертаємо значення
+        return softRef.get();
     }
-
 
     public int liveReferencesCount() {
         int count = 0;
@@ -39,5 +37,4 @@ public class SoftReferenceCache<K, V> {
         }
         return count;
     }
-
 }
