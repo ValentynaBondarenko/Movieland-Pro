@@ -37,5 +37,4 @@ public class SoftReferenceCache<K, V> {
         }
         return count;
     }
-
 }
