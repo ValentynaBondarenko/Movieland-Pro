@@ -4,9 +4,9 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.bondarenko.movieland.entity.Movie;
-import com.bondarenko.movieland.service.enrichment.task.CountryTask;
-import com.bondarenko.movieland.service.enrichment.task.GenreTask;
-import com.bondarenko.movieland.service.enrichment.task.ReviewTask;
+import com.bondarenko.movieland.service.country.CountryService;
+import com.bondarenko.movieland.service.genre.GenreService;
+import com.bondarenko.movieland.service.review.ReviewService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,31 +14,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ParallelEnrichmentTest {
     @Mock
-    private ObjectProvider<GenreTask> genreTaskProvider;
+    private GenreService genreService;
     @Mock
-    private ObjectProvider<CountryTask> countryTaskProvider;
+    private CountryService countryService;
     @Mock
-    private ObjectProvider<ReviewTask> reviewTaskProvider;
-
-    @Mock
-    private GenreTask genreTask;
-    @Mock
-    private CountryTask countryTask;
-    @Mock
-    private ReviewTask reviewTask;
+    private ReviewService reviewService;
 
     @InjectMocks
     private ParallelEnrichmentService service;
+
     private Appender<ILoggingEvent> mockAppender;
     private Logger logger;
 
@@ -50,112 +46,67 @@ class ParallelEnrichmentTest {
     }
 
     @Test
-    void enrichMovie_shouldThrowTimeoutException_whenTasksAreTooLong() throws NoSuchFieldException, IllegalAccessException {
+    void enrichMovie_shouldHandleInterruptedExceptionGracefully() throws Exception {
+        // given
+        ExecutorService mockExecutor = mock(ExecutorService.class);
+        when(mockExecutor.invokeAll(anyList(), anyLong(), any()))
+                .thenThrow(new InterruptedException());
 
-        ParallelEnrichmentService spyService = spy(service);
-
-        Field timeoutField = ParallelEnrichmentService.class.getDeclaredField("timeout");
-        timeoutField.setAccessible(true);
-        timeoutField.setInt(spyService, 1);
+        injectPrivateField(service, "executor", mockExecutor);
+        injectPrivateField(service, "timeout", 1);
 
         Movie movie = new Movie();
-        movie.setId(1L);
+        movie.setId(99L);
 
-        Runnable longTask = () -> {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ignored) {
-            }
-        };
+        // when
+        service.enrichMovie(movie);
 
-        doReturn(longTask).when(spyService).getGenresTask(any());
-        doReturn(longTask).when(spyService).getCountriesTask(any());
-        doReturn(longTask).when(spyService).getReviewsTask(any());
-
-        //when
-        spyService.enrichMovie(movie);
-
-        //than
+        // then
         verify(mockAppender, atLeastOnce()).doAppend(argThat(
-                event -> event.getLevel().toString().equals("WARN")
-                        && event.getFormattedMessage().contains("did not complete")
+                e -> e.getFormattedMessage().contains("Thread was interrupted")
+        ));
+        assertThat(Thread.currentThread().isInterrupted()).isTrue();
+    }
+
+    @Test
+    void enrichMovie_shouldCompleteSuccessfullyWithinTimeout() throws Exception {
+        // given
+        ExecutorService spyExecutor = spy(Executors.newSingleThreadExecutor());
+        injectPrivateField(service, "executor", spyExecutor);
+        injectPrivateField(service, "timeout", 3);
+
+        Movie movie = new Movie();
+        movie.setId(42L);
+
+        // when
+        service.enrichMovie(movie);
+
+        // then
+        verify(spyExecutor, times(1))
+                .invokeAll(anyList(), eq(3L), eq(TimeUnit.SECONDS));
+        verify(mockAppender, atLeastOnce()).doAppend(argThat(
+                e -> e.getFormattedMessage().contains("invokeAll starting")
         ));
     }
 
     @Test
-    void enrichMovie_shouldThrowTimeoutException_whenOneTaskIsTooLong() throws IllegalAccessException, NoSuchFieldException {
-        ParallelEnrichmentService spyService = spy(service);
+    void shutdownExecutor_shouldShutdownExecutorService() throws Exception {
+        ExecutorService mockExecutor = mock(ExecutorService.class);
+        injectPrivateField(service, "executor", mockExecutor);
 
-        Field timeoutField = ParallelEnrichmentService.class.getDeclaredField("timeout");
-        timeoutField.setAccessible(true);
-        timeoutField.setInt(spyService, 5);
+        // when
+        service.shutdownExecutor();
 
-        Movie movie = new Movie();
-        movie.setId(1L);
-
-        Runnable longTask = () -> {
-            try {
-                Thread.sleep(6000);
-            } catch (InterruptedException ignored) {
-            }
-        };
-        Runnable fastTask = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-            }
-        };
-
-        doReturn(longTask).when(spyService).getGenresTask(any());
-        doReturn(fastTask).when(spyService).getCountriesTask(any());
-        doReturn(fastTask).when(spyService).getReviewsTask(any());
-
-        //when
-        spyService.enrichMovie(movie);
-
-        //than
-        verify(mockAppender, atLeastOnce()).doAppend(argThat(
-                event -> event.getLevel().toString().equals("WARN")
-                        && event.getFormattedMessage().contains("did not complete")
-        ));
+        // then
+        verify(mockExecutor).shutdown();
     }
 
-    @Test
-    void enrichMovie_shouldFinishSuccessfully_whenTasksCompleteWithinTimeout() throws NoSuchFieldException, IllegalAccessException {
-        ParallelEnrichmentService spyService = spy(service);
-
-        Field timeoutField = ParallelEnrichmentService.class.getDeclaredField("timeout");
-        timeoutField.setAccessible(true);
-        timeoutField.setInt(spyService, 5);
-
-        Movie movie = new Movie();
-        movie.setId(1L);
-
-        Runnable fastTask = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-            }
-        };
-
-        doReturn(fastTask).when(spyService).getGenresTask(any());
-        doReturn(fastTask).when(spyService).getCountriesTask(any());
-        doReturn(fastTask).when(spyService).getReviewsTask(any());
-
-        //when
-        spyService.enrichMovie(movie);
-        //then
-        assertTrue(movie != null);
-        verify(spyService, times(1)).getGenresTask(any());
-        verify(spyService, times(1)).getCountriesTask(any());
-        verify(spyService, times(1)).getReviewsTask(any());
-
-        verify(mockAppender, never()).doAppend(argThat(
-                event -> event.getLevel().toString().equals("WARN")
-                        && event.getFormattedMessage().contains("did not complete")
-        ));
+    // --- helper method for reflection ---
+    private void injectPrivateField(Object target, String fieldName, Object value) throws Exception {
+        Field field = ParallelEnrichmentService.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
     }
-
 }
 
 
