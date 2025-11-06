@@ -17,15 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -44,6 +43,7 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     @Override
     public List<MovieResponse> findAll(MovieSortRequest movieSortRequest) {
+        validate(movieSortRequest);
         if (movieSortRequest == null) {
             List<Movie> movies = movieRepository.findAll();
             return movieMapper.toMovieResponse(movies);
@@ -58,6 +58,18 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
+    private void validate(MovieSortRequest movieSortRequest) {
+        Integer page = movieSortRequest.getPage();
+        Integer count = movieSortRequest.getCount();
+
+        if (page == null || page < 0) {
+            throw new IllegalArgumentException("Page must be >= 0");
+        }
+
+        if (count == null || count <= 0) {
+            throw new IllegalArgumentException("Count must be > 0");
+        }
+    }
 
     private List<MovieResponse> findAllWithoutPagination(MovieSortRequest movieSortRequest, Sort sort) {
         List<Movie> movies;

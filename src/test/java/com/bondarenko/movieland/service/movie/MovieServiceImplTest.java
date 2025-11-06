@@ -332,6 +332,26 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
+    void testFindAllMoviesWithInvalidPagination_shouldThrowException() {
+        // prepare
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
+                .page(-1)
+                .count(-10)
+                .searchText("Втеча");
+
+        // when + then
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> movieService.findAll(movieSortRequest),
+                "Expected IllegalArgumentException for invalid pagination"
+        );
+
+        // and optionally check message
+        assertEquals("Page must be >= 0", exception.getMessage());
+    }
+
+    @Test
     @DataSet("datasets/movie/dataset_before_update_movie.yml")
     @ExpectedDataSet(value = "datasets/movie/dataset_expected_update_movie.yml")
     void updateMovieInTheDatabase() {
