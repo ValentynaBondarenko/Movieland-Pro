@@ -185,6 +185,70 @@ class MovieServiceImplTest extends AbstractITest {
     }
 
     @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
+    void testFindAllMoviesWithPaginationAndSearchText() {
+        // prepare
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
+                .page(0)
+                .count(5)
+                .searchText("The");
+
+        // when
+        List<MovieResponse> movies = movieService.findAll(movieSortRequest);
+
+        // then
+        assertNotNull(movies);
+        assertFalse(movies.isEmpty(), "Expected at least one movie in search results");
+
+        assertEquals(5, movies.size(), "Should return max 5 movies");
+
+        movies.forEach(movie -> {
+            String nameNative = movie.getNameNative();
+            assertNotNull(nameNative);
+            assertTrue(nameNative.toLowerCase().contains("the"),
+                    () -> "Expected title to contain 'The' but got: " + nameNative);
+        });
+    }
+
+    @Test
+    @DataSet(value = "datasets/movie/dataset_movies.yml")
+    void testFindAllMoviesWithPaginationAndKirilicSearchText() {
+        // prepare
+        MovieSortRequest movieSortRequest = new MovieSortRequest()
+                .page(0)
+                .count(5)
+                .searchText("Втеча");
+
+        // when
+        List<MovieResponse> movies = movieService.findAll(movieSortRequest);
+        System.out.println(movies);
+        // then
+        assertNotNull(movies);
+        assertFalse(movies.isEmpty(), "Expected at least one movie in search results");
+
+        assertEquals(2, movies.size(), "Should return max 2 movies");
+
+        movies.forEach(movie -> {
+            String ukr = movie.getNameUkrainian();
+            String nativeName = movie.getNameNative();
+            String description = movie.getDescription();
+
+            assertNotNull(ukr);
+            assertNotNull(nativeName);
+            assertNotNull(description);
+            boolean contains =
+                    ukr.toLowerCase().contains("втеча") ||
+                            nativeName.toLowerCase().contains("втеча") ||
+                            description.toLowerCase().contains("втеча");
+            assertTrue(contains,
+                    () -> "Expected 'втеча' to appear in Ukrainian name, native name or description but got: " +
+                            "\nUkr: " + ukr +
+                            "\nNative: " + nativeName +
+                            "\nDescription: " + description);
+        });
+    }
+
+    @Test
     @DataSet(value = "/datasets/movie/dataset_full_movies.yml")
     void findFullMovieByMovieId() {
         FullMovieResponse fullMovie = movieService.getMovieById(1L, null);
