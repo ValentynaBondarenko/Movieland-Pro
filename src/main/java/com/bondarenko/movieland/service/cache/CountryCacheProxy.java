@@ -25,7 +25,7 @@ public class CountryCacheProxy implements CountryService {
     //method.invoke(bean);
     //@PostConstruct is meant for simple technical setup, not business logic.
     private void init() {
-        countryCache = new Cache<>(countryService::findAll);
+        countryCache = new Cache<>(() -> List.copyOf(countryService.findAll()));
         countryCache.refresh();
         log.info("Country cache initialized, size= {}", countryCache.getAll().size());
     }

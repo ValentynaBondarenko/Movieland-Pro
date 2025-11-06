@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +26,7 @@ public class GenreCacheProxy implements GenreService {
     private void init() {
         genreCache = new Cache<>(() -> {
             List<GenreResponse> genre = genreService.findAll();
-            return new ArrayList<>(genre);
+            return Collections.unmodifiableList(new ArrayList<>(genre));
         });
         genreCache.refresh();
         log.info("Country cache initialized, size= {}", genreCache.getAll().size());
