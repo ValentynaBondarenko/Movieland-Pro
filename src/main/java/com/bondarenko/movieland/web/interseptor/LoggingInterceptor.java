@@ -2,7 +2,7 @@ package com.bondarenko.movieland.web.interseptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.MDC;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,16 +10,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@Slf4j
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
 
     private static final String REQUEST_ID = "requestId";
-    private static final String USER = "user";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        MDC.put(REQUEST_ID, request.getHeader(REQUEST_ID));
+        String requestId = request.getHeader(REQUEST_ID);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = "guest";
 
@@ -33,15 +33,13 @@ public class LoggingInterceptor implements HandlerInterceptor {
                 username = userDetails.getUsername();
             }
         }
+        RequestContext ctx = new RequestContext(requestId, username);
+        log.info("RequestId={}, User={}", ctx.requestId(), ctx.user());
 
-        MDC.put(USER, username);
+        ScopedValue.runWhere(RequestContext.CURRENT_USER_INFO, ctx, () -> {
+        });
+
         return true;
     }
 
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        MDC.remove(REQUEST_ID);
-        MDC.remove(USER);
-    }
 }
